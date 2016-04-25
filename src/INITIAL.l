@@ -11,6 +11,7 @@
 	{WSPACE} { fprintf(source, "%s", yytext); }
 	{COMMENTS} { fprintf(source, "/*"); BEGIN(INITIAL_CSA); }
 	{COMMENT}  { fprintf(source, "/*"); BEGIN(INITIAL_CSS); }
+	\"  { fprintf( source, "\""); BEGIN(INITIAL_ST); }
   
 	{DIRECTIVE_IMPORT} { fprintf(source, "#include "); BEGIN(IMPORT); }
 	{DIRECTIVE_CLASS} { BEGIN(CLASS_DEFINE); }
@@ -26,4 +27,10 @@
 <INITIAL_CSS>{
 	\n { fprintf(source, "*/\n"); BEGIN(INITIAL); }
 	. { fprintf(source, "%s", yytext); }
+}
+
+<INITIAL_ST>{
+	\\\" { fprintf( source, "\\\""); }
+	\" { fprintf( source, "\""); BEGIN(INITIAL); }
+	. { fprintf( source, "%s", yytext); }
 }

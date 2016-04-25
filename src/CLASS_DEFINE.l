@@ -5,6 +5,12 @@
 		fprintf( source, "#include \"%s\"\n", define_header_name );
 		fprintf( source, "#include \"%s\"\n", private_header_name );
 		fprintf( source, "/* class %s */\n", SBuf_getStr(class_buf) );
+		if (singleton) {
+			fprintf( source, "static struct %s_struct instance;\n", SBuf_getStr(class_buf) );
+			fprintf( source, "%s", SBuf_getStr(class_buf) );
+			if (isThisPointer) fprintf( source, "*");
+			fprintf( source, " %s_getInstance() { return &instance; }\n", SBuf_getStr(class_buf) );
+		}
 		if (isLineNo) fprintf(source, "#line %d \"%s\"\n", yylineno, input_filename);
 
 		fprintf( public_header, "/* class %s */\n", SBuf_getStr(class_buf) );
@@ -12,6 +18,11 @@
 		fprintf( public_header, "typedef struct %s_struct", SBuf_getStr(class_buf) );
 		if (!isThisPointer) fprintf( public_header, "*");
 		fprintf( public_header, " %s;\n", SBuf_getStr(class_buf) );
+		if (singleton) {
+			fprintf( public_header, "%s", SBuf_getStr(class_buf) );
+			if (isThisPointer) fprintf( public_header, "*");
+			fprintf( public_header, " %s_getInstance();\n", SBuf_getStr(class_buf) );
+		}
 
 		fprintf( define_header, "#include \"%s\"\n", public_header_name );
 		fprintf( define_header, "/* class %s */\n", SBuf_getStr(class_buf) );
