@@ -60,6 +60,7 @@
 	}
 	{COMMENTS} { fprintf( source, "/*"); BEGIN(METHOD_SCOPE_CSA); }
 	{COMMENT}  { fprintf( source, "/*"); BEGIN(METHOD_SCOPE_CSS); }
+	\"  { fprintf( source, "\""); BEGIN(METHOD_SCOPE_ST); }
 	{DOT} {
 		// [TODO] object table check
 		SBuf_setBuf( obj_buf, SBuf_getStr(word_buf), SBuf_getLen(word_buf));
@@ -82,5 +83,11 @@
 
 <METHOD_SCOPE_CSS>{
 	\n { fprintf( source, "*/\n"); BEGIN(METHOD_SCOPE); }
+	. { fprintf( source, "%s", yytext); }
+}
+
+<METHOD_SCOPE_ST>{
+	\\\" { fprintf( source, "\\\""); }
+	\" { fprintf( source, "\""); BEGIN(METHOD_SCOPE); }
 	. { fprintf( source, "%s", yytext); }
 }

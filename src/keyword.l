@@ -3,6 +3,7 @@ ALPHABET [a-zA-Z_]
 MOJI     [a-zA-Z_1-9]
 COMMENTS (\/\*)
 COMMENTE (\*\/)
+COMMENT  (\/\/)
 DIGIT    [[:digit:]]
 FLOAT    ({NONZERO}{DIGIT}*\.?|0\.|\.{DIGIT}){DIGIT}*|0
 FLOATE   [fF]
@@ -25,8 +26,6 @@ OBJECT   (\@{WORD})
 SELF_OBJECT  (\@\@)
 DOT      (\.)
 
-COMMENT  (\/\/)
-
 %option yylineno
 
 %s IMPORT
@@ -45,6 +44,7 @@ COMMENT  (\/\/)
 %s METHOD_SCOPE
 %s METHOD_SCOPE_CSA
 %s METHOD_SCOPE_CSS
+%s METHOD_SCOPE_ST
 
 %s ATTRIBUTE_DEFINE
 %s ATTRIBUTE_DEFINE_CSA
