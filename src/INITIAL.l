@@ -19,7 +19,11 @@
 	}
 	\"  { fprintf( source, "\""); BEGIN(INITIAL_ST); }
   
-	{DIRECTIVE_IMPORT} { fprintf(source, "#include "); BEGIN(IMPORT); }
+	{DIRECTIVE_IMPORT} {
+		fprintf(source, "#include ");
+		fprintf(define_header, "#include ");
+		BEGIN(IMPORT);
+	}
 	{DIRECTIVE_CLASS} { BEGIN(CLASS_DEFINE); }
 	\n { fprintf(source, "\n"); }
 	.  { fprintf(source, "%s", yytext); }

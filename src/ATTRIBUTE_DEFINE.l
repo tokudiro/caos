@@ -23,10 +23,11 @@
 	{COMMENTS} { fprintf( define_header, "/*"); BEGIN(ATTRIBUTE_DEFINE_CSA); }
 	{COMMENT}  {
 		if (isOldComment) {
-			fprintf( define_header, "/*"); BEGIN(ATTRIBUTE_DEFINE_CSS);
+			fprintf( define_header, "/*");
 		} else {
-			fprintf( define_header, "//"); BEGIN(ATTRIBUTE_DEFINE_CSS);
+			fprintf( define_header, "//");
 		}
+		BEGIN(ATTRIBUTE_DEFINE_CSS);
 	}
 	\n {
 		fprintf( define_header, "%s", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
@@ -43,7 +44,10 @@
 }
 
 <ATTRIBUTE_DEFINE_CSA>{
-	{COMMENTE} { fprintf( define_header, "*/"); BEGIN(ATTRIBUTE_DEFINE); }
+	{COMMENTE} {
+		fprintf( define_header, "*/");
+		BEGIN(ATTRIBUTE_DEFINE);
+	}
 	\n { fprintf( define_header, "\n"); }
 	.  { fprintf( define_header, "%s", yytext); }
 }
@@ -51,10 +55,11 @@
 <ATTRIBUTE_DEFINE_CSS>{
 	\n {
 		if (isOldComment) {
-			fprintf(define_header, "*/\n"); BEGIN(ATTRIBUTE_DEFINE);
+			fprintf(define_header, "*/\n");
 		} else {
-			fprintf(define_header, "\n"); BEGIN(ATTRIBUTE_DEFINE);
+			fprintf(define_header, "\n");
 		}
+		BEGIN(ATTRIBUTE_DEFINE);
 	}
 	.  { fprintf(define_header, "%s", yytext); }
 }
