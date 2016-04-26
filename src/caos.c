@@ -32,4 +32,5 @@ boolean isLineNo = TRUE;
 boolean isThisPointer = TRUE;
 boolean isVerbose = FALSE;
 visibility methodVisibility = VISIBILITY_NONE;
+boolean isOldComment = FALSE;
 boolean singleton = FALSE;

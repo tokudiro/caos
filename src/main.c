@@ -36,23 +36,30 @@ extern boolean isLineNo;
 extern boolean isThisPointer;
 extern boolean isVerbose;
 extern char* input_filename;
+extern boolean isOldComment;
 extern boolean singleton;
 
 int main(int argc, char** argv)
 {
 	int c;
-	while( (c = getopt(argc, argv, "hLSVs")) !=-1 ) {
+	while( (c = getopt(argc, argv, "hVLSCs")) !=-1 ) {
 		switch(c){
 		case 'h':
 			printf("--------------------\n");
 			printf("C-language Addtional Object Source\n");
 			printf("[[ option ]]\n");
 			printf("h : HELP\n");
+			printf("V : verbose\n");
+			printf("[source style]");
 			printf("L : LINENO OFF\n");
 			printf("S : self object\n");
-			printf("V : verbose\n");
+			printf("C : replace old comment\n");
+			printf("[stereotype]");
 			printf("s : singleton\n");
 			exit(0);
+			break;
+		case 'V':
+			isVerbose = TRUE;
 			break;
 		case 'L':
 			isLineNo = FALSE;
@@ -60,8 +67,8 @@ int main(int argc, char** argv)
 		case 'S':
 			isThisPointer = FALSE;
 			break;
-		case 'V':
-			isVerbose = TRUE;
+		case 'C':
+			isOldComment = TRUE;
 			break;
 		case 's':
 			singleton = TRUE;

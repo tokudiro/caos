@@ -51,7 +51,14 @@
 	}
 	{WSPACE}   { RBuf_enque(tmp, yytext, yyleng, T_NON); }
 	{COMMENTS} { fprintf( source, "/*"); BEGIN(METHOD_DEFINE_CSA); }
-	{COMMENT}  { fprintf( source, "/*"); BEGIN(METHOD_DEFINE_CSS); }
+	{COMMENT}  {
+		if (isOldComment) {
+			fprintf( source, "/*");
+		} else {
+			fprintf( source, "//");
+		}
+		BEGIN(METHOD_DEFINE_CSS);
+	}
 	\n {
 		fprintf( source, "%s\n", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
 	}
@@ -65,6 +72,13 @@
 }
 
 <METHOD_DEFINE_CSS>{
-	\n { fprintf( source, "*/\n"); BEGIN(METHOD_DEFINE); }
+	\n {
+		if (isOldComment) {
+			fprintf( source, "*/\n");
+		} else {
+			fprintf( source, "\n");
+		}
+		BEGIN(METHOD_DEFINE);
+	}
 	.  { fprintf( source, "%s", yytext); }
 }

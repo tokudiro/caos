@@ -72,7 +72,13 @@
 	}
 	{WSPACE}   { RBuf_enque(tmp, yytext, yyleng, T_NON); }
 	{COMMENTS} { fprintf( (isMember?define_header:source), "/*"); BEGIN(CLASS_SCOPE_CSA); }
-	{COMMENT}  { fprintf( (isMember?define_header:source), "/*"); BEGIN(CLASS_SCOPE_CSS); }
+	{COMMENT}  {
+		if (isOldComment) {
+			fprintf( (isMember?define_header:source), "/*"); BEGIN(CLASS_SCOPE_CSS);
+		} else {
+			fprintf( (isMember?define_header:source), "//"); BEGIN(CLASS_SCOPE_CSS);
+		}
+	}
 	\n {
 		fprintf( (isMember?define_header:source), "%s", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
 		fprintf( (isMember?define_header:source), "\n");
@@ -93,6 +99,12 @@
 }
 
 <CLASS_SCOPE_CSS>{
-	\n { fprintf((isMember?define_header:source), "*/\n"); BEGIN(CLASS_SCOPE); }
+	\n {
+		if (isOldComment) {
+			fprintf((isMember?define_header:source), "*/\n"); BEGIN(CLASS_SCOPE);
+		} else {
+			fprintf((isMember?define_header:source), "\n"); BEGIN(CLASS_SCOPE);
+		}
+	}
 	.  { fprintf((isMember?define_header:source), "%s", yytext); }
 }

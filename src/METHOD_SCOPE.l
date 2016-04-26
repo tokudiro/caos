@@ -59,7 +59,13 @@
 		}
 	}
 	{COMMENTS} { fprintf( source, "/*"); BEGIN(METHOD_SCOPE_CSA); }
-	{COMMENT}  { fprintf( source, "/*"); BEGIN(METHOD_SCOPE_CSS); }
+	{COMMENT}  {
+		if (isOldComment) {
+			fprintf( source, "/*"); BEGIN(METHOD_SCOPE_CSS);
+		} else {
+			fprintf( source, "//"); BEGIN(METHOD_SCOPE_CSS);
+		}
+	}
 	\"  { fprintf( source, "\""); BEGIN(METHOD_SCOPE_ST); }
 	{DOT} {
 		// [TODO] object table check
@@ -82,7 +88,13 @@
 }
 
 <METHOD_SCOPE_CSS>{
-	\n { fprintf( source, "*/\n"); BEGIN(METHOD_SCOPE); }
+	\n {
+		if (isOldComment) {
+			fprintf( source, "*/\n"); BEGIN(METHOD_SCOPE);
+		} else {
+			fprintf( source, "\n"); BEGIN(METHOD_SCOPE);
+		}
+	}
 	. { fprintf( source, "%s", yytext); }
 }
 

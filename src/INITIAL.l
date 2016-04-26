@@ -10,7 +10,13 @@
 	{WORD}   { fprintf(source, "%s", yytext); }
 	{WSPACE} { fprintf(source, "%s", yytext); }
 	{COMMENTS} { fprintf(source, "/*"); BEGIN(INITIAL_CSA); }
-	{COMMENT}  { fprintf(source, "/*"); BEGIN(INITIAL_CSS); }
+	{COMMENT}  {
+		if (isOldComment) {
+			fprintf(source, "/*"); BEGIN(INITIAL_CSS);
+		} else {
+			fprintf(source, "//"); BEGIN(INITIAL_CSS);
+		}
+	}
 	\"  { fprintf( source, "\""); BEGIN(INITIAL_ST); }
   
 	{DIRECTIVE_IMPORT} { fprintf(source, "#include "); BEGIN(IMPORT); }
@@ -25,7 +31,13 @@
 }
 
 <INITIAL_CSS>{
-	\n { fprintf(source, "*/\n"); BEGIN(INITIAL); }
+	\n {
+		if (isOldComment) {
+			fprintf(source, "*/\n"); BEGIN(INITIAL);
+		} else {
+			fprintf(source, "\n"); BEGIN(INITIAL);
+		}
+	}
 	. { fprintf(source, "%s", yytext); }
 }
 
