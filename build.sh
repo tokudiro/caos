@@ -1,3 +1,9 @@
+#!/bin/bash
+
+if [ ! -e obj ]; then
+    mkdir obj
+fi
+
 echo %{>  ./obj/caos.l
 cat ./src/caos.c    >> ./obj/caos.l
 echo %}>> ./obj/caos.l
