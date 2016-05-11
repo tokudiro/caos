@@ -93,6 +93,14 @@
 		fprintf(define_header, "%s;", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
 		isMember = TRUE;
 	}
+	
+	=  {
+		/* TODO : bad case : struct member initialize */
+		if (isVerbose) printf("error:struct member initialize\n");
+		/* Class Member */
+		fprintf(define_header, "%s;", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
+		isMember = TRUE;
+	}
 	.  { RBuf_enque(tmp, yytext, yyleng, T_NON); }
 }
 

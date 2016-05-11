@@ -75,4 +75,60 @@ boolean RBuf_back_retype(RBuf self, buftype find, buftype replace) {
 	return FALSE;
 }
 
+char* RBuf_back_getStr(RBuf self, buftype find) {
+	if (RBuf_empty(self) ) return 0;
+	
+	int index = self->last;
+	while( index != self->first) {
+		index--;
+		if ( index < 0 ) index=MAX_TMP;
+		if ( self->type[index] == find ) {
+			return self->buf[index];
+		}
+	}
+	return 0;
+}
+
+char* TYPE_CAPTION[] = {
+	"T_NON",
+	"T_NUMBER",
+	"T_WORD",
+	"T_OBJECT",
+	"T_CLASS", 
+	"T_DOT",
+	"T_KEYWORD",
+	"T_METHOD",
+	"T_PARAMETER",
+	"T_ASTERISK",
+	"T_TYPE"};
+
+char* RBuf_toString(RBuf self, char* buf) {
+	if (self->first == self->last) return buf;
+
+	if (self->first < self->last) {
+		for (int i = self->first; i<=self->last; i++)
+		{
+			strcat(buf, TYPE_CAPTION[self->type[i]]);
+			strcat(buf, ":");
+			strcat(buf, self->buf[i]);
+			strcat(buf, "\n");
+		}
+	} else {
+		for (int i = self->first; i<MAX_BUF; i++)
+		{
+			strcat(buf, TYPE_CAPTION[self->type[i]]);
+			strcat(buf, ":");
+			strcat(buf, self->buf[i]);
+			strcat(buf, "\n");
+		}
+		for (int i = 0; i<=self->last; i++)
+		{
+			strcat(buf, TYPE_CAPTION[self->type[i]]);
+			strcat(buf, ":");
+			strcat(buf, self->buf[i]);
+			strcat(buf, "\n");
+		}
+	}
+	return buf;
+}
 
