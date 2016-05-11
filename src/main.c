@@ -42,7 +42,7 @@ extern boolean singleton;
 int main(int argc, char** argv)
 {
 	int c;
-	while( (c = getopt(argc, argv, "hVLSCs")) !=-1 ) {
+	while( (c = getopt(argc, argv, "hVLSC")) !=-1 ) {
 		switch(c){
 		case 'h':
 			printf("--------------------\n");
@@ -54,8 +54,6 @@ int main(int argc, char** argv)
 			printf("L : LINENO OFF\n");
 			printf("S : self object\n");
 			printf("C : replace old comment\n");
-			printf("[stereotype]");
-			printf("s : singleton\n");
 			exit(0);
 			break;
 		case 'V':
@@ -70,8 +68,6 @@ int main(int argc, char** argv)
 		case 'C':
 			isOldComment = TRUE;
 			break;
-		case 's':
-			singleton = TRUE;
 		default:
 			break;
 		}

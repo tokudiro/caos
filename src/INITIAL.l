@@ -25,6 +25,11 @@
 		BEGIN(IMPORT);
 	}
 	{DIRECTIVE_CLASS} { BEGIN(CLASS_DEFINE); }
+	{DIRECTIVE_SINGLETON} {
+		singleton = TRUE;
+		BEGIN(CLASS_DEFINE);
+	}
+	
 	\n { fprintf(source, "\n"); }
 	.  { fprintf(source, "%s", yytext); }
 }
