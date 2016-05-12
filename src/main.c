@@ -50,7 +50,7 @@ int main(int argc, char** argv)
 			printf("[[ option ]]\n");
 			printf("h : HELP\n");
 			printf("V : verbose\n");
-			printf("[source style]");
+			printf("[source style]\n");
 			printf("L : LINENO OFF\n");
 			printf("S : self object\n");
 			printf("C : replace old comment\n");
