@@ -1,7 +1,0 @@
-#class $SampleB
-
-#+int function(){
-	return 9;
-}
-
-#endclass
