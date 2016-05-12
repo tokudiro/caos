@@ -27,7 +27,7 @@ char public_header_name[MAX_BUF];
 char private_header_name[MAX_BUF];
 char define_header_name[MAX_BUF];
 
-RBuf tmp;
+RBuf* tmp;
 boolean isLineNo = TRUE;
 boolean isThisPointer = TRUE;
 boolean isVerbose = FALSE;

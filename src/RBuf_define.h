@@ -1,4 +1,10 @@
 #include "RBuf.h"
+
+/**
+* @defgroup RBuf
+* @{
+*/
+
 //Class:RBuf
 struct RBuf_struct{
 	char buf[MAX_TMP][MAX_BUF];   /* buf */
@@ -7,3 +13,5 @@ struct RBuf_struct{
 	int first;
 	int last;
 };
+
+/** @} */

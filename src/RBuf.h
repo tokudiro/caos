@@ -1,11 +1,11 @@
 //Class:RBuf
-typedef struct RBuf_struct* RBuf;
-void RBuf_init(RBuf self, boolean isThisPointer);
-void RBuf_enque(RBuf self, char* str, int len, buftype type);
-char* RBuf_deque(RBuf self, buftype* p_type) ;
-boolean RBuf_empty(RBuf self);
-char* RBuf_allque(RBuf self, char* buf, char* class_buf_str) ;
-boolean RBuf_back_retype(RBuf self, buftype find, buftype replace) ;
-char* RBuf_back_getStr(RBuf self, buftype find) ;
+typedef struct RBuf_struct RBuf;
+void RBuf_init(RBuf* this, boolean isThisPointer);
+void RBuf_enque(RBuf* this, const char* str, const int len, const buftype type);
+char* RBuf_deque(RBuf* this, buftype* p_type) ;
+boolean RBuf_empty(RBuf* this);
+char* RBuf_allque(RBuf* this, char* buf, char* class_buf_str) ;
+boolean RBuf_back_retype(RBuf* this, buftype find, buftype replace) ;
+char* RBuf_back_getStr(RBuf* this, buftype find) ;
 
-char* RBuf_toString(RBuf self, char* buf);
+char* RBuf_toString(RBuf* this, char* buf);

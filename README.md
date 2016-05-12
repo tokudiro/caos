@@ -14,11 +14,11 @@ C-language additional object source
 
 int member;
 
-#+int public_method(void){
+#+int public_method(){
 	return 0;
 }
 
-#-int private_method(void){
+#-int private_method(){
 	return 0;
 }
 
@@ -36,11 +36,11 @@ int member;
 #include "SampleClass_private.h"
 /* class SampleClass */
 
-int SampleClass_public_method(SampleClass* this, void){
+int SampleClass_public_method(SampleClass* this){
     return 0;
 }
 
-int SampleClass_private_method(SampleClass* this, void){
+int SampleClass_private_method(SampleClass* this){
     return 0;
 }
 ```
@@ -52,7 +52,7 @@ int SampleClass_private_method(SampleClass* this, void){
 #define __SampleClass_H__
 /* class SampleClass */
 typedef struct SampleClass_struct SampleClass;
-int SampleClass_public_method(SampleClass* this, void);
+int SampleClass_public_method(SampleClass* this);
 #endif /* __SampleClass_H__ */
 ```
 
@@ -69,5 +69,5 @@ int member;
 * SampleClass_private.h
 
 ```c
-static int SampleClass_private_method(SampleClass* this, void);
+static int SampleClass_private_method(SampleClass* this);
 ```

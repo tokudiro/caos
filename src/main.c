@@ -25,7 +25,7 @@ SBuf obj_class_buf;
 SBuf word_buf;
 SBuf obj_buf;
 
-extern RBuf tmp;
+extern RBuf* tmp;
 extern char filename[];
 extern char source_name[];
 extern char public_header_name[];
@@ -73,7 +73,7 @@ int main(int argc, char** argv)
 		}
 	}
 	
-	struct RBuf_struct tmp_impl;
+	RBuf tmp_impl;
 	tmp = &tmp_impl;
 	RBuf_init(tmp, isThisPointer);
 	

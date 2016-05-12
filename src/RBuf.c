@@ -2,53 +2,51 @@
 
 #include "common.h"
 
-#include "RBuf_define.h"
-//Class:RBuf 
-
 /**
-* @defgroup RBuf
+* @addtogroup RBuf
+* @brief Ring Buffer
 * @{
 */
 
-/**
-* @brief initial
-*/
-void RBuf_init(RBuf self, boolean isThisPointer){
-	self->first = 0;
-	self->last = 0;
-	self->isThisPointer = isThisPointer;
+#include "RBuf_define.h"
+//Class:RBuf 
+
+void RBuf_init(RBuf* this, boolean isThisPointer){
+	this->first = 0;
+	this->last = 0;
+	this->isThisPointer = isThisPointer;
 }
 
-void RBuf_enque(RBuf self, char* str, int len, buftype type){
-	memset(&(self->buf[self->last][0]), 0, MAX_BUF);
-	strcpy( &(self->buf[self->last][0]), str);
-	self->type[self->last] = type;
-	self->last++;
-	if (self->first == self->last) { /* buffer over */ }
-	if (self->last==MAX_TMP) {self->last=0;}
+void RBuf_enque(RBuf* this, const char* str, const int len, const buftype type){
+	memset(&(this->buf[this->last][0]), 0, MAX_BUF);
+	strcpy( &(this->buf[this->last][0]), str);
+	this->type[this->last] = type;
+	this->last++;
+	if (this->first == this->last) { /* buffer over */ }
+	if (this->last==MAX_TMP) {this->last=0;}
 }
 
-char* RBuf_deque(RBuf self, buftype* p_type) {
-	char* ret = self->buf[self->first];
-	*p_type = self->type[self->first];
-	self->first++;
-	if (self->first==MAX_TMP) {self->first=0;}
+char* RBuf_deque(RBuf* this, buftype* p_type) {
+	char* ret = this->buf[this->first];
+	*p_type = this->type[this->first];
+	this->first++;
+	if (this->first==MAX_TMP) {this->first=0;}
 	return ret;
 }
 
-boolean RBuf_empty(RBuf self){
-	return (self->first==self->last?TRUE:FALSE);
+boolean RBuf_empty(RBuf* this){
+	return (this->first==this->last?TRUE:FALSE);
 }
 
-char* RBuf_allque(RBuf self, char* buf, char* class_buf_str) {
+char* RBuf_allque(RBuf* this, char* buf, char* class_buf_str) {
 	buftype type;
 	char* str;
 	buf[0] = 0;
-	while(RBuf_empty(self) == FALSE) {
-		str = RBuf_deque(self, &type);
+	while(RBuf_empty(this) == FALSE) {
+		str = RBuf_deque(this, &type);
 		switch(type) {
 		case T_OBJECT:
-			if (self->isThisPointer) {
+			if (this->isThisPointer) {
 				strcat(buf, "this->");
 			}else{
 				strcat(buf, "self->");
@@ -64,31 +62,31 @@ char* RBuf_allque(RBuf self, char* buf, char* class_buf_str) {
 	return buf;
 }
 
-boolean RBuf_back_retype(RBuf self, buftype find, buftype replace) {
-	if (RBuf_empty(self) ) return FALSE;
+boolean RBuf_back_retype(RBuf* this, buftype find, buftype replace) {
+	if (RBuf_empty(this) ) return FALSE;
 	
-	int index = self->last;
-	while( index != self->first) {
+	int index = this->last;
+	while( index != this->first) {
 		index--;
 		if ( index < 0 ) index=MAX_TMP;
-		if ( self->type[index] == T_DOT ) { return FALSE; }
-		if ( self->type[index] == find ) {
-			self->type[index] = replace;
+		if ( this->type[index] == T_DOT ) { return FALSE; }
+		if ( this->type[index] == find ) {
+			this->type[index] = replace;
 			return TRUE;
 		}
 	}
 	return FALSE;
 }
 
-char* RBuf_back_getStr(RBuf self, buftype find) {
-	if (RBuf_empty(self) ) return 0;
+char* RBuf_back_getStr(RBuf* this, buftype find) {
+	if (RBuf_empty(this) ) return 0;
 	
-	int index = self->last;
-	while( index != self->first) {
+	int index = this->last;
+	while( index != this->first) {
 		index--;
 		if ( index < 0 ) index=MAX_TMP;
-		if ( self->type[index] == find ) {
-			return self->buf[index];
+		if ( this->type[index] == find ) {
+			return this->buf[index];
 		}
 	}
 	return 0;
@@ -107,30 +105,30 @@ static char* TYPE_CAPTION[] = {
 	"T_ASTERISK",
 	"T_TYPE"};
 
-char* RBuf_toString(RBuf self, char* buf) {
-	if (self->first == self->last) return buf;
+char* RBuf_toString(RBuf* this, char* buf) {
+	if (this->first == this->last) return buf;
 
-	if (self->first < self->last) {
-		for (int i = self->first; i<=self->last; i++)
+	if (this->first < this->last) {
+		for (int i = this->first; i<=this->last; i++)
 		{
-			strcat(buf, TYPE_CAPTION[self->type[i]]);
+			strcat(buf, TYPE_CAPTION[this->type[i]]);
 			strcat(buf, ":");
-			strcat(buf, self->buf[i]);
+			strcat(buf, this->buf[i]);
 			strcat(buf, "\n");
 		}
 	} else {
-		for (int i = self->first; i<MAX_BUF; i++)
+		for (int i = this->first; i<MAX_BUF; i++)
 		{
-			strcat(buf, TYPE_CAPTION[self->type[i]]);
+			strcat(buf, TYPE_CAPTION[this->type[i]]);
 			strcat(buf, ":");
-			strcat(buf, self->buf[i]);
+			strcat(buf, this->buf[i]);
 			strcat(buf, "\n");
 		}
-		for (int i = 0; i<=self->last; i++)
+		for (int i = 0; i<=this->last; i++)
 		{
-			strcat(buf, TYPE_CAPTION[self->type[i]]);
+			strcat(buf, TYPE_CAPTION[this->type[i]]);
 			strcat(buf, ":");
-			strcat(buf, self->buf[i]);
+			strcat(buf, this->buf[i]);
 			strcat(buf, "\n");
 		}
 	}
