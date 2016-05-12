@@ -46,8 +46,15 @@
 
 	{OBJECT} { RBuf_enque(tmp, &(yytext[1]), yyleng-1, T_OBJECT); }
 	{WORD}   {
-		if (arg_comma) { RBuf_enque(tmp, ", ", 2, T_NON); arg_comma=FALSE; }
-		RBuf_enque(tmp, yytext, yyleng, T_WORD);
+		if ( (arg_comma) && ( 0 == strcmp(yytext, "void") ) ) {
+			/* nothing */
+		} else {
+			if (arg_comma) {
+				RBuf_enque(tmp, ", ", 2, T_NON);
+				arg_comma=FALSE;
+			}
+			RBuf_enque(tmp, yytext, yyleng, T_WORD);
+		}
 	}
 	{WSPACE}   { RBuf_enque(tmp, yytext, yyleng, T_NON); }
 	{COMMENTS} { fprintf( source, "/*"); BEGIN(METHOD_DEFINE_CSA); }

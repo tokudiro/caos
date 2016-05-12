@@ -20,10 +20,10 @@ FILE* public_header;
 FILE* private_header;
 FILE* define_header;
 
-SBuf class_buf;
-SBuf obj_class_buf;
-SBuf word_buf;
-SBuf obj_buf;
+SBuf* class_buf;
+SBuf* obj_class_buf;
+SBuf* word_buf;
+SBuf* obj_buf;
 
 extern RBuf* tmp;
 extern char filename[];
@@ -77,18 +77,20 @@ int main(int argc, char** argv)
 	tmp = &tmp_impl;
 	RBuf_init(tmp, isThisPointer);
 	
-	struct SBuf_struct class_buf_impl;
-	struct SBuf_struct obj_class_buf_impl;
-	struct SBuf_struct word_buf_impl;
-	struct SBuf_struct obj_buf_impl;
+	SBuf class_buf_impl;
 	class_buf = &class_buf_impl;
-	obj_class_buf = &obj_class_buf_impl;
-	word_buf = &word_buf_impl;
-	obj_buf = &obj_buf_impl;
-	
 	SBuf_init(class_buf);
+
+	SBuf obj_class_buf_impl;
+	obj_class_buf = &obj_class_buf_impl;
 	SBuf_init(obj_class_buf);
+
+	SBuf word_buf_impl;
+	word_buf = &word_buf_impl;
 	SBuf_init(word_buf);
+
+	SBuf obj_buf_impl;
+	obj_buf = &obj_buf_impl;
 	SBuf_init(obj_buf);
 
 	if(optind < argc) {

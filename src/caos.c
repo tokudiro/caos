@@ -15,10 +15,10 @@ int bracket = 0;
 boolean arg_comma = FALSE;
 boolean isMember = FALSE;
 
-SBuf class_buf;
-SBuf obj_class_buf;
-SBuf word_buf;
-SBuf obj_buf;
+SBuf* class_buf;
+SBuf* obj_class_buf;
+SBuf* word_buf;
+SBuf* obj_buf;
 char allque[MAX_BUF*MAX_TMP];
 char* input_filename;
 char filename[MAX_BUF];

@@ -11,7 +11,7 @@
 #include "RBuf_define.h"
 //Class:RBuf 
 
-void RBuf_init(RBuf* this, boolean isThisPointer){
+void RBuf_init(RBuf* this, const boolean isThisPointer){
 	this->first = 0;
 	this->last = 0;
 	this->isThisPointer = isThisPointer;
@@ -34,11 +34,11 @@ char* RBuf_deque(RBuf* this, buftype* p_type) {
 	return ret;
 }
 
-boolean RBuf_empty(RBuf* this){
+boolean RBuf_empty(const RBuf* this){
 	return (this->first==this->last?TRUE:FALSE);
 }
 
-char* RBuf_allque(RBuf* this, char* buf, char* class_buf_str) {
+char* RBuf_allque(RBuf* this, char* buf, const char* class_buf_str) {
 	buftype type;
 	char* str;
 	buf[0] = 0;
@@ -62,7 +62,7 @@ char* RBuf_allque(RBuf* this, char* buf, char* class_buf_str) {
 	return buf;
 }
 
-boolean RBuf_back_retype(RBuf* this, buftype find, buftype replace) {
+boolean RBuf_back_retype(RBuf* this, const buftype find, const buftype replace) {
 	if (RBuf_empty(this) ) return FALSE;
 	
 	int index = this->last;
@@ -78,7 +78,7 @@ boolean RBuf_back_retype(RBuf* this, buftype find, buftype replace) {
 	return FALSE;
 }
 
-char* RBuf_back_getStr(RBuf* this, buftype find) {
+const char* RBuf_back_getStr(const RBuf* this, const buftype find) {
 	if (RBuf_empty(this) ) return 0;
 	
 	int index = this->last;
@@ -105,6 +105,11 @@ static char* TYPE_CAPTION[] = {
 	"T_ASTERISK",
 	"T_TYPE"};
 
+/**
+* @brief toString
+* @param buf A string that represents the current object.
+* @return A string that represents the current object.
+*/
 char* RBuf_toString(RBuf* this, char* buf) {
 	if (this->first == this->last) return buf;
 

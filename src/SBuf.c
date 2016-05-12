@@ -4,22 +4,22 @@
 
 #include "SBuf_define.h"
 
-void SBuf_init(SBuf self) {
-	memset(&(self->str[0]), 0, MAX_BUF);
-	self->exist = FALSE;
-	self->len = 0;
+void SBuf_init(SBuf* this) {
+	memset(&(this->str[0]), 0, MAX_BUF);
+	this->exist = FALSE;
+	this->len = 0;
 }
 
-void SBuf_setBuf(SBuf self, char* top, int len) {
-	strncpy(self->str, top, len);
-	self->len = len;
-	self->exist = TRUE;
+void SBuf_setBuf(SBuf* this, const char* top, const int len) {
+	strncpy(this->str, top, len);
+	this->len = len;
+	this->exist = TRUE;
 }
 
-char* SBuf_getStr(SBuf self) {
-	return self->str;
+const char* SBuf_getStr(const SBuf* this) {
+	return this->str;
 }
 
-int SBuf_getLen(SBuf self) {
-	return self->len;
+int SBuf_getLen(const SBuf* this) {
+	return this->len;
 }
