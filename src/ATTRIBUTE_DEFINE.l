@@ -88,7 +88,7 @@
 		fprintf(define_header, "%s;", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
 	}
 	\*  { RBuf_enque(tmp, yytext, yyleng, T_ASTERISK); }
-	.  { RBuf_enque(tmp, yytext, yyleng, T_DOT); }
+	.  { RBuf_enque(tmp, yytext, yyleng, T_NON); }
 }
 
 <ATTRIBUTE_DEFINE_CSA>{

@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+typedef struct A_struct {
+	int x;
+}A;
+
+#singleton $Bad
+
+int b[10] = { 1,2,3,4,5, 6,7,8,9,10 };
+int c[10];
+
+#@ int z;
+#@ $A a;
+
+#endclass
+
+
+int main(void) {
+	Bad* obj = Bad_getInstance();
+	obj->z = 5;
+	printf("%d", Bad_get_z(obj) );
+}

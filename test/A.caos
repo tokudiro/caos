@@ -1,0 +1,25 @@
+#import $B
+
+/* クラスA */
+#class $A
+
+int x;
+#@int y;
+
+int func($C c) {
+  $B b;
+  B_func(b, c);
+  printf("@x \"");
+  return 0;
+}
+
+#define X(a) %a_X()
+
+#+int function(int x1, int x2){
+	return x1+x2;
+}
+  #+void unfuction(void){}
+
+#define PRINT(import) printf("#import\n")
+
+#endclass

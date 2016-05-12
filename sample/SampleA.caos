@@ -1,0 +1,13 @@
+#include <stdio.h>
+#import $SampleB
+
+#class $SampleA
+
+$SampleB b;
+
+#+void function(int attr){
+	@b = SampleB_getInstance();
+	printf( "%d\n", SampleB_function(@b) );
+}
+
+#endclass

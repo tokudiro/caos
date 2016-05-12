@@ -1,0 +1,9 @@
+#class $Validator
+bool (*const validate)($Validator this, int val);
+void * const pData;
+
+@+ bool validateRange(int val)
+{
+	return pRange->min <= val && val <= pRange->max;
+}
+#endclass

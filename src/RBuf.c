@@ -6,8 +6,13 @@
 //Class:RBuf 
 
 /**
- * initial
- */
+* @defgroup RBuf
+* @{
+*/
+
+/**
+* @brief initial
+*/
 void RBuf_init(RBuf self, boolean isThisPointer){
 	self->first = 0;
 	self->last = 0;
@@ -19,7 +24,7 @@ void RBuf_enque(RBuf self, char* str, int len, buftype type){
 	strcpy( &(self->buf[self->last][0]), str);
 	self->type[self->last] = type;
 	self->last++;
-	if (self->first == self->last) {/* buffer over */;}
+	if (self->first == self->last) { /* buffer over */ }
 	if (self->last==MAX_TMP) {self->last=0;}
 }
 
@@ -89,7 +94,7 @@ char* RBuf_back_getStr(RBuf self, buftype find) {
 	return 0;
 }
 
-char* TYPE_CAPTION[] = {
+static char* TYPE_CAPTION[] = {
 	"T_NON",
 	"T_NUMBER",
 	"T_WORD",
@@ -132,3 +137,4 @@ char* RBuf_toString(RBuf self, char* buf) {
 	return buf;
 }
 
+/** @} */

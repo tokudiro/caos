@@ -1,0 +1,332 @@
+!_TAG_FILE_ENCODING	cp932	//
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_JP_AUTHOR	HIGASHI Hirohito	/Twitter: @h_east/
+!_TAG_PROGRAM_JP_URL	http://hp.vector.co.jp/authors/VA025040/	//
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8J2	//
+A	test\A.h	4;"	t	typeref:struct:A_struct
+A_Struct	test\A_def.h	3;"	s
+A_func	test\A.expect.c	8;"	f
+A_function	test\A.c	18;"	f
+A_struct	test\A_define.h	3;"	s
+B1	test\B.h	2;"	t	typeref:struct:B1$
+B1$	test\B_def.h	3;"	s
+B1_func	test\B.c	6;"	f
+B2	test\B.h	5;"	t	typeref:struct:B2$
+B2$	test\B_def.h	8;"	s
+B2_func	test\B.c	18;"	f
+BEGIN	obj\caos.yy.c	126;"	d	file:
+CLASSDEF	obj\caos.yy.c	735;"	d	file:
+CLASS_SCOPE	obj\caos.yy.c	738;"	d	file:
+C_COMMENT_SA	obj\caos.yy.c	739;"	d	file:
+C_COMMENT_SS	obj\caos.yy.c	740;"	d	file:
+ECHO	obj\caos.yy.c	845;"	d	file:
+EOB_ACT_CONTINUE_SCAN	obj\caos.yy.c	174;"	d	file:
+EOB_ACT_END_OF_FILE	obj\caos.yy.c	175;"	d	file:
+EOB_ACT_LAST_MATCH	obj\caos.yy.c	176;"	d	file:
+FALSE	src\boolean.h	1;"	e	enum:_boolean
+FALSE	test\boolean.h	1;"	e	enum:_boolean
+FLEXINT_H	obj\caos.yy.c	30;"	d	file:
+FLEX_BETA	obj\caos.yy.c	14;"	d	file:
+FLEX_SCANNER	obj\caos.yy.c	9;"	d	file:
+FUNC_SCOPE	obj\caos.yy.c	741;"	d	file:
+F_COMMENT_SA	obj\caos.yy.c	742;"	d	file:
+F_COMMENT_SS	obj\caos.yy.c	743;"	d	file:
+IMPORT	obj\caos.yy.c	734;"	d	file:
+INITIAL	obj\caos.yy.c	733;"	d	file:
+INT16_MAX	obj\caos.yy.c	72;"	d	file:
+INT16_MIN	obj\caos.yy.c	63;"	d	file:
+INT32_MAX	obj\caos.yy.c	75;"	d	file:
+INT32_MIN	obj\caos.yy.c	66;"	d	file:
+INT8_MAX	obj\caos.yy.c	69;"	d	file:
+INT8_MIN	obj\caos.yy.c	60;"	d	file:
+I_COMMENT_SA	obj\caos.yy.c	736;"	d	file:
+I_COMMENT_SS	obj\caos.yy.c	737;"	d	file:
+MAX_BUF	src\common.h	1;"	d
+MAX_BUF	test\common.h	1;"	d
+MAX_TMP	src\common.h	2;"	d
+MAX_TMP	test\common.h	2;"	d
+PBFD_COMMENT_SA	obj\caos.yy.c	745;"	d	file:
+PBFD_COMMENT_SS	obj\caos.yy.c	746;"	d	file:
+PRIVATE_FUNCDEF_SCOPE	obj\caos.yy.c	747;"	d	file:
+PUBLIC_FUNCDEF_SCOPE	obj\caos.yy.c	744;"	d	file:
+PVFD_COMMENT_SA	obj\caos.yy.c	748;"	d	file:
+PVFD_COMMENT_SS	obj\caos.yy.c	749;"	d	file:
+RBuf	src\RBuf.h	2;"	t	typeref:struct:RBuf_struct
+RBuf	test\RBuf.expect.h	4;"	t	typeref:struct:RBuf_Struct
+RBuf	test\RBuf.h	4;"	t	typeref:struct:RBuf_struct
+RBuf_allque	src\RBuf.c	39;"	f
+RBuf_allque	test\RBuf.c	47;"	f
+RBuf_allque	test\RBuf.expect.c	38;"	f
+RBuf_back_retype	src\RBuf.c	59;"	f
+RBuf_back_retype	test\RBuf.c	68;"	f
+RBuf_deque	src\RBuf.c	27;"	f
+RBuf_deque	test\RBuf.c	33;"	f
+RBuf_deque	test\RBuf.expect.c	26;"	f
+RBuf_empty	src\RBuf.c	35;"	f
+RBuf_empty	test\RBuf.c	42;"	f
+RBuf_empty	test\RBuf.expect.c	34;"	f
+RBuf_enque	src\RBuf.c	18;"	f
+RBuf_enque	test\RBuf.c	23;"	f
+RBuf_enque	test\RBuf.expect.c	18;"	f
+RBuf_init	src\RBuf.c	13;"	f
+RBuf_init	test\RBuf.c	17;"	f
+RBuf_init	test\RBuf.expect.c	13;"	f
+RBuf_private	test\RBuf.c	86;"	f
+RBuf_struct	src\RBuf_define.h	3;"	s
+RBuf_struct	test\RBuf_define.h	3;"	s
+REJECT	obj\caos.yy.c	679;"	d	file:
+SBuf	src\SBuf.h	4;"	t	typeref:struct:SBuf_struct
+SBuf_getLen	src\SBuf.c	25;"	f
+SBuf_getStr	src\SBuf.c	21;"	f
+SBuf_init	src\SBuf.c	9;"	f
+SBuf_setBuf	src\SBuf.c	15;"	f
+SBuf_struct	src\SBuf_define.h	3;"	s
+SBuf_struct_	src\SBuf_define.h	7;"	t	typeref:struct:SBuf_struct
+STATE_DO	State.h	1;"	e	enum:_State
+STATE_END	State.h	1;"	e	enum:_State
+STATE_START	State.h	1;"	e	enum:_State
+State	State.h	1;"	t	typeref:enum:_State
+TRUE	src\boolean.h	1;"	e	enum:_boolean
+TRUE	test\boolean.h	1;"	e	enum:_boolean
+T_CLASS	src\buftype.h	1;"	e	enum:_buftype
+T_CLASS	test\buftype.h	1;"	e	enum:_buftype
+T_DOT	src\buftype.h	1;"	e	enum:_buftype
+T_DOT	test\buftype.h	1;"	e	enum:_buftype
+T_KEYWORD	src\buftype.h	1;"	e	enum:_buftype
+T_KEYWORD	test\buftype.h	1;"	e	enum:_buftype
+T_METHOD	src\buftype.h	1;"	e	enum:_buftype
+T_METHOD	test\buftype.h	1;"	e	enum:_buftype
+T_NON	src\buftype.h	1;"	e	enum:_buftype
+T_NON	test\buftype.h	1;"	e	enum:_buftype
+T_NUMBER	src\buftype.h	1;"	e	enum:_buftype
+T_NUMBER	test\buftype.h	1;"	e	enum:_buftype
+T_OBJECT	src\buftype.h	1;"	e	enum:_buftype
+T_OBJECT	test\buftype.h	1;"	e	enum:_buftype
+T_WORD	src\buftype.h	1;"	e	enum:_buftype
+T_WORD	test\buftype.h	1;"	e	enum:_buftype
+UINT16_MAX	obj\caos.yy.c	81;"	d	file:
+UINT32_MAX	obj\caos.yy.c	84;"	d	file:
+UINT8_MAX	obj\caos.yy.c	78;"	d	file:
+Validator	stack\Validator.h	2;"	t	typeref:struct:Validator$
+Validator$	stack\Validator_def.h	3;"	s
+Validator_validateRange	stack\Validator.c	4;"	f
+X	test\A.c	16;"	d	file:
+YYSTATE	obj\caos.yy.c	133;"	d	file:
+YYTABLES_NAME	obj\caos.yy.c	2784;"	d	file:
+YY_AT_BOL	obj\caos.yy.c	360;"	d	file:
+YY_BREAK	obj\caos.yy.c	924;"	d	file:
+YY_BUFFER_EOF_PENDING	obj\caos.yy.c	276;"	d	file:
+YY_BUFFER_NEW	obj\caos.yy.c	264;"	d	file:
+YY_BUFFER_NORMAL	obj\caos.yy.c	265;"	d	file:
+YY_BUFFER_STATE	obj\caos.yy.c	162;"	t	typeref:struct:yy_buffer_state	file:
+YY_BUF_SIZE	obj\caos.yy.c	150;"	d	file:
+YY_BUF_SIZE	obj\caos.yy.c	152;"	d	file:
+YY_CHAR	obj\caos.yy.c	362;"	t	file:
+YY_CURRENT_BUFFER	obj\caos.yy.c	292;"	d	file:
+YY_CURRENT_BUFFER_LVALUE	obj\caos.yy.c	299;"	d	file:
+YY_DECL	obj\caos.yy.c	912;"	d	file:
+YY_DECL_IS_OURS	obj\caos.yy.c	908;"	d	file:
+YY_DO_BEFORE_ACTION	obj\caos.yy.c	389;"	d	file:
+YY_END_OF_BUFFER	obj\caos.yy.c	397;"	d	file:
+YY_END_OF_BUFFER_CHAR	obj\caos.yy.c	141;"	d	file:
+YY_EXIT_FAILURE	obj\caos.yy.c	2577;"	d	file:
+YY_EXTRA_TYPE	obj\caos.yy.c	760;"	d	file:
+YY_FATAL_ERROR	obj\caos.yy.c	899;"	d	file:
+YY_FLEX_MAJOR_VERSION	obj\caos.yy.c	10;"	d	file:
+YY_FLEX_MINOR_VERSION	obj\caos.yy.c	11;"	d	file:
+YY_FLEX_SUBMINOR_VERSION	obj\caos.yy.c	12;"	d	file:
+YY_FLUSH_BUFFER	obj\caos.yy.c	328;"	d	file:
+YY_INPUT	obj\caos.yy.c	852;"	d	file:
+YY_INT_ALIGNED	obj\caos.yy.c	5;"	d	file:
+YY_LESS_LINENO	obj\caos.yy.c	185;"	d	file:
+YY_LINENO_REWIND_TO	obj\caos.yy.c	192;"	d	file:
+YY_MORE_ADJ	obj\caos.yy.c	681;"	d	file:
+YY_NEW_FILE	obj\caos.yy.c	139;"	d	file:
+YY_NULL	obj\caos.yy.c	113;"	d	file:
+YY_NUM_RULES	obj\caos.yy.c	396;"	d	file:
+YY_READ_BUF_SIZE	obj\caos.yy.c	834;"	d	file:
+YY_READ_BUF_SIZE	obj\caos.yy.c	836;"	d	file:
+YY_RESTORE_YY_MORE_OFFSET	obj\caos.yy.c	682;"	d	file:
+YY_RULE_SETUP	obj\caos.yy.c	927;"	d	file:
+YY_SC_TO_UI	obj\caos.yy.c	120;"	d	file:
+YY_START	obj\caos.yy.c	132;"	d	file:
+YY_START_STACK_INCR	obj\caos.yy.c	894;"	d	file:
+YY_STATE_BUF_SIZE	obj\caos.yy.c	158;"	d	file:
+YY_STATE_EOF	obj\caos.yy.c	136;"	d	file:
+YY_STRUCT_YY_BUFFER_STATE	obj\caos.yy.c	217;"	d	file:
+YY_TYPEDEF_YY_BUFFER_STATE	obj\caos.yy.c	161;"	d	file:
+YY_TYPEDEF_YY_SIZE_T	obj\caos.yy.c	166;"	d	file:
+YY_USER_ACTION	obj\caos.yy.c	919;"	d	file:
+YY_USE_CONST	obj\caos.yy.c	101;"	d	file:
+YY_USE_CONST	obj\caos.yy.c	94;"	d	file:
+_State	State.h	1;"	g
+__A__	test\A.h	2;"	d
+__RBuf__	test\RBuf.expect.h	2;"	d
+__RBuf__	test\RBuf.h	2;"	d
+__SBuf__	src\SBuf.h	2;"	d
+__STDC_LIMIT_MACROS	obj\caos.yy.c	40;"	d	file:
+_boolean	src\boolean.h	1;"	g
+_boolean	test\boolean.h	1;"	g
+_buftype	src\buftype.h	1;"	g
+_buftype	test\buftype.h	1;"	g
+allque	obj\caos.yy.c	710;"	v
+allque	src\caos.c	25;"	v
+arg_comma	obj\caos.yy.c	703;"	v
+arg_comma	src\caos.c	18;"	v
+boolean	src\boolean.h	1;"	t	typeref:enum:_boolean
+boolean	test\boolean.h	1;"	t	typeref:enum:_boolean
+bracket	obj\caos.yy.c	702;"	v
+bracket	src\caos.c	17;"	v
+buf	src\RBuf_define.h	4;"	m	struct:RBuf_struct
+buf	test\RBuf_define.h	4;"	m	struct:RBuf_struct
+buftype	src\buftype.h	1;"	t	typeref:enum:_buftype
+buftype	test\buftype.h	1;"	t	typeref:enum:_buftype
+class_buf	obj\caos.yy.c	706;"	v
+class_buf	src\caos.c	21;"	v
+class_buf	src\main.c	23;"	v
+define_header	src\main.c	21;"	v
+exist	src\SBuf_define.h	5;"	m	struct:SBuf_struct
+first	src\RBuf_define.h	6;"	m	struct:RBuf_struct
+first	test\RBuf_define.h	6;"	m	struct:RBuf_struct
+flex_int16_t	obj\caos.yy.c	46;"	t	file:
+flex_int16_t	obj\caos.yy.c	52;"	t	file:
+flex_int32_t	obj\caos.yy.c	48;"	t	file:
+flex_int32_t	obj\caos.yy.c	53;"	t	file:
+flex_int8_t	obj\caos.yy.c	44;"	t	file:
+flex_int8_t	obj\caos.yy.c	51;"	t	file:
+flex_uint16_t	obj\caos.yy.c	47;"	t	file:
+flex_uint16_t	obj\caos.yy.c	55;"	t	file:
+flex_uint32_t	obj\caos.yy.c	49;"	t	file:
+flex_uint32_t	obj\caos.yy.c	56;"	t	file:
+flex_uint8_t	obj\caos.yy.c	45;"	t	file:
+flex_uint8_t	obj\caos.yy.c	54;"	t	file:
+func	test\A.c	10;"	f
+isMember	obj\caos.yy.c	704;"	v
+isMember	src\caos.c	19;"	v
+last	src\RBuf_define.h	7;"	m	struct:RBuf_struct
+last	test\RBuf_define.h	7;"	m	struct:RBuf_struct
+len	src\SBuf_define.h	6;"	m	struct:SBuf_struct
+lineno	obj\caos.yy.c	714;"	v
+lineno	src\caos.c	29;"	v
+main	src\main.c	32;"	f
+main	test\RBuf.c	97;"	f
+name	src\main.c	29;"	v
+obj_buf	obj\caos.yy.c	709;"	v
+obj_buf	src\caos.c	24;"	v
+obj_buf	src\main.c	26;"	v
+obj_class_buf	obj\caos.yy.c	707;"	v
+obj_class_buf	src\caos.c	22;"	v
+obj_class_buf	src\main.c	24;"	v
+other_function	test\RBuf.c	90;"	f
+pData	stack\Validator_def.h	5;"	m	struct:Validator$
+private_header	src\main.c	20;"	v
+public_header	src\main.c	19;"	v
+source	src\main.c	18;"	v
+str	src\SBuf_define.h	4;"	m	struct:SBuf_struct
+tmp	obj\caos.yy.c	713;"	v
+tmp	src\caos.c	28;"	v
+type	src\RBuf_define.h	5;"	m	struct:RBuf_struct
+type	test\RBuf_define.h	5;"	m	struct:RBuf_struct
+unput	obj\caos.yy.c	214;"	d	file:
+word_buf	obj\caos.yy.c	708;"	v
+word_buf	src\caos.c	23;"	v
+word_buf	src\main.c	25;"	v
+x	test\A_def.h	4;"	m	struct:A_Struct
+x	test\A_define.h	4;"	m	struct:A_struct
+x	test\B_def.h	4;"	m	struct:B1$
+x	test\B_def.h	9;"	m	struct:B2$
+yy_accept	obj\caos.yy.c	405;"	v	file:
+yy_at_bol	obj\caos.yy.c	252;"	m	struct:yy_buffer_state	file:
+yy_base	obj\caos.yy.c	474;"	v	file:
+yy_bs_column	obj\caos.yy.c	255;"	m	struct:yy_buffer_state	file:
+yy_bs_lineno	obj\caos.yy.c	254;"	m	struct:yy_buffer_state	file:
+yy_buf_pos	obj\caos.yy.c	223;"	m	struct:yy_buffer_state	file:
+yy_buf_size	obj\caos.yy.c	228;"	m	struct:yy_buffer_state	file:
+yy_buffer_stack	obj\caos.yy.c	284;"	v	file:
+yy_buffer_stack_max	obj\caos.yy.c	283;"	v	file:
+yy_buffer_stack_top	obj\caos.yy.c	282;"	v	file:
+yy_buffer_state	obj\caos.yy.c	218;"	s	file:
+yy_buffer_status	obj\caos.yy.c	262;"	m	struct:yy_buffer_state	file:
+yy_c_buf_p	obj\caos.yy.c	307;"	v	file:
+yy_ch_buf	obj\caos.yy.c	222;"	m	struct:yy_buffer_state	file:
+yy_chk	obj\caos.yy.c	600;"	v	file:
+yy_create_buffer	obj\caos.yy.c	2294;"	f
+yy_def	obj\caos.yy.c	507;"	v	file:
+yy_delete_buffer	obj\caos.yy.c	2322;"	f
+yy_did_buffer_switch_on_eof	obj\caos.yy.c	314;"	v	file:
+yy_ec	obj\caos.yy.c	434;"	v	file:
+yy_fatal_error	obj\caos.yy.c	2580;"	f	file:
+yy_fill_buffer	obj\caos.yy.c	260;"	m	struct:yy_buffer_state	file:
+yy_flex_debug	obj\caos.yy.c	674;"	v
+yy_flex_strlen	obj\caos.yy.c	2751;"	f	file:
+yy_flex_strncpy	obj\caos.yy.c	2741;"	f	file:
+yy_flush_buffer	obj\caos.yy.c	2369;"	f
+yy_get_next_buffer	obj\caos.yy.c	1914;"	f	file:
+yy_get_previous_state	obj\caos.yy.c	2048;"	f	file:
+yy_hold_char	obj\caos.yy.c	302;"	v	file:
+yy_init	obj\caos.yy.c	308;"	v	file:
+yy_init_buffer	obj\caos.yy.c	2341;"	f	file:
+yy_init_globals	obj\caos.yy.c	2683;"	f	file:
+yy_input_file	obj\caos.yy.c	220;"	m	struct:yy_buffer_state	file:
+yy_is_interactive	obj\caos.yy.c	246;"	m	struct:yy_buffer_state	file:
+yy_is_our_buffer	obj\caos.yy.c	239;"	m	struct:yy_buffer_state	file:
+yy_last_accepting_cpos	obj\caos.yy.c	671;"	v	file:
+yy_last_accepting_state	obj\caos.yy.c	670;"	v	file:
+yy_load_buffer_state	obj\caos.yy.c	2280;"	f	file:
+yy_meta	obj\caos.yy.c	466;"	v	file:
+yy_n_chars	obj\caos.yy.c	233;"	m	struct:yy_buffer_state	file:
+yy_n_chars	obj\caos.yy.c	303;"	v	file:
+yy_new_buffer	obj\caos.yy.c	338;"	d	file:
+yy_nxt	obj\caos.yy.c	403;"	m	struct:yy_trans_info	file:
+yy_nxt	obj\caos.yy.c	540;"	v	file:
+yy_rule_can_match_eol	obj\caos.yy.c	661;"	v	file:
+yy_scan_buffer	obj\caos.yy.c	2496;"	f
+yy_scan_bytes	obj\caos.yy.c	2546;"	f
+yy_scan_string	obj\caos.yy.c	2533;"	f
+yy_set_bol	obj\caos.yy.c	350;"	d	file:
+yy_set_interactive	obj\caos.yy.c	340;"	d	file:
+yy_size_t	obj\caos.yy.c	167;"	t	file:
+yy_start	obj\caos.yy.c	309;"	v	file:
+yy_state_type	obj\caos.yy.c	366;"	t	file:
+yy_switch_to_buffer	obj\caos.yy.c	2249;"	f
+yy_trans_info	obj\caos.yy.c	400;"	s	file:
+yy_try_NUL_trans	obj\caos.yy.c	2080;"	f	file:
+yy_verify	obj\caos.yy.c	402;"	m	struct:yy_trans_info	file:
+yyalloc	obj\caos.yy.c	2761;"	f
+yyconst	obj\caos.yy.c	107;"	d	file:
+yyconst	obj\caos.yy.c	109;"	d	file:
+yyensure_buffer_stack	obj\caos.yy.c	2447;"	f	file:
+yyfree	obj\caos.yy.c	2779;"	f
+yyget_debug	obj\caos.yy.c	2673;"	f
+yyget_in	obj\caos.yy.c	2617;"	f
+yyget_leng	obj\caos.yy.c	2633;"	f
+yyget_lineno	obj\caos.yy.c	2608;"	f
+yyget_out	obj\caos.yy.c	2625;"	f
+yyget_text	obj\caos.yy.c	2642;"	f
+yyin	obj\caos.yy.c	364;"	v
+yyinput	obj\caos.yy.c	2150;"	f	file:
+yyleng	obj\caos.yy.c	304;"	v
+yyless	obj\caos.yy.c	201;"	d	file:
+yyless	obj\caos.yy.c	2588;"	d	file:
+yyless	obj\caos.yy.c	2589;"	d	file:
+yylex_destroy	obj\caos.yy.c	2715;"	f
+yylineno	obj\caos.yy.c	370;"	v
+yymore	obj\caos.yy.c	680;"	d	file:
+yyout	obj\caos.yy.c	364;"	v
+yypop_buffer_state	obj\caos.yy.c	2428;"	f
+yypush_buffer_state	obj\caos.yy.c	2398;"	f
+yyrealloc	obj\caos.yy.c	2766;"	f
+yyrestart	obj\caos.yy.c	2232;"	f
+yyset_debug	obj\caos.yy.c	2678;"	f
+yyset_in	obj\caos.yy.c	2663;"	f
+yyset_lineno	obj\caos.yy.c	2651;"	f
+yyset_out	obj\caos.yy.c	2668;"	f
+yyterminate	obj\caos.yy.c	889;"	d	file:
+yytext	obj\caos.yy.c	683;"	v
+yytext_ptr	obj\caos.yy.c	374;"	d	file:
+yytext_ptr	obj\caos.yy.c	376;"	d	file:
+yyunput	obj\caos.yy.c	2105;"	f	file:

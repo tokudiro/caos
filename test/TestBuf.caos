@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <string.h>
+
+#include "boolean.h"
+#include "buftype.h"
+#include "common.h"
+
+#singleton $TestBuffer
+	char buf[MAX_TMP][MAX_BUF]; /* buf */
+	char type[MAX_TMP];
+	int first;
+	int last;
+
+/**
+ * initial
+ */
+#+void init(){
+	@first = 0;
+	@last = 0;
+}
+
+// enque
+#+void enque(char* str, int len, buftype type){
+	memset(&(@buf[@last][0]), 0, MAX_BUF);
+	strcpy( &(@buf[@last][0]), str);
+	@type[@last] = type;
+	@last++;
+	if (@first == @last) {/* buffer over */;}
+	if (@last==MAX_TMP) {@last=0;}
+}
+
+#+char* deque(buftype* p_type) {
+	char* ret = @buf[@first];
+	*p_type = @type[@first];
+	@first++;
+	if (@first==MAX_TMP) {@first=0;}
+	return ret;
+}
+
+#+boolean empty(){
+	return (@first==@last?TRUE:FALSE);
+}
+
+#+char* allque(char* buf, char* class_buf_str) {
+	buftype type;
+	char* str;
+	buf[0] = 0;
+	while(TestBuffer_empty(@@) == FALSE) {
+		str = TestBuffer_deque(@@, &type);
+		switch(type) {
+		case T_OBJECT:
+			strcat(buf, "this->");
+			break;
+		case T_METHOD:
+			strcat(buf, class_buf_str);
+			strcat(buf, "_");
+			break;
+		}
+		strcat(buf,  str);
+	}
+	return buf;
+}
+
+#+boolean back_retype(buftype find, buftype replace) {
+	if (TestBuffer_empty(@@) ) return FALSE;
+	
+	// ƒRƒƒ“ƒg
+	int index = @last;
+	while( index != @first) {
+		index--;
+		if ( index < 0 ) index=MAX_TMP;
+		if ( @type[index] == T_DOT ) { return FALSE; }
+		if ( @type[index] == find ) {
+			@type[index] = replace;
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+#+int public() {
+	return TestBuffer_private(@@);
+}
+
+#-int private() {
+	return 1;
+}
+
+int other_function(int x)
+{
+	return 0;
+}
+
+#endclass
+
+int main(void)
+{
+	struct TestBuffer_struct buf;
+	char longbuf[100] = {0};
+	TestBuffer_init(&buf);
+	TestBuffer_enque(&buf, "aaa", 3, T_WORD);
+	TestBuffer_enque(&buf, "bb", 2, T_WORD);
+	printf("%s\n", TestBuffer_allque(&buf, longbuf, "zzz") );
+	return 0;
+}
