@@ -47,6 +47,8 @@
 	{DIRECTIVE_ENDCLASS} {
 		fprintf( define_header, "};\n" );
 		SBuf_init(class_buf);
+		fprintf( source, "/** \\} */\n" );
+		fprintf( define_header, "/** \\} */\n" );
 		BEGIN(INITIAL);
 	}
 
