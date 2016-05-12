@@ -2,12 +2,14 @@
 C-language additional object source
 
 ---
+## Build
+```./build.sh```
 
-## Sample
+## Sample Code
 
 * SampleClass.caos
 
-```
+```c
 #class $SampleClass
 
 int member;
@@ -23,9 +25,10 @@ int member;
 #endclass
 ```
 
-generate files
+## Generate files
 ```caos -L SampleClass.caos```
 
+## Sample Output
 * SampleClass.c
 
 ```c
