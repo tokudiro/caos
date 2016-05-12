@@ -3,6 +3,8 @@ C-language additional object source
 
 ---
 ## Build
+build environment : gcc + flex
+
 ``` ./build.sh ```
 
 ## Sample Code
