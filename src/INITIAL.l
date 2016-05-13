@@ -36,6 +36,7 @@
 
 <INITIAL_CSA>{
 	{COMMENTE} { fprintf(source, "*/"); BEGIN(INITIAL); }
+	\n { fprintf(source, "\n"); }
 	. { fprintf(source, "%s", yytext); }
 }
 
@@ -53,5 +54,6 @@
 <INITIAL_ST>{
 	\\\" { fprintf( source, "\\\""); }
 	\" { fprintf( source, "\""); BEGIN(INITIAL); }
+	\n { fprintf(source, "\n"); }
 	. { fprintf( source, "%s", yytext); }
 }

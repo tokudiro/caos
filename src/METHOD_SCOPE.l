@@ -84,6 +84,7 @@
 
 <METHOD_SCOPE_CSA>{
 	{COMMENTE} { fprintf(source, "*/"); BEGIN(METHOD_SCOPE); }
+	\n { fprintf( source, "\n"); }
 	. { fprintf( source, "%s", yytext); }
 }
 
@@ -101,5 +102,6 @@
 <METHOD_SCOPE_ST>{
 	\\\" { fprintf( source, "\\\""); }
 	\" { fprintf( source, "\""); BEGIN(METHOD_SCOPE); }
+	\n { fprintf( source, "\n"); }
 	. { fprintf( source, "%s", yytext); }
 }
