@@ -19,7 +19,7 @@ build environment : gcc + flex
 int private_member;
 
 #+int public_method(void){
-    SampleClass_private_method(this);
+    @private_method();
     return @private_member;
 }
 
