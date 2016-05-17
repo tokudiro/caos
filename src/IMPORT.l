@@ -2,6 +2,7 @@
 	{CLASS}  {
 		fprintf(source, "\"%s.h\"\n", &(yytext[1]));
 		fprintf(define_header, "\"%s.h\"\n", &(yytext[1]));
+	    if (isVerbose) printf("BEGIN <INITIAL>\n");
 		BEGIN(INITIAL);
 	}
 

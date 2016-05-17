@@ -1,6 +1,7 @@
 <METHOD_SCOPE>{
 	{NUMBER} {
-		fprintf( source, "%s%s", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)), yytext);
+	    RBuf_enque(tmp, yytext, yyleng, T_NUMBER);
+		fprintf( source, "%s", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
 	}
 
 	{CLASS}  {
@@ -9,14 +10,17 @@
 	}
 
 	\{ {
-		fprintf( source, "%s{", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
+	    RBuf_enque(tmp, yytext, yyleng, T_NON);
+		fprintf( source, "%s", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
 		bracket++;
 	}
 
 	\} {
-		fprintf( source, "%s}", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
+	    RBuf_enque(tmp, yytext, yyleng, T_NON);
+		fprintf( source, "%s", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
 		if (bracket == 0) {
 			methodVisibility = VISIBILITY_NONE;
+    	    if (isVerbose) printf("BEGIN <CLASS_SCOPE>\n");
 			BEGIN(CLASS_SCOPE);
 		} else {
 			bracket--;
@@ -24,18 +28,29 @@
 	}
 
 	\( {
-		fprintf( source, "%s(", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
-	}
-
-	, {
-		fprintf( source, "%s,", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
+		boolean isMethod = RBuf_back_retype(tmp, T_OBJECT, T_METHOD);
+		RBuf_enque( tmp, yytext, yyleng, T_NON);
+		if (isMethod) {
+			if (isThisPointer){
+				RBuf_enque( tmp, "this", 4, T_KEYWORD);
+			}else{
+				RBuf_enque( tmp, "self", 4, T_KEYWORD);
+			}
+			arg_comma = TRUE;
+		}
 	}
 
 	\) {
-		fprintf( source, "%s%s", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)), yytext);
+		arg_comma = FALSE;
+	    RBuf_enque(tmp, yytext, yyleng, T_NON);
+		fprintf( source, "%s", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
 	}
 
 	{OBJECT} {
+		if (arg_comma) {
+			RBuf_enque(tmp, ", ", 2, T_NON);
+			arg_comma=FALSE;
+		}
 		fprintf( source, "%s", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
 		RBuf_enque(tmp, &(yytext[1]), yyleng-1, T_OBJECT);
 		SBuf_setBuf( word_buf, &(yytext[1]), yyleng-1);
@@ -49,6 +64,10 @@
 		}
 	}
 	{WORD}   {
+		if (arg_comma) {
+			RBuf_enque(tmp, ", ", 2, T_NON);
+			arg_comma=FALSE;
+		}
 		RBuf_enque(tmp, yytext, yyleng, T_WORD);
 	}
 	{WSPACE} {
@@ -74,10 +93,12 @@
 	}
 	\n { fprintf( source, "\n"); }
 	;  {
-		fprintf( source, "%s;", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
+	    RBuf_enque(tmp, yytext, yyleng, T_SEMICOLON);
+		fprintf( source, "%s", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
 	}
-	:  {
-		fprintf( source, "%s:", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
+	[\+\-\=\*\/:,]  {
+	    RBuf_enque(tmp, yytext, yyleng, T_NON);
+		fprintf( source, "%s", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
 	}
 	.  { RBuf_enque(tmp, yytext, yyleng, T_NON); }
 }

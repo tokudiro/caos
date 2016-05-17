@@ -22,6 +22,7 @@
 			break;
 		}
 		fprintf( source, "%s{", method );
+	    if (isVerbose) printf("BEGIN <METHOD_SCOPE>\n");
 		BEGIN(METHOD_SCOPE);
 	}
 
@@ -31,9 +32,12 @@
 		if (isMethod) {
 			RBuf_enque( tmp, SBuf_getStr(class_buf), SBuf_getLen(class_buf), T_CLASS);
 			if (isThisPointer){
-				RBuf_enque( tmp, "* this", 6, T_KEYWORD);
+				RBuf_enque( tmp, "*", 1, T_ASTERISK);
+			    RBuf_enque( tmp, " ", 1, T_NON);
+				RBuf_enque( tmp, "this", 4, T_KEYWORD);
 			}else{
-				RBuf_enque( tmp, " self", 5, T_KEYWORD);
+			    RBuf_enque( tmp, " ", 1, T_NON);
+				RBuf_enque( tmp, "self", 4, T_KEYWORD);
 			}
 			arg_comma = TRUE;
 		}
@@ -41,7 +45,7 @@
 
 	\) {
 		arg_comma = FALSE;
-		RBuf_enque( tmp, ")", 1, T_NON);
+		RBuf_enque( tmp, yytext, yyleng, T_NON);
 	}
 
 	{OBJECT} { RBuf_enque(tmp, &(yytext[1]), yyleng-1, T_OBJECT); }

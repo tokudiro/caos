@@ -1,6 +1,6 @@
 //Class:RBuf
 typedef struct RBuf_struct RBuf;
-void RBuf_init(RBuf* this, boolean isThisPointer);
+void RBuf_init(RBuf* this, boolean isThisPointer, boolean isVerbose);
 void RBuf_enque(RBuf* this, const char* str, const int len, const buftype type);
 char* RBuf_deque(RBuf* this, buftype* p_type) ;
 boolean RBuf_empty(const RBuf* this);

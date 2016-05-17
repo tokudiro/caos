@@ -24,9 +24,14 @@
 		fprintf(define_header, "#include ");
 		BEGIN(IMPORT);
 	}
-	{DIRECTIVE_CLASS} { BEGIN(CLASS_DEFINE); }
+	{DIRECTIVE_CLASS} {
+	    if (isVerbose) printf("BEGIN <CLASS_DEFINE>\n");
+	    BEGIN(CLASS_DEFINE);
+	}
 	{DIRECTIVE_SINGLETON} {
+	    if (isVerbose) printf("#directive singleton\n");
 		singleton = TRUE;
+	    if (isVerbose) printf("BEGIN <CLASS_DEFINE>\n");
 		BEGIN(CLASS_DEFINE);
 	}
 	

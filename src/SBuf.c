@@ -4,6 +4,12 @@
 
 #include "SBuf_define.h"
 
+/**
+* @addtogroup SBuf
+* @brief String Buffer
+* @{
+*/
+
 void SBuf_init(SBuf* this) {
 	memset(&(this->str[0]), 0, MAX_BUF);
 	this->exist = FALSE;
@@ -23,3 +29,5 @@ const char* SBuf_getStr(const SBuf* this) {
 int SBuf_getLen(const SBuf* this) {
 	return this->len;
 }
+
+/** @} */

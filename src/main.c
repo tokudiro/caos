@@ -75,7 +75,7 @@ int main(int argc, char** argv)
 	
 	RBuf tmp_impl;
 	tmp = &tmp_impl;
-	RBuf_init(tmp, isThisPointer);
+	RBuf_init(tmp, isThisPointer, isVerbose);
 	
 	SBuf class_buf_impl;
 	class_buf = &class_buf_impl;

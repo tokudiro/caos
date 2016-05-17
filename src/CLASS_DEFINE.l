@@ -45,6 +45,7 @@
 		SBuf_setBuf( class_buf, yytext, yyleng);
 		defineClassInSource();
 		defineClassInHeader();
+	    if (isVerbose) printf("BEGIN <CLASS_SCOPE>\n");
 		BEGIN(CLASS_SCOPE);
 	}
 	
@@ -52,6 +53,7 @@
 		SBuf_setBuf( class_buf, &(yytext[1]), yyleng-1);
 		defineClassInSource();
 		defineClassInHeader();
+	    if (isVerbose) printf("BEGIN <CLASS_SCOPE>\n");
 		BEGIN(CLASS_SCOPE);
 	}
 

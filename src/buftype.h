@@ -11,6 +11,6 @@ typedef enum _buftype {
 	T_METHOD, 
 	T_PARAMETER,
 	T_ASTERISK,
-	T_TYPE } buftype;
-
+	T_TYPE,
+    T_SEMICOLON} buftype;
 #endif /* __BUFTYPE__H__ */

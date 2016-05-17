@@ -82,6 +82,7 @@
 	{DIRECTIVE_ENDCLASS} {
 		fprintf( define_header, "};\n" );
 		SBuf_init(class_buf);
+        if (isVerbose) printf("BEGIN <INITIAL>\n");
 		BEGIN(INITIAL);
 	}
 
@@ -103,19 +104,19 @@
 		fprintf( define_header, "%s", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
 		fprintf( define_header, "\n");
 		if (isMember) { isMember = FALSE; }
+        if (isVerbose) printf("BEGIN <CLASS_SCOPE>\n");
 		BEGIN(CLASS_SCOPE);
 	}
 	;  {
+	    RBuf_enque(tmp, yytext, yyleng, T_SEMICOLON);
 		/* Class Member */
 		isMember = RBuf_back_retype(tmp, T_WORD, T_PARAMETER);
 		boolean isType = RBuf_back_retype(tmp, T_WORD, T_TYPE);
 		const char* clazz = RBuf_back_getStr(tmp, T_CLASS);
-		if (isVerbose) printf("RBuf_toString :\n%s\n", RBuf_toString(tmp, allque) );
 		if (isMember && (isType || 0!=clazz) ) {
 			const char* member = RBuf_back_getStr(tmp, T_PARAMETER);
 			const char* asterisk = RBuf_back_getStr(tmp, T_ASTERISK);
 			const char* type = RBuf_back_getStr(tmp, T_TYPE);
-			if (isVerbose) printf("member : %s\n", member);
 			
 			// getter,setter in header
 			getterInHeader((0!=clazz?clazz:type), asterisk, member);
@@ -124,7 +125,7 @@
 			getterInSource((0!=clazz?clazz:type), asterisk, member);
 			setterInSource((0!=clazz?clazz:type), asterisk, member);
 		}
-		fprintf(define_header, "%s;", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
+		fprintf(define_header, "%s", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
 	}
 	\*  { RBuf_enque(tmp, yytext, yyleng, T_ASTERISK); }
 	.  { RBuf_enque(tmp, yytext, yyleng, T_NON); }

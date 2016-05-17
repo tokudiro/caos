@@ -10,18 +10,20 @@
 	}
 
 	{DIRECTIVE_PUBLIC_METHOD} {
-		if (isVerbose) printf("public method\n");
+		if (isVerbose) printf("#directive public method\n");
 		if (isLineNo) fprintf(source, "#line %d \"%s\"\n", yylineno, input_filename);
 		if (isLineNo) fprintf(public_header, "#line %d \"%s\"\n", yylineno, input_filename);
 		methodVisibility = VISIBILITY_PUBLIC;
+	    if (isVerbose) printf("BEGIN <METHOD_DEFINE>\n");
 		BEGIN(METHOD_DEFINE);
 	}
 	{DIRECTIVE_PRIVATE_METHOD} {
-		if (isVerbose) printf("private method\n");
+		if (isVerbose) printf("#directive private method\n");
 		if (isLineNo) fprintf(source, "#line %d \"%s\"\n", yylineno, input_filename);
 		if (isLineNo) fprintf(private_header, "#line %d \"%s\"\n", yylineno, input_filename);
 		fprintf(private_header, "static ");
 		methodVisibility = VISIBILITY_PRIVATE;
+	    if (isVerbose) printf("BEGIN <METHOD_DEFINE>\n");
 		BEGIN(METHOD_DEFINE);
 	}
 	{DIRECTIVE_PROTECTED_METHOD} {
@@ -32,6 +34,7 @@
 	}
 	
 	{DIRECTIVE_PUBLIC_ATTRIBUTE} {
+	    if (isVerbose) printf("BEGIN <ATTRIBUTE_DEFINE>\n");
 		BEGIN(ATTRIBUTE_DEFINE);
 	}
 	
@@ -41,6 +44,7 @@
 			fprintf( public_header, "%s;\n", method );
 		}
 		fprintf( source, "%s{", method );
+	    if (isVerbose) printf("BEGIN <METHOD_SCOPE>\n");
 		BEGIN(METHOD_SCOPE);
 	}
 
@@ -49,6 +53,7 @@
 		SBuf_init(class_buf);
 		fprintf( source, "/** \\} */\n" );
 		fprintf( define_header, "/** \\} */\n" );
+	    if (isVerbose) printf("BEGIN <INITIAL>\n");
 		BEGIN(INITIAL);
 	}
 
