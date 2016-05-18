@@ -1,6 +1,6 @@
 NONZERO  [1-9]
 ALPHABET [a-zA-Z_]
-MOJI     [a-zA-Z_1-9]
+CHARCTOR [a-zA-Z_0-9]
 COMMENTS (\/\*)
 COMMENTE (\*\/)
 COMMENT  (\/\/)
@@ -21,7 +21,7 @@ DIRECTIVE_PUBLIC_ATTRIBUTE ^#\@
 
 NUMBER   {FLOAT}{FLOATE}?
 WSPACE   [[:blank:]]+
-WORD     ({ALPHABET}{MOJI}*)
+WORD     ({ALPHABET}{CHARCTOR}*)
 CLASS    (\${WORD})
 OBJECT   (\@{WORD})
 SELF_OBJECT  (\@\@)
