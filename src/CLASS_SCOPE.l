@@ -97,7 +97,8 @@
 	}
 	;  {
 		/* Class Member */
-		fprintf(define_header, "%s;", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
+		RBuf_enque(tmp, yytext, yyleng, T_SEMICOLON);
+		fprintf(define_header, "%s", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
 		isMember = TRUE;
 	}
 	
