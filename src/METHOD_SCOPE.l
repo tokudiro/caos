@@ -6,7 +6,6 @@
 
 	{CLASS}  {
 		fprintf(source, "%s", &(yytext[1]));
-		SBuf_setBuf( obj_class_buf, &(yytext[1]), yyleng-1);
 	}
 
 	\{ {
@@ -53,7 +52,6 @@
 		}
 		fprintf( source, "%s", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
 		RBuf_enque(tmp, &(yytext[1]), yyleng-1, T_OBJECT);
-		SBuf_setBuf( word_buf, &(yytext[1]), yyleng-1);
 	}
 	{SELF_OBJECT} {
 		fprintf( source, "%s", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
@@ -88,8 +86,6 @@
 	}
 	\"  { fprintf( source, "\""); BEGIN(METHOD_SCOPE_ST); }
 	{DOT} {
-		// [TODO] object table check
-		SBuf_setBuf( obj_buf, SBuf_getStr(word_buf), SBuf_getLen(word_buf));
 		RBuf_enque(tmp, yytext, yyleng, T_DOT);
 	}
 	\n { fprintf( source, "\n"); }

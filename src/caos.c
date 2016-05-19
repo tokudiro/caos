@@ -16,9 +16,6 @@ boolean arg_comma = FALSE;
 boolean isMember = FALSE;
 
 SBuf* class_buf;
-SBuf* obj_class_buf;
-SBuf* word_buf;
-SBuf* obj_buf;
 char allque[MAX_TEXT*MAX_ARRAYSIZE];
 char* input_filename;
 char filename[MAX_TEXT];
