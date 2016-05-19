@@ -39,21 +39,24 @@ extern char* input_filename;
 extern boolean isOldComment;
 extern boolean singleton;
 
+static void outputHELP(){
+	printf("------------------------------------------------------\n");
+	printf("C-language Addtional Object-oriented Source Transpiler\n");
+	printf("(option)\n");
+	printf("h : HELP\n");
+	printf("V : verbose\n");
+	printf("L : LINENO OFF\n");
+	printf("S : self object\n");
+	printf("C : replace to old style comment\n");
+}
+
 int main(int argc, char** argv)
 {
 	int c;
 	while( (c = getopt(argc, argv, "hVLSC")) !=-1 ) {
 		switch(c){
 		case 'h':
-			printf("--------------------\n");
-			printf("C-language Addtional Object Source\n");
-			printf("[[ option ]]\n");
-			printf("h : HELP\n");
-			printf("V : verbose\n");
-			printf("[source style]\n");
-			printf("L : LINENO OFF\n");
-			printf("S : self object\n");
-			printf("C : replace old comment\n");
+		    outputHELP();
 			exit(0);
 			break;
 		case 'V':
@@ -97,15 +100,17 @@ int main(int argc, char** argv)
 		input_filename = argv[optind];
 		yyin = fopen(input_filename, "r");
 	} else {
-		input_filename = "Temp.caos";
+	    outputHELP();
+	    exit(0);
 	}
 
 	sscanf(input_filename, "%[^.]]", filename);
 	
 	if (isVerbose){
-		printf("--------------------\n");
-		printf("C-language Addtional Object Source\n");
+    	printf("------------------------------------------------------\n");
+    	printf("C-language Addtional Object-oriented Source Transpiler\n");
 		printf("file: %s\n", input_filename);
+    	printf("------------------------------------------------------\n");
 		printf("Verbose Mode\n\n");
 	}
 

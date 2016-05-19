@@ -1,5 +1,9 @@
 # caos
-C-language additional object source
+C-language additional object-oriented source
+
+## Description
+object-oriented source transpiler for C-language.
+It implements only my minimum necessary functions .
 
 ---
 ## Build
