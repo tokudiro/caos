@@ -84,6 +84,9 @@
 			fprintf( source, "//"); BEGIN(METHOD_SCOPE_CSS);
 		}
 	}
+    {DIRECTIVE_COMMENT} {
+		BEGIN(METHOD_SCOPE_CS);
+    }
 	\"  { fprintf( source, "\""); BEGIN(METHOD_SCOPE_ST); }
 	{DOT} {
 		RBuf_enque(queue, yytext, yyleng, T_DOT);
@@ -122,4 +125,11 @@
 	\" { fprintf( source, "\""); BEGIN(METHOD_SCOPE); }
 	\n { fprintf( source, "\n"); }
 	. { fprintf( source, "%s", yytext); }
+}
+
+<METHOD_SCOPE_CS>{
+	\n {
+		BEGIN(METHOD_SCOPE);
+	}
+    . {;}
 }

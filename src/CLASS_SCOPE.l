@@ -91,6 +91,9 @@
 		}
 		BEGIN(CLASS_SCOPE_CSS);
 	}
+    {DIRECTIVE_COMMENT} {
+		BEGIN(CLASS_SCOPE_CS);
+    }
 	\n {
 		fprintf( (isMember?define_header:source), "%s", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
 		fprintf( (isMember?define_header:source), "\n");
@@ -129,4 +132,11 @@
 		BEGIN(CLASS_SCOPE);
 	}
 	.  { fprintf((isMember?define_header:source), "%s", yytext); }
+}
+
+<CLASS_SCOPE_CS>{
+	\n {
+		BEGIN(CLASS_SCOPE);
+	}
+    . {;}
 }

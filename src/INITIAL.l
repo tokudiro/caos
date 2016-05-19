@@ -17,6 +17,9 @@
 			fprintf(source, "//"); BEGIN(INITIAL_CSS);
 		}
 	}
+    {DIRECTIVE_COMMENT} {
+		BEGIN(INITIAL_CS);
+    }
 	\"  { fprintf( source, "\""); BEGIN(INITIAL_ST); }
   
 	{DIRECTIVE_IMPORT} {
@@ -61,4 +64,11 @@
 	\" { fprintf( source, "\""); BEGIN(INITIAL); }
 	\n { fprintf(source, "\n"); }
 	. { fprintf( source, "%s", yytext); }
+}
+
+<INITIAL_CS>{
+	\n {
+		BEGIN(INITIAL);
+	}
+    . {;}
 }
