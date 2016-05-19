@@ -119,12 +119,49 @@ const char* RBuf_back_getStr(const RBuf* this, const buftype find) {
     return 0;
 }
 
+void RBuf_trimque(RBuf* this){
+    if (this->first == this->last) return;
+
+    if (this->first < this->last) {
+        for (int i = this->first; i<this->last; i++)
+        {
+            if( this->type[i] == T_WSPACE ) {
+                this->first++;
+            } else {
+                break;
+            }
+        }
+    } else {
+        boolean isContinue = TRUE;
+        for (int i = this->first; i<MAX_TMP; i++)
+        {
+            if( this->type[i] == T_WSPACE ) {
+                this->first++;
+            } else {
+                isContinue = FALSE;
+                break;
+            }
+        }
+        if (isContinue) {
+            for (int i = 0; i<this->last; i++)
+            {
+                if( this->type[i] == T_WSPACE ) {
+                    this->first++;
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+    return;
+}
+
 /**
 * @brief toString
 * @param buf A string that represents the current object.
 * @return A string that represents the current object.
 */
-char* RBuf_toString(RBuf* this, char* tostring) {
+char* RBuf_toString(const RBuf* this, char* tostring) {
     if (this->first == this->last) return tostring;
 
     if (this->first < this->last) {

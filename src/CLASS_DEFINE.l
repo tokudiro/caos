@@ -4,10 +4,6 @@
 		if (isVerbose) printf("class %s\n", SBuf_getStr(class_buf) );
 		fprintf( source, "#include \"%s\"\n", define_header_name );
 		fprintf( source, "#include \"%s\"\n", private_header_name );
-		fprintf( source, "/**\n");
-		fprintf( source, "* \\addtogroup %s\n", SBuf_getStr(class_buf));
-		fprintf( source, "* \\{\n" );
-		fprintf( source, "*/\n" );
 		if (singleton) {
 			fprintf( source, "static struct %s_struct instance;\n", SBuf_getStr(class_buf) );
 			fprintf( source, "%s", SBuf_getStr(class_buf) );
@@ -31,10 +27,6 @@
 		}
 
 		fprintf( define_header, "#include \"%s\"\n", public_header_name );
-		fprintf( define_header, "/**\n");
-		fprintf( define_header, "* \\defgroup %s\n", SBuf_getStr(class_buf));
-		fprintf( define_header, "* \\{\n" );
-		fprintf( define_header, "*/\n" );
 		if (isLineNo) fprintf(define_header, "#line %d \"%s\"\n", yylineno, input_filename);
 		fprintf( define_header, "struct %s_struct{\n", SBuf_getStr(class_buf) );
 	}

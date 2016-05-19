@@ -58,14 +58,15 @@
 	{SELF_OBJECT} {
 		fprintf( source, "%s", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
 		if (isThisPointer) {
-			RBuf_enque(tmp, "this", 4, T_WORD);
+			RBuf_enque(tmp, "this", 4, T_KEYWORD);
 		}else{
-			RBuf_enque(tmp, "self", 4, T_WORD);
+			RBuf_enque(tmp, "self", 4, T_KEYWORD);
 		}
 	}
 	{WORD}   {
 		if (arg_comma) {
-			RBuf_enque(tmp, ", ", 2, T_NON);
+			RBuf_enque(tmp, ",", 1, T_COMMA);
+			RBuf_enque(tmp, " ", 1, T_WSPACE);
 			arg_comma=FALSE;
 		}
 		RBuf_enque(tmp, yytext, yyleng, T_WORD);
@@ -74,7 +75,7 @@
 		if ( RBuf_empty(tmp) == TRUE ) {
 			fprintf(source, "%s", yytext);
 		} else {
-			RBuf_enque(tmp, yytext, yyleng, T_NON);
+			RBuf_enque(tmp, yytext, yyleng, T_WSPACE);
 		}
 	}
 	{COMMENTS} { fprintf( source, "/*"); BEGIN(METHOD_SCOPE_CSA); }

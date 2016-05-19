@@ -12,5 +12,7 @@ typedef enum _buftype {
 	T_PARAMETER,
 	T_ASTERISK,
 	T_TYPE,
-    T_SEMICOLON} buftype;
+    T_SEMICOLON,
+	T_WSPACE,
+	T_COMMA} buftype;
 #endif /* __BUFTYPE__H__ */

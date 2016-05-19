@@ -4,7 +4,11 @@
 	}
 
 	{CLASS}  {
-		if (arg_comma) { RBuf_enque(tmp, ", ", 2, T_NON); arg_comma=FALSE; }
+		if (arg_comma) {
+			RBuf_enque(tmp, ",", 1, T_COMMA);
+			RBuf_enque(tmp, " ", 1, T_WSPACE);
+			arg_comma=FALSE;
+		}
 		RBuf_enque(tmp, &(yytext[1]), yyleng-1, T_CLASS);
 		if (isThisPointer) RBuf_enque(tmp, "*", 1, T_KEYWORD);
 	}
@@ -60,7 +64,7 @@
 			RBuf_enque(tmp, yytext, yyleng, T_WORD);
 		}
 	}
-	{WSPACE}   { RBuf_enque(tmp, yytext, yyleng, T_NON); }
+	{WSPACE}   { RBuf_enque(tmp, yytext, yyleng, T_WSPACE); }
 	{COMMENTS} { fprintf( source, "/*"); BEGIN(METHOD_DEFINE_CSA); }
 	{COMMENT}  {
 		if (isOldComment) {

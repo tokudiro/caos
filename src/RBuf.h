@@ -7,5 +7,6 @@ boolean RBuf_empty(const RBuf* this);
 char* RBuf_allque(RBuf* this, char* buf, const char* class_buf_str) ;
 boolean RBuf_back_retype(RBuf* this, const buftype find, const buftype replace) ;
 const char* RBuf_back_getStr(const RBuf* this, const buftype find) ;
+void RBuf_trimque(RBuf* this);
 
-char* RBuf_toString(RBuf* this, char* buf);
+char* RBuf_toString(const RBuf* this, char* buf);

@@ -4,7 +4,6 @@
 	}
 
 	{CLASS}  {
-		//if (arg_comma) { RBuf_enque(tmp, ", ", 2, T_NON); arg_comma=FALSE; }
 		RBuf_enque(tmp, &(yytext[1]), yyleng-1, T_CLASS);
 		if(isThisPointer) RBuf_enque(tmp, "*", 1, T_KEYWORD);
 	}
@@ -51,8 +50,6 @@
 	{DIRECTIVE_ENDCLASS} {
 		fprintf( define_header, "};\n" );
 		SBuf_init(class_buf);
-		fprintf( source, "/** \\} */\n" );
-		fprintf( define_header, "/** \\} */\n" );
 	    if (isVerbose) printf("BEGIN <INITIAL>\n");
 		BEGIN(INITIAL);
 	}
@@ -74,10 +71,9 @@
 
 	{OBJECT} { RBuf_enque(tmp, &(yytext[1]), yyleng-1, T_OBJECT); }
 	{WORD}   {
-		//if (arg_comma) { RBuf_enque(tmp, ", ", 2, T_NON); arg_comma=FALSE; }
 		RBuf_enque(tmp, yytext, yyleng, T_WORD);
 	}
-	{WSPACE}   { RBuf_enque(tmp, yytext, yyleng, T_NON); }
+	{WSPACE}   { RBuf_enque(tmp, yytext, yyleng, T_WSPACE); }
 	{COMMENTS} {
 		fprintf( (isMember?define_header:source), "/*");
 		BEGIN(CLASS_SCOPE_CSA);

@@ -90,7 +90,7 @@
 	{WORD}   {
 		RBuf_enque(tmp, yytext, yyleng, T_WORD);
 	}
-	{WSPACE}   { RBuf_enque(tmp, yytext, yyleng, T_NON); }
+	{WSPACE}   { RBuf_enque(tmp, yytext, yyleng, T_WSPACE); }
 	{COMMENTS} { fprintf( define_header, "/*"); BEGIN(ATTRIBUTE_DEFINE_CSA); }
 	{COMMENT}  {
 		if (isOldComment) {
@@ -109,6 +109,7 @@
 	}
 	;  {
 	    RBuf_enque(tmp, yytext, yyleng, T_SEMICOLON);
+	    RBuf_trimque(tmp);
 		/* Class Member */
 		isMember = RBuf_back_retype(tmp, T_WORD, T_PARAMETER);
 		boolean isType = RBuf_back_retype(tmp, T_WORD, T_TYPE);
