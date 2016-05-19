@@ -41,19 +41,19 @@ void RBuf_init(RBuf* this, const boolean isThisPointer, boolean isVerbose){
 }
 
 void RBuf_enque(RBuf* this, const char* str, const int len, const buftype type){
-    memset(&(this->buf[this->last][0]), 0, MAX_BUF);
+    memset(&(this->buf[this->last][0]), 0, MAX_TEXT);
     strcpy( &(this->buf[this->last][0]), str);
     this->type[this->last] = type;
     this->last++;
     if (this->first == this->last) { /* buffer over */ }
-    if (this->last==MAX_TMP) {this->last=0;}
+    if (this->last==MAX_ARRAYSIZE) {this->last=0;}
 }
 
 char* RBuf_deque(RBuf* this, buftype* p_type) {
     char* ret = this->buf[this->first];
     *p_type = this->type[this->first];
     this->first++;
-    if (this->first==MAX_TMP) {this->first=0;}
+    if (this->first==MAX_ARRAYSIZE) {this->first=0;}
     return ret;
 }
 
@@ -68,7 +68,7 @@ char* RBuf_allque(RBuf* this, char* buf, const char* class_buf_str) {
     while(RBuf_empty(this) == FALSE) {
         str = RBuf_deque(this, &type);
         
-        char tostring[MAX_BUF] = {0};
+        char tostring[MAX_TEXT] = {0};
         if (this->isVerbose) printf("element :%s\n", RBufElement_toString(tostring, str, type) );
         
         switch(type) {
@@ -95,7 +95,7 @@ boolean RBuf_back_retype(RBuf* this, const buftype find, const buftype replace) 
     int index = this->last;
     while( index != this->first) {
         index--;
-        if ( index < 0 ) index=MAX_TMP;
+        if ( index < 0 ) index=MAX_ARRAYSIZE;
         if ( this->type[index] == T_DOT ) { return FALSE; }
         if ( this->type[index] == find ) {
             this->type[index] = replace;
@@ -111,7 +111,7 @@ const char* RBuf_back_getStr(const RBuf* this, const buftype find) {
     int index = this->last;
     while( index != this->first) {
         index--;
-        if ( index < 0 ) index=MAX_TMP;
+        if ( index < 0 ) index=MAX_ARRAYSIZE;
         if ( this->type[index] == find ) {
             return this->buf[index];
         }
@@ -133,7 +133,7 @@ void RBuf_trimque(RBuf* this){
         }
     } else {
         boolean isContinue = TRUE;
-        for (int i = this->first; i<MAX_TMP; i++)
+        for (int i = this->first; i<MAX_ARRAYSIZE; i++)
         {
             if( this->type[i] == T_WSPACE ) {
                 this->first++;
@@ -167,20 +167,20 @@ char* RBuf_toString(const RBuf* this, char* tostring) {
     if (this->first < this->last) {
         for (int i = this->first; i<this->last; i++)
         {
-            char element_tostring[MAX_TMP] = {0};
+            char element_tostring[MAX_ARRAYSIZE] = {0};
             strcat(tostring, RBufElement_toString(element_tostring, this->buf[i], this->type[i]) );
             strcat(tostring, "\n");
         }
     } else {
-        for (int i = this->first; i<MAX_TMP; i++)
+        for (int i = this->first; i<MAX_ARRAYSIZE; i++)
         {
-            char element_tostring[MAX_TMP] = {0};
+            char element_tostring[MAX_ARRAYSIZE] = {0};
             strcat(tostring, RBufElement_toString(element_tostring, this->buf[i], this->type[i]) );
             strcat(tostring, "\n");
         }
         for (int i = 0; i<this->last; i++)
         {
-            char element_tostring[MAX_TMP] = {0};
+            char element_tostring[MAX_ARRAYSIZE] = {0};
             strcat(tostring, RBufElement_toString(element_tostring, this->buf[i], this->type[i]) );
             strcat(tostring, "\n");
         }

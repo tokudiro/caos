@@ -7,8 +7,8 @@
 
 //Class:RBuf
 struct RBuf_struct{
-	char buf[MAX_TMP][MAX_BUF];   /* buf */
-	buftype type[MAX_TMP];
+	char buf[MAX_ARRAYSIZE][MAX_TEXT];   /* buf */
+	buftype type[MAX_ARRAYSIZE];
 	boolean isThisPointer;
     boolean isVerbose;
 	int first;

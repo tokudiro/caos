@@ -11,7 +11,7 @@
 */
 
 void SBuf_init(SBuf* this) {
-	memset(&(this->str[0]), 0, MAX_BUF);
+	memset(&(this->str[0]), 0, MAX_TEXT);
 	this->exist = FALSE;
 	this->len = 0;
 }

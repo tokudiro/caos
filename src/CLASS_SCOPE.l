@@ -13,6 +13,7 @@
 		if (isLineNo) fprintf(source, "#line %d \"%s\"\n", yylineno, input_filename);
 		if (isLineNo) fprintf(public_header, "#line %d \"%s\"\n", yylineno, input_filename);
 		methodVisibility = VISIBILITY_PUBLIC;
+	    methodScope = SCOPE_OBJECT;
 	    if (isVerbose) printf("BEGIN <METHOD_DEFINE>\n");
 		BEGIN(METHOD_DEFINE);
 	}
@@ -22,6 +23,7 @@
 		if (isLineNo) fprintf(private_header, "#line %d \"%s\"\n", yylineno, input_filename);
 		fprintf(private_header, "static ");
 		methodVisibility = VISIBILITY_PRIVATE;
+	    methodScope = SCOPE_OBJECT;
 	    if (isVerbose) printf("BEGIN <METHOD_DEFINE>\n");
 		BEGIN(METHOD_DEFINE);
 	}
@@ -30,6 +32,15 @@
 		//if (isLineNo) fprintf(protected_header, "#line %d \"%s\"\n", yylineno, input_filename);
 		//methodVisibility = VISIBILITY_PROTECTED;
 		//BEGIN(METHOD_DEFINE);
+	}
+	{DIRECTIVE_CLASS_METHOD} {
+		if (isVerbose) printf("#directive class method\n");
+		if (isLineNo) fprintf(source, "#line %d \"%s\"\n", yylineno, input_filename);
+		if (isLineNo) fprintf(private_header, "#line %d \"%s\"\n", yylineno, input_filename);
+		methodVisibility = VISIBILITY_PUBLIC;
+	    methodScope = SCOPE_CLASS;
+	    if (isVerbose) printf("BEGIN <METHOD_DEFINE>\n");
+		BEGIN(METHOD_DEFINE);
 	}
 	
 	{DIRECTIVE_PUBLIC_ATTRIBUTE} {
