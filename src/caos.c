@@ -24,7 +24,7 @@ char public_header_name[MAX_TEXT];
 char private_header_name[MAX_TEXT];
 char define_header_name[MAX_TEXT];
 
-RBuf* tmp;
+RBuf* queue;
 boolean isLineNo = TRUE;
 boolean isThisPointer = TRUE;
 boolean isVerbose = FALSE;

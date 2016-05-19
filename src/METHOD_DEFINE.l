@@ -1,20 +1,20 @@
 <METHOD_DEFINE>{
 	{NUMBER} {
-		RBuf_enque(tmp, yytext, yyleng, T_NUMBER);
+		RBuf_enque(queue, yytext, yyleng, T_NUMBER);
 	}
 
 	{CLASS}  {
 		if (arg_comma) {
-			RBuf_enque(tmp, ",", 1, T_COMMA);
-			RBuf_enque(tmp, " ", 1, T_WSPACE);
+			RBuf_enque(queue, ",", 1, T_COMMA);
+			RBuf_enque(queue, " ", 1, T_WSPACE);
 			arg_comma=FALSE;
 		}
-		RBuf_enque(tmp, &(yytext[1]), yyleng-1, T_CLASS);
-		if (isThisPointer) RBuf_enque(tmp, "*", 1, T_KEYWORD);
+		RBuf_enque(queue, &(yytext[1]), yyleng-1, T_CLASS);
+		if (isThisPointer) RBuf_enque(queue, "*", 1, T_KEYWORD);
 	}
 
 	\{ {
-		char* method = RBuf_allque(tmp, allque, SBuf_getStr(class_buf));
+		char* method = RBuf_allque(queue, allque, SBuf_getStr(class_buf));
 		switch(methodVisibility){
 		case VISIBILITY_PUBLIC:
 			fprintf( public_header, "%s;\n", method );
@@ -31,19 +31,19 @@
 	}
 
 	\( {
-		boolean isMethod = RBuf_back_retype(tmp, T_WORD, T_METHOD);
-	    RBuf_trimque(tmp);
-		RBuf_enque( tmp, yytext, yyleng, T_NON);
+		boolean isMethod = RBuf_back_retype(queue, T_WORD, T_METHOD);
+	    RBuf_trimque(queue);
+		RBuf_enque( queue, yytext, yyleng, T_NON);
 		if (isMethod) {
 		    if (methodScope == SCOPE_OBJECT){
-    			RBuf_enque( tmp, SBuf_getStr(class_buf), SBuf_getLen(class_buf), T_CLASS);
+    			RBuf_enque( queue, SBuf_getStr(class_buf), SBuf_getLen(class_buf), T_CLASS);
     			if (isThisPointer){
-    				RBuf_enque( tmp, "*", 1, T_ASTERISK);
-    			    RBuf_enque( tmp, " ", 1, T_WSPACE);
-    				RBuf_enque( tmp, "this", 4, T_KEYWORD);
+    				RBuf_enque( queue, "*", 1, T_ASTERISK);
+    			    RBuf_enque( queue, " ", 1, T_WSPACE);
+    				RBuf_enque( queue, "this", 4, T_KEYWORD);
     			}else{
-    			    RBuf_enque( tmp, " ", 1, T_WSPACE);
-    				RBuf_enque( tmp, "self", 4, T_KEYWORD);
+    			    RBuf_enque( queue, " ", 1, T_WSPACE);
+    				RBuf_enque( queue, "self", 4, T_KEYWORD);
     			}
     			arg_comma = TRUE;
 		    }
@@ -52,22 +52,22 @@
 
 	\) {
 		arg_comma = FALSE;
-		RBuf_enque( tmp, yytext, yyleng, T_NON);
+		RBuf_enque( queue, yytext, yyleng, T_NON);
 	}
 
-	{OBJECT} { RBuf_enque(tmp, &(yytext[1]), yyleng-1, T_OBJECT); }
+	{OBJECT} { RBuf_enque(queue, &(yytext[1]), yyleng-1, T_OBJECT); }
 	{WORD}   {
 		if ( (arg_comma) && ( 0 == strcmp(yytext, "void") ) ) {
 			/* nothing */
 		} else {
 			if (arg_comma) {
-				RBuf_enque(tmp, ", ", 2, T_NON);
+				RBuf_enque(queue, ", ", 2, T_NON);
 				arg_comma=FALSE;
 			}
-			RBuf_enque(tmp, yytext, yyleng, T_WORD);
+			RBuf_enque(queue, yytext, yyleng, T_WORD);
 		}
 	}
-	{WSPACE}   { RBuf_enque(tmp, yytext, yyleng, T_WSPACE); }
+	{WSPACE}   { RBuf_enque(queue, yytext, yyleng, T_WSPACE); }
 	{COMMENTS} { fprintf( source, "/*"); BEGIN(METHOD_DEFINE_CSA); }
 	{COMMENT}  {
 		if (isOldComment) {
@@ -78,9 +78,9 @@
 		BEGIN(METHOD_DEFINE_CSS);
 	}
 	\n {
-		fprintf( source, "%s\n", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
+		fprintf( source, "%s\n", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
 	}
-	.  { RBuf_enque(tmp, yytext, yyleng, T_NON); }
+	.  { RBuf_enque(queue, yytext, yyleng, T_NON); }
 }
 
 <METHOD_DEFINE_CSA>{

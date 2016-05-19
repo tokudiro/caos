@@ -22,7 +22,7 @@ FILE* define_header;
 
 SBuf* class_buf;
 
-extern RBuf* tmp;
+extern RBuf* queue;
 extern char filename[];
 extern char source_name[];
 extern char public_header_name[];
@@ -73,9 +73,9 @@ int main(int argc, char** argv)
 		}
 	}
 	
-	RBuf tmp_impl;
-	tmp = &tmp_impl;
-	RBuf_init(tmp, isThisPointer, isVerbose);
+	RBuf queue_impl;
+	queue = &queue_impl;
+	RBuf_init(queue, isThisPointer, isVerbose);
 	
 	SBuf class_buf_impl;
 	class_buf = &class_buf_impl;

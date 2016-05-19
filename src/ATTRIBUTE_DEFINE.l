@@ -70,13 +70,12 @@
 
 <ATTRIBUTE_DEFINE>{
 	{NUMBER} {
-		RBuf_enque(tmp, yytext, yyleng, T_NUMBER);
+		RBuf_enque(queue, yytext, yyleng, T_NUMBER);
 	}
 
 	{CLASS}  {
-		//if (arg_comma) { RBuf_enque(tmp, ", ", 2, T_NON); arg_comma=FALSE; }
-		RBuf_enque(tmp, &(yytext[1]), yyleng-1, T_CLASS);
-		if(isThisPointer) RBuf_enque(tmp, "*", 1, T_ASTERISK);
+		RBuf_enque(queue, &(yytext[1]), yyleng-1, T_CLASS);
+		if(isThisPointer) RBuf_enque(queue, "*", 1, T_ASTERISK);
 	}
 
 	{DIRECTIVE_ENDCLASS} {
@@ -86,11 +85,11 @@
 		BEGIN(INITIAL);
 	}
 
-	{OBJECT} { RBuf_enque(tmp, &(yytext[1]), yyleng-1, T_OBJECT); }
+	{OBJECT} { RBuf_enque(queue, &(yytext[1]), yyleng-1, T_OBJECT); }
 	{WORD}   {
-		RBuf_enque(tmp, yytext, yyleng, T_WORD);
+		RBuf_enque(queue, yytext, yyleng, T_WORD);
 	}
-	{WSPACE}   { RBuf_enque(tmp, yytext, yyleng, T_WSPACE); }
+	{WSPACE}   { RBuf_enque(queue, yytext, yyleng, T_WSPACE); }
 	{COMMENTS} { fprintf( define_header, "/*"); BEGIN(ATTRIBUTE_DEFINE_CSA); }
 	{COMMENT}  {
 		if (isOldComment) {
@@ -101,23 +100,23 @@
 		BEGIN(ATTRIBUTE_DEFINE_CSS);
 	}
 	\n {
-		fprintf( define_header, "%s", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
+		fprintf( define_header, "%s", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
 		fprintf( define_header, "\n");
 		if (isMember) { isMember = FALSE; }
         if (isVerbose) printf("BEGIN <CLASS_SCOPE>\n");
 		BEGIN(CLASS_SCOPE);
 	}
 	;  {
-	    RBuf_enque(tmp, yytext, yyleng, T_SEMICOLON);
-	    RBuf_trimque(tmp);
+	    RBuf_enque(queue, yytext, yyleng, T_SEMICOLON);
+	    RBuf_trimque(queue);
 		/* Class Member */
-		isMember = RBuf_back_retype(tmp, T_WORD, T_PARAMETER);
-		boolean isType = RBuf_back_retype(tmp, T_WORD, T_TYPE);
-		const char* clazz = RBuf_back_getStr(tmp, T_CLASS);
+		isMember = RBuf_back_retype(queue, T_WORD, T_PARAMETER);
+		boolean isType = RBuf_back_retype(queue, T_WORD, T_TYPE);
+		const char* clazz = RBuf_back_getStr(queue, T_CLASS);
 		if (isMember && (isType || 0!=clazz) ) {
-			const char* member = RBuf_back_getStr(tmp, T_PARAMETER);
-			const char* asterisk = RBuf_back_getStr(tmp, T_ASTERISK);
-			const char* type = RBuf_back_getStr(tmp, T_TYPE);
+			const char* member = RBuf_back_getStr(queue, T_PARAMETER);
+			const char* asterisk = RBuf_back_getStr(queue, T_ASTERISK);
+			const char* type = RBuf_back_getStr(queue, T_TYPE);
 			
 			// getter,setter in header
 			getterInHeader((0!=clazz?clazz:type), asterisk, member);
@@ -126,10 +125,10 @@
 			getterInSource((0!=clazz?clazz:type), asterisk, member);
 			setterInSource((0!=clazz?clazz:type), asterisk, member);
 		}
-		fprintf(define_header, "%s", RBuf_allque(tmp, allque, SBuf_getStr(class_buf)) );
+		fprintf(define_header, "%s", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
 	}
-	\*  { RBuf_enque(tmp, yytext, yyleng, T_ASTERISK); }
-	.  { RBuf_enque(tmp, yytext, yyleng, T_NON); }
+	\*  { RBuf_enque(queue, yytext, yyleng, T_ASTERISK); }
+	.  { RBuf_enque(queue, yytext, yyleng, T_NON); }
 }
 
 <ATTRIBUTE_DEFINE_CSA>{
