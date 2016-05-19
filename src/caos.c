@@ -28,7 +28,13 @@ RBuf* queue;
 boolean isLineNo = TRUE;
 boolean isThisPointer = TRUE;
 boolean isVerbose = FALSE;
+boolean isOldComment = FALSE;
+
 visibility methodVisibility = VISIBILITY_NONE;
 scope methodScope = SCOPE_OBJECT;
-boolean isOldComment = FALSE;
 boolean singleton = FALSE;
+
+int countPublicMethod = 0;
+int countPrivateMethod = 0;
+int countClassMethod = 0;
+int countAttribute = 0;

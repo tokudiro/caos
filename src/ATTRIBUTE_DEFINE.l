@@ -110,6 +110,8 @@
 	    RBuf_enque(queue, yytext, yyleng, T_SEMICOLON);
 	    RBuf_trimque(queue);
 		/* Class Member */
+	    countAttribute++;
+	    
 		isMember = RBuf_back_retype(queue, T_WORD, T_PARAMETER);
 		boolean isType = RBuf_back_retype(queue, T_WORD, T_TYPE);
 		const char* clazz = RBuf_back_getStr(queue, T_CLASS);

@@ -36,6 +36,11 @@ extern char* input_filename;
 extern boolean isOldComment;
 extern boolean singleton;
 
+extern int countPublicMethod;
+extern int countPrivateMethod;
+extern int countClassMethod;
+extern int countAttribute;
+
 static void outputHELP(){
 	printf("------------------------------------------------------\n");
 	printf("C-language Addtional Object-oriented Source Transpiler\n");
@@ -133,5 +138,13 @@ int main(int argc, char** argv)
 	fclose(private_header);
 	fclose(define_header);
 
-	return ret;
+    if (isVerbose){
+        printf("------------------------------------------------------\n");
+        printf("PUBLIC  METHOD: %d\n", countPublicMethod);
+        printf("PRIVATE METHOD: %d\n", countPrivateMethod);
+        printf("CLASS   METHOD: %d\n", countClassMethod);
+        printf("------------------------------------------------------\n");
+        printf("ATTRIBUTE     : %d\n", countAttribute);
+    }
+    return ret;
 }
