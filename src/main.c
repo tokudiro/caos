@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <ctype.h>
 
 #include "common.h"
 
@@ -40,6 +41,13 @@ extern int countPublicMethod;
 extern int countPrivateMethod;
 extern int countClassMethod;
 extern int countAttribute;
+
+void Name_toupper( char* output, const char* input ){
+    
+    for(; *input!=0; input++, output++ ){
+        *output = toupper(*input);
+    }
+}
 
 static void outputHELP(){
 	printf("------------------------------------------------------\n");
@@ -128,10 +136,14 @@ int main(int argc, char** argv)
 	define_header = fopen(define_header_name, "w");
 	if (define_header == 0) {printf("define header file error.");exit(-1);}
 
-	fprintf( public_header, "#ifndef __%s_H__\n", filename );
-	fprintf( public_header, "#define __%s_H__\n", filename );
+    char guardname[MAX_TEXT] = {0};
+    strcat(guardname, "__");
+    Name_toupper(guardname, filename);
+    
+	fprintf( public_header, "#ifndef __%s_H__\n", guardname );
+	fprintf( public_header, "#define __%s_H__\n", guardname );
 	int ret = yylex();
-	fprintf( public_header, "#endif /* __%s_H__ */\n", filename );
+	fprintf( public_header, "#endif /* __%s_H__ */\n", guardname );
 
 	fclose(source);
 	fclose(public_header);

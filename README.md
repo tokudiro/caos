@@ -99,7 +99,7 @@ int SampleClass_public_method(SampleClass* this);
 #include "SampleClass.h"
 /* class SampleClass */
 struct SampleClass_struct{
- int public_member;
+int public_member;
 int private_member;
 };
 ```
