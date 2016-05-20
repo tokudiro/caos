@@ -45,7 +45,10 @@ void RBuf_enque(RBuf* this, const char* str, const int len, const buftype type){
     strcpy( &(this->buf[this->last][0]), str);
     this->type[this->last] = type;
     this->last++;
-    if (this->first == this->last) { /* buffer over */ }
+    if (this->first == this->last) {
+        /* buffer over */
+        if (this->isVerbose) { printf("error:buffer over.\n"); }
+    }
     if (this->last==MAX_ARRAYSIZE) {this->last=0;}
 }
 

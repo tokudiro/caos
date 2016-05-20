@@ -5,6 +5,7 @@
 
 #include "RBuf.h"
 #include "SBuf.h"
+#include "SLib.h"
 
 extern FILE* source;
 extern FILE* public_header;

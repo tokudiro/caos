@@ -14,18 +14,21 @@
 	}
 
 	\{ {
-		char* method = RBuf_allque(queue, allque, SBuf_getStr(class_buf));
+		RBuf_allque(queue, allque, SBuf_getStr(class_buf));
+        // source
+	    fprintf( source, "%s{", allque );
+	    // header
+	        SLib_chopRet(allque);
 		switch(methodVisibility){
 		case VISIBILITY_PUBLIC:
-			fprintf( public_header, "%s;\n", method );
+			fprintf( public_header, "%s;\n", allque );
 			break;
 		case VISIBILITY_PRIVATE:
-			fprintf( private_header, "%s;\n", method );
+			fprintf( private_header, "%s;\n", allque );
 			break;
 		default:
 			break;
 		}
-		fprintf( source, "%s{", method );
 	    if (isVerbose) printf("BEGIN <METHOD_SCOPE>\n");
 		BEGIN(METHOD_SCOPE);
 	}
@@ -77,9 +80,7 @@
 		}
 		BEGIN(METHOD_DEFINE_CSS);
 	}
-	\n {
-		fprintf( source, "%s\n", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
-	}
+	\n { RBuf_enque(queue, yytext, yyleng, T_NON); }
 	.  { RBuf_enque(queue, yytext, yyleng, T_NON); }
 }
 

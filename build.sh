@@ -19,4 +19,4 @@ cat ./src/INITIAL.l \
     ./src/EOF.l \
     >> ./obj/caos.l
 flex -o./obj/caos.yy.c ./obj/caos.l
-gcc -o caos ./obj/caos.yy.c ./src/RBuf.c ./src/main.c ./src/SBuf.c -L/usr/lib -lfl -I./src
+gcc -o caos ./obj/caos.yy.c ./src/RBuf.c ./src/main.c ./src/SBuf.c ./src/SLib.c -L/usr/lib -lfl -I./src
