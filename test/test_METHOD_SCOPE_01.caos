@@ -1,0 +1,44 @@
+int func(int a, int b){return a+b;}
+
+#class $TEST_METHOD_SCOPE_01
+int a;
+
+#-int a(){return 0;}
+
+#+int func(){
+	// member a
+	//@a!(0); // 0x21 !   => expected ';' before '!' token
+	(@a%(2)); // 0x25 %
+	(@a&&(0)); // 0x26 &
+	
+	@a*(2); // 0x2a *
+	@a+(2); // 0x2b +
+	func(@a,(2)); // 0x2c ,
+	@a-(2); // 0x2d -
+	//@a.(2); // 0x2e .  => expected identifier before '(' token
+	@a/(2); // 0x2f /
+	
+	(0?@a:(0)); // 0x3a :
+	@a;(0); // 0x3b ;
+	(@a<(2)); // 0x3c <
+	@a=(2+3); // 0x3d =
+	(@a>(2)); // 0x3e >
+	(@a?(1):0); // 0x3f ?
+
+	(@a||(0)); // 0x7c |
+	//@a~(0); // 0x7e ~    => expected ';' before '~' token
+
+	// method a
+	@a();
+}
+
+#endclass
+
+int main(){
+}
+
+// Output
+// METHOD_SCOPE_TEST01.c
+// METHOD_SCOPE_TEST01.h
+// METHOD_SCOPE_TEST01_private.h
+// METHOD_SCOPE_TEST01_define.h

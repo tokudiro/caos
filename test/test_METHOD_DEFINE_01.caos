@@ -1,0 +1,18 @@
+#class $TEST_METHOD_DEFINE_01
+
+#+ void publicMethod(){
+}
+
+#- void privateMethod(){
+}
+
+#$ void classMethod(){
+}
+
+#endclass
+
+int main(){
+    TEST_METHOD_DEFINE_01_publicMethod(0);
+    TEST_METHOD_DEFINE_01_privateMethod(0);
+    TEST_METHOD_DEFINE_01_classMethod();
+}

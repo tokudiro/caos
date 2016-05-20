@@ -1,0 +1,23 @@
+#class $TEST_METHOD_DEFINE_02
+
+#+ void publicMethod(int a,
+    int b)
+{
+    
+}
+
+#- void privateMethod
+(int a, int b)
+{
+}
+
+#$ void classMethod(){
+}
+
+#endclass
+
+int main(){
+    TEST_METHOD_DEFINE_02_publicMethod(0,1,2);
+    TEST_METHOD_DEFINE_02_privateMethod(0,1,2);
+    TEST_METHOD_DEFINE_02_classMethod();
+}
