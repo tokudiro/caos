@@ -11,6 +11,7 @@ extern FILE* source;
 extern FILE* public_header;
 extern FILE* private_header;
 extern FILE* define_header;
+extern FILE* struct_header;
 
 int bracket = 0;
 boolean arg_comma = FALSE;
@@ -33,7 +34,7 @@ boolean isOldComment = FALSE;
 
 visibility methodVisibility = VISIBILITY_NONE;
 scope methodScope = SCOPE_OBJECT;
-boolean singleton = FALSE;
+classtype classType = TYPE_CLASS;
 
 int countPublicMethod = 0;
 int countPrivateMethod = 0;

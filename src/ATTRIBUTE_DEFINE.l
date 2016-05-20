@@ -79,7 +79,7 @@
 	}
 
 	{DIRECTIVE_ENDCLASS} {
-		fprintf( define_header, "};\n" );
+		fprintf( struct_header, "};\n" );
 		SBuf_init(class_buf);
         if (isVerbose) printf("BEGIN <INITIAL>\n");
 		BEGIN(INITIAL);
@@ -90,18 +90,18 @@
 		RBuf_enque(queue, yytext, yyleng, T_WORD);
 	}
 	{WSPACE}   { RBuf_enque(queue, yytext, yyleng, T_WSPACE); }
-	{COMMENTS} { fprintf( define_header, "/*"); BEGIN(ATTRIBUTE_DEFINE_CSA); }
+	{COMMENTS} { fprintf( struct_header, "/*"); BEGIN(ATTRIBUTE_DEFINE_CSA); }
 	{COMMENT}  {
 		if (isOldComment) {
-			fprintf( define_header, "/*");
+			fprintf( struct_header, "/*");
 		} else {
-			fprintf( define_header, "//");
+			fprintf( struct_header, "//");
 		}
 		BEGIN(ATTRIBUTE_DEFINE_CSS);
 	}
 	\n {
-		fprintf( define_header, "%s", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
-		fprintf( define_header, "\n");
+		fprintf( struct_header, "%s", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
+		fprintf( struct_header, "\n");
 		if (isMember) { isMember = FALSE; }
         if (isVerbose) printf("BEGIN <CLASS_SCOPE>\n");
 		BEGIN(CLASS_SCOPE);
@@ -127,7 +127,7 @@
 			getterInSource((0!=clazz?clazz:type), asterisk, member);
 			setterInSource((0!=clazz?clazz:type), asterisk, member);
 		}
-		fprintf(define_header, "%s", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
+		fprintf(struct_header, "%s", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
 	}
 	\*  { RBuf_enque(queue, yytext, yyleng, T_ASTERISK); }
 	.  { RBuf_enque(queue, yytext, yyleng, T_NON); }
@@ -135,21 +135,21 @@
 
 <ATTRIBUTE_DEFINE_CSA>{
 	{COMMENTE} {
-		fprintf( define_header, "*/");
+		fprintf( struct_header, "*/");
 		BEGIN(ATTRIBUTE_DEFINE);
 	}
-	\n { fprintf( define_header, "\n"); }
-	.  { fprintf( define_header, "%s", yytext); }
+	\n { fprintf( struct_header, "\n"); }
+	.  { fprintf( struct_header, "%s", yytext); }
 }
 
 <ATTRIBUTE_DEFINE_CSS>{
 	\n {
 		if (isOldComment) {
-			fprintf(define_header, "*/\n");
+			fprintf(struct_header, "*/\n");
 		} else {
-			fprintf(define_header, "\n");
+			fprintf(struct_header, "\n");
 		}
 		BEGIN(ATTRIBUTE_DEFINE);
 	}
-	.  { fprintf(define_header, "%s", yytext); }
+	.  { fprintf(struct_header, "%s", yytext); }
 }

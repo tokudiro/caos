@@ -18,3 +18,8 @@ typedef enum _scope {
     SCOPE_GLOBAL
 } scope;
 
+typedef enum _classtype {
+	TYPE_CLASS, 
+	TYPE_SINGLETON, 
+	TYPE_STRUCT
+} classtype;

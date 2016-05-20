@@ -62,7 +62,7 @@
 	}
 
 	{DIRECTIVE_ENDCLASS} {
-		fprintf( define_header, "};\n" );
+		fprintf( struct_header, "};\n" );
 		SBuf_init(class_buf);
 	    if (isVerbose) printf("BEGIN <INITIAL>\n");
 		BEGIN(INITIAL);
@@ -83,14 +83,14 @@
 	}
 	{WSPACE}   { RBuf_enque(queue, yytext, yyleng, T_WSPACE); }
 	{COMMENTS} {
-		fprintf( (isMember?define_header:source), "/*");
+		fprintf( (isMember?struct_header:source), "/*");
 		BEGIN(CLASS_SCOPE_CSA);
 	}
 	{COMMENT}  {
 		if (isOldComment) {
-			fprintf( (isMember?define_header:source), "/*");
+			fprintf( (isMember?struct_header:source), "/*");
 		} else {
-			fprintf( (isMember?define_header:source), "//");
+			fprintf( (isMember?struct_header:source), "//");
 		}
 		BEGIN(CLASS_SCOPE_CSS);
 	}
@@ -98,14 +98,14 @@
 		BEGIN(CLASS_SCOPE_CS);
     }
 	\n {
-		fprintf( (isMember?define_header:source), "%s", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
-		fprintf( (isMember?define_header:source), "\n");
+		fprintf( (isMember?struct_header:source), "%s", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
+		fprintf( (isMember?struct_header:source), "\n");
 		if (isMember) { isMember = FALSE; }
 	}
 	;  {
 		/* Class Member */
 		RBuf_enque(queue, yytext, yyleng, T_SEMICOLON);
-		fprintf(define_header, "%s", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
+		fprintf(struct_header, "%s", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
 		isMember = TRUE;
 	}
 	
@@ -113,28 +113,28 @@
 		/* TODO : bad case : struct member initialize */
 		if (isVerbose) printf("error:struct member initialize\n");
 		/* Class Member */
-		fprintf(define_header, "%s;", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
+		fprintf(struct_header, "%s;", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
 		isMember = TRUE;
 	}
 	.  { RBuf_enque(queue, yytext, yyleng, T_NON); }
 }
 
 <CLASS_SCOPE_CSA>{
-	{COMMENTE} { fprintf( (isMember?define_header:source), "*/"); BEGIN(CLASS_SCOPE); }
-	\n { fprintf( (isMember?define_header:source), "\n"); }
-	.  { fprintf( (isMember?define_header:source), "%s", yytext); }
+	{COMMENTE} { fprintf( (isMember?struct_header:source), "*/"); BEGIN(CLASS_SCOPE); }
+	\n { fprintf( (isMember?struct_header:source), "\n"); }
+	.  { fprintf( (isMember?struct_header:source), "%s", yytext); }
 }
 
 <CLASS_SCOPE_CSS>{
 	\n {
 		if (isOldComment) {
-			fprintf((isMember?define_header:source), "*/\n");
+			fprintf((isMember?struct_header:source), "*/\n");
 		} else {
-			fprintf((isMember?define_header:source), "\n");
+			fprintf((isMember?struct_header:source), "\n");
 		}
 		BEGIN(CLASS_SCOPE);
 	}
-	.  { fprintf((isMember?define_header:source), "%s", yytext); }
+	.  { fprintf((isMember?struct_header:source), "%s", yytext); }
 }
 
 <CLASS_SCOPE_CS>{

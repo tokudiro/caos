@@ -20,6 +20,7 @@ FILE* source;
 FILE* public_header;
 FILE* private_header;
 FILE* define_header;
+FILE* struct_header;
 
 SBuf* class_buf;
 
@@ -35,7 +36,7 @@ extern boolean isThisPointer;
 extern boolean isVerbose;
 extern char* input_filename;
 extern boolean isOldComment;
-extern boolean singleton;
+extern classtype classType;
 
 extern int countPublicMethod;
 extern int countPrivateMethod;
@@ -135,7 +136,8 @@ int main(int argc, char** argv)
 	strcat(define_header_name, "_define.h");
 	define_header = fopen(define_header_name, "w");
 	if (define_header == 0) {printf("define header file error.");exit(-1);}
-
+    struct_header = define_header;
+    
     char guardname[MAX_TEXT] = {0};
     strcat(guardname, "__");
     Name_toupper(guardname, filename);
@@ -149,6 +151,7 @@ int main(int argc, char** argv)
 	fclose(public_header);
 	fclose(private_header);
 	fclose(define_header);
+    struct_header = 0;
 
     if (isVerbose){
         printf("------------------------------------------------------\n");

@@ -33,7 +33,14 @@
 	}
 	{DIRECTIVE_SINGLETON} {
 	    if (isVerbose) printf("#directive singleton\n");
-		singleton = TRUE;
+		classType = TYPE_SINGLETON;
+	    if (isVerbose) printf("BEGIN <CLASS_DEFINE>\n");
+		BEGIN(CLASS_DEFINE);
+	}
+	{DIRECTIVE_STRUCT} {
+	    if (isVerbose) printf("#directive struct\n");
+		classType = TYPE_STRUCT;
+	    struct_header = public_header;
 	    if (isVerbose) printf("BEGIN <CLASS_DEFINE>\n");
 		BEGIN(CLASS_DEFINE);
 	}

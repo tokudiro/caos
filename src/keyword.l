@@ -8,10 +8,11 @@ DIGIT    [[:digit:]]
 FLOAT    ({NONZERO}{DIGIT}*\.?|0\.|\.{DIGIT}){DIGIT}*|0
 FLOATE   [fF]
 
-DIRECTIVE_IMPORT   ^#import
-DIRECTIVE_CLASS    ^#class
-DIRECTIVE_ENDCLASS ^#endclass
+DIRECTIVE_IMPORT    ^#import
+DIRECTIVE_CLASS     ^#class
+DIRECTIVE_ENDCLASS  ^#endclass
 DIRECTIVE_SINGLETON ^#singleton
+DIRECTIVE_STRUCT    ^#struct
 
 DIRECTIVE_PUBLIC_METHOD    ^(#\+|#public)
 DIRECTIVE_PRIVATE_METHOD   ^(#-|#private)

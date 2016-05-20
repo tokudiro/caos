@@ -2,9 +2,13 @@
 	void defineClassInSource()
 	{
 		if (isVerbose) printf("class %s\n", SBuf_getStr(class_buf) );
-		fprintf( source, "#include \"%s\"\n", define_header_name );
+	    if (classType == TYPE_STRUCT) {
+    	    fprintf( source, "#include \"%s\"\n", public_header_name );
+	    } else {
+    	    fprintf( source, "#include \"%s\"\n", define_header_name );
+	    }
 		fprintf( source, "#include \"%s\"\n", private_header_name );
-		if (singleton) {
+		if (classType == TYPE_SINGLETON) {
 			fprintf( source, "static struct %s_struct instance;\n", SBuf_getStr(class_buf) );
 			fprintf( source, "%s", SBuf_getStr(class_buf) );
 			if (isThisPointer) fprintf( source, "*");
@@ -20,15 +24,15 @@
 		fprintf( public_header, "typedef struct %s_struct", SBuf_getStr(class_buf) );
 		if (!isThisPointer) fprintf( public_header, "*");
 		fprintf( public_header, " %s;\n", SBuf_getStr(class_buf) );
-		if (singleton) {
+		if (classType == TYPE_SINGLETON) {
 			fprintf( public_header, "%s", SBuf_getStr(class_buf) );
 			if (isThisPointer) fprintf( public_header, "*");
 			fprintf( public_header, " %s_getInstance();\n", SBuf_getStr(class_buf) );
 		}
 
 		fprintf( define_header, "#include \"%s\"\n", public_header_name );
-		if (isLineNo) fprintf(define_header, "#line %d \"%s\"\n", yylineno, input_filename);
-		fprintf( define_header, "struct %s_struct{\n", SBuf_getStr(class_buf) );
+		if (isLineNo) fprintf(struct_header, "#line %d \"%s\"\n", yylineno, input_filename);
+		fprintf( struct_header, "struct %s_struct{\n", SBuf_getStr(class_buf) );
 	}
 %}
 
