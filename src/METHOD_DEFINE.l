@@ -24,7 +24,9 @@
 			fprintf( public_header, "%s;\n", allque );
 			break;
 		case VISIBILITY_PRIVATE:
-			fprintf( private_header, "%s;\n", allque );
+            if (!isNonPrivateHeader) {
+		        fprintf( private_header, "%s;\n", allque );
+            }
 			break;
 		default:
 			break;

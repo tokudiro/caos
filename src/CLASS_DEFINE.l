@@ -7,7 +7,9 @@
 	    } else {
     	    fprintf( source, "#include \"%s\"\n", define_header_name );
 	    }
-		fprintf( source, "#include \"%s\"\n", private_header_name );
+        if (!isNonPrivateHeader) {
+    		fprintf( source, "#include \"%s\"\n", private_header_name );
+        }
 		if (classType == TYPE_SINGLETON) {
 			fprintf( source, "static struct %s_struct instance;\n", SBuf_getStr(class_buf) );
 			fprintf( source, "%s", SBuf_getStr(class_buf) );

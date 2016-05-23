@@ -21,9 +21,11 @@
 	{DIRECTIVE_PRIVATE_METHOD} {
 		if (isVerbose) printf("#directive private method\n");
 		if (isLineNo) fprintf(source, "#line %d \"%s\"\n", yylineno, input_filename);
-		if (isLineNo) fprintf(private_header, "#line %d \"%s\"\n", yylineno, input_filename);
-		fprintf(private_header, "static ");
-	    countPrivateMethod++;
+        if (!isNonPrivateHeader) {
+    		if (isLineNo) fprintf(private_header, "#line %d \"%s\"\n", yylineno, input_filename);
+    		fprintf(private_header, "static ");
+        }
+        countPrivateMethod++;
 		methodVisibility = VISIBILITY_PRIVATE;
 	    methodScope = SCOPE_OBJECT;
 	    if (isVerbose) printf("BEGIN <METHOD_DEFINE>\n");
@@ -38,7 +40,9 @@
 	{DIRECTIVE_CLASS_METHOD} {
 		if (isVerbose) printf("#directive class method\n");
 		if (isLineNo) fprintf(source, "#line %d \"%s\"\n", yylineno, input_filename);
-		if (isLineNo) fprintf(private_header, "#line %d \"%s\"\n", yylineno, input_filename);
+        if (!isNonPrivateHeader) {
+            if (isLineNo) fprintf(private_header, "#line %d \"%s\"\n", yylineno, input_filename);
+        }
 	    countClassMethod++;
 		methodVisibility = VISIBILITY_PUBLIC;
 	    methodScope = SCOPE_CLASS;

@@ -31,6 +31,7 @@ boolean isLineNo = TRUE;
 boolean isThisPointer = TRUE;
 boolean isVerbose = FALSE;
 boolean isOldComment = FALSE;
+boolean isNonPrivateHeader = FALSE;
 
 visibility methodVisibility = VISIBILITY_NONE;
 scope methodScope = SCOPE_OBJECT;

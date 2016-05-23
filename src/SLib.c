@@ -1,3 +1,5 @@
+#include <ctype.h>
+
 #include "common.h"
 
 #include "SLib.h"
@@ -12,5 +14,12 @@ char* SLib_chopRet(char* buf){
     if (len==0) return buf;
     if ( '\n' == buf[len-1] ) buf[len-1]=0;
     return buf;
+}
+
+void SLib_toupper( char* output, const char* input ){
+    
+    for(; *input!=0; input++, output++ ){
+        *output = toupper(*input);
+    }
 }
 

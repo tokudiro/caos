@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <ctype.h>
 
 #include "common.h"
 
@@ -11,6 +10,7 @@
 
 #include "RBuf_define.h"
 #include "SBuf_define.h"
+#include "SLib.h"
 
 /* flex extern */
 extern FILE *yyin;
@@ -37,18 +37,12 @@ extern boolean isVerbose;
 extern char* input_filename;
 extern boolean isOldComment;
 extern classtype classType;
+extern boolean isNonPrivateHeader;
 
 extern int countPublicMethod;
 extern int countPrivateMethod;
 extern int countClassMethod;
 extern int countAttribute;
-
-void Name_toupper( char* output, const char* input ){
-    
-    for(; *input!=0; input++, output++ ){
-        *output = toupper(*input);
-    }
-}
 
 static void outputHELP(){
 	printf("------------------------------------------------------\n");
@@ -61,10 +55,12 @@ static void outputHELP(){
 	printf("C : replace to old style comment\n");
 }
 
+extern char	*optarg;
+
 int main(int argc, char** argv)
 {
 	int c;
-	while( (c = getopt(argc, argv, "hVLSC")) !=-1 ) {
+	while( (c = getopt(argc, argv, "hVLSCo:p")) !=-1 ) {
 		switch(c){
 		case 'h':
 		    outputHELP();
@@ -82,6 +78,12 @@ int main(int argc, char** argv)
 		case 'C':
 			isOldComment = TRUE;
 			break;
+		case 'o':
+		    printf("output :%s\n", optarg);
+		    break;
+		case 'p':
+		    isNonPrivateHeader = TRUE;
+		    break;
 		default:
 			break;
 		}
@@ -128,8 +130,10 @@ int main(int argc, char** argv)
 	*private_header_name = 0;
 	strcat(private_header_name, filename);
 	strcat(private_header_name, "_private.h");
-	private_header = fopen(private_header_name, "w");
-	if (private_header == 0) {printf("private header file error.");exit(-1);}
+    if (!isNonPrivateHeader) {
+    	private_header = fopen(private_header_name, "w");
+    	if (private_header == 0) {printf("private header file error.");exit(-1);}
+    }
 
 	*define_header_name = 0;
 	strcat(define_header_name, filename);
@@ -140,7 +144,7 @@ int main(int argc, char** argv)
     
     char guardname[MAX_TEXT] = {0};
     strcat(guardname, "__");
-    Name_toupper(guardname, filename);
+    SLib_toupper(guardname, filename);
     
 	fprintf( public_header, "#ifndef __%s_H__\n", guardname );
 	fprintf( public_header, "#define __%s_H__\n", guardname );
@@ -149,7 +153,9 @@ int main(int argc, char** argv)
 
 	fclose(source);
 	fclose(public_header);
-	fclose(private_header);
+    if (!isNonPrivateHeader) {
+        fclose(private_header);
+    }
 	fclose(define_header);
     struct_header = 0;
 
