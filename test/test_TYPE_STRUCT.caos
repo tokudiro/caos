@@ -2,6 +2,11 @@
 int a;
 int b;
 
+#+int func()
+{
+    return @a+@b;
+}
+
 #endclass
 
 int main(){

@@ -40,7 +40,7 @@
 	{DIRECTIVE_STRUCT} {
 	    if (isVerbose) printf("#directive struct\n");
 		classType = TYPE_STRUCT;
-	    struct_header = public_header;
+	    //struct_header = public_header;
 	    if (isVerbose) printf("BEGIN <CLASS_DEFINE>\n");
 		BEGIN(CLASS_DEFINE);
 	}

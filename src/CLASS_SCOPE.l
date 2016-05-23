@@ -63,6 +63,9 @@
 
 	{DIRECTIVE_ENDCLASS} {
 		fprintf( struct_header, "};\n" );
+	    if (classType == TYPE_STRUCT) {
+    	    fprintf( public_header, "#include \"%s\"\n", define_header_name );
+	    }
 		SBuf_init(class_buf);
 	    if (isVerbose) printf("BEGIN <INITIAL>\n");
 		BEGIN(INITIAL);

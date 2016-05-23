@@ -30,7 +30,9 @@
 			fprintf( public_header, " %s_getInstance();\n", SBuf_getStr(class_buf) );
 		}
 
-		fprintf( define_header, "#include \"%s\"\n", public_header_name );
+	    if (classType != TYPE_STRUCT) {
+            fprintf( define_header, "#include \"%s\"\n", public_header_name );
+	    }
 		if (isLineNo) fprintf(struct_header, "#line %d \"%s\"\n", yylineno, input_filename);
 		fprintf( struct_header, "struct %s_struct{\n", SBuf_getStr(class_buf) );
 	}
