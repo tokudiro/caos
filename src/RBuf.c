@@ -24,10 +24,17 @@ static const char* TYPE_CAPTION[] = {
     "T_PARAMETER",
     "T_ASTERISK ",
     "T_TYPE     ",
-    "T_SEMICOLON"};
+    "T_SEMICOLON",
+    "T_WSPACE   ",
+    "T_COMMA    "};
 
 char* RBufElement_toString(char* tostring, const char* str, const buftype type) {
-    strcat(tostring, TYPE_CAPTION[type]);
+    
+    if ( type < sizeof(TYPE_CAPTION)/sizeof(TYPE_CAPTION[0]) ) {
+        strcat(tostring, TYPE_CAPTION[type]);
+    } else {
+        strcat(tostring, "UNKNOWN    ");
+    }
     strcat(tostring, ":");
     strcat(tostring, str);
     return tostring;
