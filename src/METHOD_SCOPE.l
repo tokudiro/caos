@@ -1,7 +1,7 @@
 <METHOD_SCOPE>{
 	{NUMBER} {
 	    RBuf_enque(queue, yytext, yyleng, T_NUMBER);
-		fprintf( source, "%s", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
+		fprintf( source, "%s", RBuf_allDeque(queue, allque, SBuf_getStr(class_buf)) );
 	}
 
 	{CLASS}  {
@@ -10,13 +10,13 @@
 
 	\{ {
 	    RBuf_enque(queue, yytext, yyleng, T_NON);
-		fprintf( source, "%s", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
+		fprintf( source, "%s", RBuf_allDeque(queue, allque, SBuf_getStr(class_buf)) );
 		bracket++;
 	}
 
 	\} {
 	    RBuf_enque(queue, yytext, yyleng, T_NON);
-		fprintf( source, "%s", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
+		fprintf( source, "%s", RBuf_allDeque(queue, allque, SBuf_getStr(class_buf)) );
 		if (bracket == 0) {
 			methodVisibility = VISIBILITY_NONE;
     	    if (isVerbose) printf("BEGIN <CLASS_SCOPE>\n");
@@ -42,7 +42,7 @@
 	\) {
 		arg_comma = FALSE;
 	    RBuf_enque(queue, yytext, yyleng, T_NON);
-		fprintf( source, "%s", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
+		fprintf( source, "%s", RBuf_allDeque(queue, allque, SBuf_getStr(class_buf)) );
 	}
 
 	{OBJECT} {
@@ -50,11 +50,11 @@
 			RBuf_enque(queue, ", ", 2, T_NON);
 			arg_comma=FALSE;
 		}
-		fprintf( source, "%s", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
+		fprintf( source, "%s", RBuf_allDeque(queue, allque, SBuf_getStr(class_buf)) );
 		RBuf_enque(queue, &(yytext[1]), yyleng-1, T_OBJECT);
 	}
 	{SELF_OBJECT} {
-		fprintf( source, "%s", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
+		fprintf( source, "%s", RBuf_allDeque(queue, allque, SBuf_getStr(class_buf)) );
 		if (isThisPointer) {
 			RBuf_enque(queue, "this", 4, T_KEYWORD);
 		}else{
@@ -70,7 +70,7 @@
 		RBuf_enque(queue, yytext, yyleng, T_WORD);
 	}
 	{WSPACE} {
-		if ( RBuf_empty(queue) == TRUE ) {
+		if ( RBuf_isEmpty(queue) == TRUE ) {
 			fprintf(source, "%s", yytext);
 		} else {
 			RBuf_enque(queue, yytext, yyleng, T_WSPACE);
@@ -94,11 +94,11 @@
 	\n { fprintf( source, "\n"); }
 	;  {
 	    RBuf_enque(queue, yytext, yyleng, T_SEMICOLON);
-		fprintf( source, "%s", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
+		fprintf( source, "%s", RBuf_allDeque(queue, allque, SBuf_getStr(class_buf)) );
 	}
 	[\+\-\=\*\/:,<>~&?|!%]  {
 	    RBuf_enque(queue, yytext, yyleng, T_NON);
-		fprintf( source, "%s", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
+		fprintf( source, "%s", RBuf_allDeque(queue, allque, SBuf_getStr(class_buf)) );
 	}
 	.  { RBuf_enque(queue, yytext, yyleng, T_NON); }
 }

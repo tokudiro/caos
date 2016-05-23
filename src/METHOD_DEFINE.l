@@ -14,7 +14,7 @@
 	}
 
 	\{ {
-		RBuf_allque(queue, allque, SBuf_getStr(class_buf));
+		RBuf_allDeque(queue, allque, SBuf_getStr(class_buf));
         // source
 	    fprintf( source, "%s{", allque );
 	    // header
@@ -37,7 +37,7 @@
 
 	\( {
 		boolean isMethod = RBuf_back_retype(queue, T_WORD, T_METHOD);
-	    RBuf_trimque(queue);
+	    RBuf_trimQue(queue);
 		RBuf_enque( queue, yytext, yyleng, T_NON);
 		if (isMethod) {
 		    if (methodScope == SCOPE_OBJECT){

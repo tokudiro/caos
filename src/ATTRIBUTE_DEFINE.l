@@ -93,8 +93,21 @@
 		RBuf_enque(queue, yytext, yyleng, T_WORD);
 	}
 	{WSPACE}   { RBuf_enque(queue, yytext, yyleng, T_WSPACE); }
-	{COMMENTS} { fprintf( struct_header, "/*"); BEGIN(ATTRIBUTE_DEFINE_CSA); }
+	{COMMENTS} {
+        if (RBuf_isWSPACE)
+        {
+            RBuf_allDeque( queue, allque, SBuf_getStr(class_buf) );
+            fprintf( (isMember?struct_header:source), "%s", allque);
+        }
+        fprintf( struct_header, "/*");
+        BEGIN(ATTRIBUTE_DEFINE_CSA);
+	}
 	{COMMENT}  {
+        if (RBuf_isWSPACE)
+        {
+            RBuf_allDeque( queue, allque, SBuf_getStr(class_buf) );
+            fprintf( (isMember?struct_header:source), "%s", allque);
+        }
 		if (isOldComment) {
 			fprintf( struct_header, "/*");
 		} else {
@@ -103,7 +116,7 @@
 		BEGIN(ATTRIBUTE_DEFINE_CSS);
 	}
 	\n {
-		fprintf( struct_header, "%s", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
+		fprintf( struct_header, "%s", RBuf_allDeque(queue, allque, SBuf_getStr(class_buf)) );
 		fprintf( struct_header, "\n");
 		if (isMember) { isMember = FALSE; }
         if (isVerbose) printf("BEGIN <CLASS_SCOPE>\n");
@@ -111,7 +124,7 @@
 	}
 	;  {
 	    RBuf_enque(queue, yytext, yyleng, T_SEMICOLON);
-	    RBuf_trimque(queue);
+	    RBuf_trimQue(queue);
 		/* Class Member */
 	    countAttribute++;
 	    
@@ -130,7 +143,7 @@
 			getterInSource((0!=clazz?clazz:type), asterisk, member);
 			setterInSource((0!=clazz?clazz:type), asterisk, member);
 		}
-		fprintf(struct_header, "%s", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
+		fprintf(struct_header, "%s", RBuf_allDeque(queue, allque, SBuf_getStr(class_buf)) );
 	}
 	\*  { RBuf_enque(queue, yytext, yyleng, T_ASTERISK); }
 	.  { RBuf_enque(queue, yytext, yyleng, T_NON); }

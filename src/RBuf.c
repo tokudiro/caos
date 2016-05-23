@@ -4,9 +4,8 @@
 #include "common.h"
 
 /**
-* @addtogroup RBuf
+* @class RBuf
 * @brief Ring Buffer
-* @{
 */
 
 #include "RBuf_define.h"
@@ -40,6 +39,10 @@ char* RBufElement_toString(char* tostring, const char* str, const buftype type) 
     return tostring;
 }
 
+/**
+* @brief initialize
+* @memberof RBuf
+*/
 void RBuf_init(RBuf* this, const boolean isThisPointer, boolean isVerbose){
     this->first = 0;
     this->last = 0;
@@ -47,6 +50,10 @@ void RBuf_init(RBuf* this, const boolean isThisPointer, boolean isVerbose){
     this->isVerbose = isVerbose;
 }
 
+/**
+* @brief enque
+* @memberof RBuf
+*/
 void RBuf_enque(RBuf* this, const char* str, const int len, const buftype type){
     memset(&(this->buf[this->last][0]), 0, MAX_TEXT);
     strcpy( &(this->buf[this->last][0]), str);
@@ -59,6 +66,10 @@ void RBuf_enque(RBuf* this, const char* str, const int len, const buftype type){
     if (this->last==MAX_ARRAYSIZE) {this->last=0;}
 }
 
+/**
+* @brief deque
+* @memberof RBuf
+*/
 char* RBuf_deque(RBuf* this, buftype* p_type) {
     char* ret = this->buf[this->first];
     *p_type = this->type[this->first];
@@ -67,15 +78,19 @@ char* RBuf_deque(RBuf* this, buftype* p_type) {
     return ret;
 }
 
-boolean RBuf_empty(const RBuf* this){
+/**
+* @brief empty check
+* @memberof RBuf
+*/
+boolean RBuf_isEmpty(const RBuf* this){
     return (this->first==this->last?TRUE:FALSE);
 }
 
-char* RBuf_allque(RBuf* this, char* buf, const char* class_buf_str) {
+char* RBuf_allDeque(RBuf* this, char* buf, const char* class_buf_str) {
     buftype type;
     char* str;
     buf[0] = 0;
-    while(RBuf_empty(this) == FALSE) {
+    while(RBuf_isEmpty(this) == FALSE) {
         str = RBuf_deque(this, &type);
         
         char tostring[MAX_TEXT] = {0};
@@ -100,7 +115,7 @@ char* RBuf_allque(RBuf* this, char* buf, const char* class_buf_str) {
 }
 
 boolean RBuf_back_retype(RBuf* this, const buftype find, const buftype replace) {
-    if (RBuf_empty(this) ) return FALSE;
+    if (RBuf_isEmpty(this) ) return FALSE;
     
     int index = this->last;
     while( index != this->first) {
@@ -116,7 +131,7 @@ boolean RBuf_back_retype(RBuf* this, const buftype find, const buftype replace) 
 }
 
 const char* RBuf_back_getStr(const RBuf* this, const buftype find) {
-    if (RBuf_empty(this) ) return 0;
+    if (RBuf_isEmpty(this) ) return 0;
     
     int index = this->last;
     while( index != this->first) {
@@ -129,7 +144,7 @@ const char* RBuf_back_getStr(const RBuf* this, const buftype find) {
     return 0;
 }
 
-void RBuf_trimque(RBuf* this){
+void RBuf_trimQue(RBuf* this){
     if (this->first == this->last) return;
 
     if (this->first < this->last) {
@@ -166,6 +181,27 @@ void RBuf_trimque(RBuf* this){
     return;
 }
 
+boolean RBuf_isWSPACE(RBuf* this){
+    if (this->first == this->last) return FALSE;
+
+    if (this->first < this->last) {
+        for (int i = this->first; i<this->last; i++)
+        {
+            if(this->type[i]!=T_WSPACE) return FALSE;
+        }
+    } else {
+        for (int i = this->first; i<MAX_ARRAYSIZE; i++)
+        {
+            if(this->type[i]!=T_WSPACE) return FALSE;
+        }
+        for (int i = 0; i<this->last; i++)
+        {
+            if(this->type[i]!=T_WSPACE) return FALSE;
+        }
+    }
+    return TRUE;
+}
+
 /**
 * @brief toString
 * @param buf A string that represents the current object.
@@ -197,5 +233,3 @@ char* RBuf_toString(const RBuf* this, char* tostring) {
     }
     return tostring;
 }
-
-/** @} */

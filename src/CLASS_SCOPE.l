@@ -56,7 +56,7 @@
 	}
 	
 	\{ {
-		char* method = RBuf_allque(queue, allque, SBuf_getStr(class_buf));
+		char* method = RBuf_allDeque(queue, allque, SBuf_getStr(class_buf));
 		if (strlen(method) != 0) {
 			fprintf( public_header, "%s;\n", method );
 		}
@@ -90,10 +90,20 @@
 	}
 	{WSPACE}   { RBuf_enque(queue, yytext, yyleng, T_WSPACE); }
 	{COMMENTS} {
-		fprintf( (isMember?struct_header:source), "/*");
-		BEGIN(CLASS_SCOPE_CSA);
+        if (RBuf_isWSPACE)
+        {
+            RBuf_allDeque( queue, allque, SBuf_getStr(class_buf) );
+            fprintf( (isMember?struct_header:source), "%s", allque);
+        }
+        fprintf( (isMember?struct_header:source), "/*");
+        BEGIN(CLASS_SCOPE_CSA);
 	}
 	{COMMENT}  {
+        if (RBuf_isWSPACE)
+        {
+            RBuf_allDeque( queue, allque, SBuf_getStr(class_buf) );
+            fprintf( (isMember?struct_header:source), "%s", allque);
+        }
 		if (isOldComment) {
 			fprintf( (isMember?struct_header:source), "/*");
 		} else {
@@ -105,14 +115,16 @@
 		BEGIN(CLASS_SCOPE_CS);
     }
 	\n {
-		fprintf( (isMember?struct_header:source), "%s", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
+	    RBuf_allDeque( queue, allque, SBuf_getStr(class_buf) );
+		fprintf( (isMember?struct_header:source), "%s", allque);
 		fprintf( (isMember?struct_header:source), "\n");
 		if (isMember) { isMember = FALSE; }
 	}
 	;  {
 		/* Class Member */
 		RBuf_enque(queue, yytext, yyleng, T_SEMICOLON);
-		fprintf(struct_header, "%s", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
+	    RBuf_allDeque(queue, allque, SBuf_getStr(class_buf));
+		fprintf(struct_header, "%s", allque );
 		isMember = TRUE;
 	}
 	
@@ -120,7 +132,8 @@
 		/* TODO : bad case : struct member initialize */
 		if (isVerbose) printf("error:struct member initialize\n");
 		/* Class Member */
-		fprintf(struct_header, "%s;", RBuf_allque(queue, allque, SBuf_getStr(class_buf)) );
+	    RBuf_allDeque( queue, allque, SBuf_getStr(class_buf) );
+		fprintf(struct_header, "%s;", allque );
 		isMember = TRUE;
 	}
 	.  { RBuf_enque(queue, yytext, yyleng, T_NON); }
