@@ -1,5 +1,16 @@
+%{
+    void check_arg_comma() {
+        if (arg_comma) {
+            RBuf_enque(queue, ",", 1, T_COMMA);
+            RBuf_enque(queue, " ", 1, T_WSPACE);
+            arg_comma=FALSE;
+        }
+    }
+%}
+
 <METHOD_SCOPE>{
 	{NUMBER} {
+	    check_arg_comma();
 	    RBuf_enque(queue, yytext, yyleng, T_NUMBER);
 		fprintf( source, "%s", RBuf_allDeque(queue, allque, SBuf_getStr(class_buf)) );
 	}
@@ -27,6 +38,7 @@
 	}
 
 	\( {
+	    check_arg_comma();
 		boolean isMethod = RBuf_back_retype(queue, T_OBJECT, T_METHOD);
 		RBuf_enque( queue, yytext, yyleng, T_NON);
 		if (isMethod) {
@@ -46,10 +58,7 @@
 	}
 
 	{OBJECT} {
-		if (arg_comma) {
-			RBuf_enque(queue, ", ", 2, T_NON);
-			arg_comma=FALSE;
-		}
+	    check_arg_comma();
 		fprintf( source, "%s", RBuf_allDeque(queue, allque, SBuf_getStr(class_buf)) );
 		RBuf_enque(queue, &(yytext[1]), yyleng-1, T_OBJECT);
 	}
@@ -62,11 +71,7 @@
 		}
 	}
 	{WORD}   {
-		if (arg_comma) {
-			RBuf_enque(queue, ",", 1, T_COMMA);
-			RBuf_enque(queue, " ", 1, T_WSPACE);
-			arg_comma=FALSE;
-		}
+	    check_arg_comma();
 		RBuf_enque(queue, yytext, yyleng, T_WORD);
 	}
 	{WSPACE} {
@@ -97,6 +102,7 @@
 		fprintf( source, "%s", RBuf_allDeque(queue, allque, SBuf_getStr(class_buf)) );
 	}
 	[\+\-\=\*\/:,<>~&?|!%]  {
+	    check_arg_comma();
 	    RBuf_enque(queue, yytext, yyleng, T_NON);
 		fprintf( source, "%s", RBuf_allDeque(queue, allque, SBuf_getStr(class_buf)) );
 	}

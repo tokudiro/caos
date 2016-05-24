@@ -1,6 +1,6 @@
 #struct $TEST_TYPE_STRUCT
-int a;
-int b;
+int a; // a
+int b; /*+<b */
 
 #+int func()
 {

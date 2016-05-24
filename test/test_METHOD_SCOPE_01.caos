@@ -32,6 +32,16 @@ int a;
 	@a();
 }
 
+#+int called_func(int z){
+}
+
+#+void call_func(){
+    @called_func(0);     /* arg num */
+    @called_func(-1);    /* arg - */
+    @called_func((1+2)); /* arg ( */
+    @called_func(@a);    /* arg object */
+}
+
 #endclass
 
 int main(){

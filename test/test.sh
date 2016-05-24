@@ -16,6 +16,6 @@ gcc test_METHOD_DEFINE_01.c -o test_METHOD_DEFINE_01
 gcc test_METHOD_DEFINE_02.c -o test_METHOD_DEFINE_02
 ./test_METHOD_DEFINE_02
 
-../caos -LVp test_TYPE_STRUCT.caos
+../caos -Lp test_TYPE_STRUCT.caos
 gcc test_TYPE_STRUCT.c -o test_TYPE_STRUCT
 ./test_TYPE_STRUCT
