@@ -54,6 +54,7 @@ static void outputHELP(){
 	printf("L : LINENO OFF\n");
 	printf("S : self object\n");
 	printf("C : replace to old style comment\n");
+    printf("k : change thispointer string\n");
 }
 
 extern char	*optarg;
