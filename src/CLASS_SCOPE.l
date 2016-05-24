@@ -56,7 +56,7 @@
 	}
 	
 	\{ {
-		char* method = RBuf_allDeque(queue, allque, SBuf_getStr(class_buf));
+		char* method = RBuf_allDeque(queue, allque);
 		if (strlen(method) != 0) {
 			fprintf( public_header, "%s;\n", method );
 		}
@@ -92,7 +92,7 @@
 	{COMMENTS} {
         if (RBuf_isWSPACE)
         {
-            RBuf_allDeque( queue, allque, SBuf_getStr(class_buf) );
+            RBuf_allDeque( queue, allque);
             fprintf( (isMember?struct_header:source), "%s", allque);
         }
         fprintf( (isMember?struct_header:source), "/*");
@@ -101,7 +101,7 @@
 	{COMMENT}  {
         if (RBuf_isWSPACE)
         {
-            RBuf_allDeque( queue, allque, SBuf_getStr(class_buf) );
+            RBuf_allDeque( queue, allque);
             fprintf( (isMember?struct_header:source), "%s", allque);
         }
 		if (isOldComment) {
@@ -115,7 +115,7 @@
 		BEGIN(CLASS_SCOPE_CS);
     }
 	\n {
-	    RBuf_allDeque( queue, allque, SBuf_getStr(class_buf) );
+	    RBuf_allDeque( queue, allque);
 		fprintf( (isMember?struct_header:source), "%s", allque);
 		fprintf( (isMember?struct_header:source), "\n");
 		if (isMember) { isMember = FALSE; }
@@ -123,7 +123,7 @@
 	;  {
 		/* Class Member */
 		RBuf_enque(queue, yytext, yyleng, T_SEMICOLON);
-	    RBuf_allDeque(queue, allque, SBuf_getStr(class_buf));
+	    RBuf_allDeque(queue, allque);
 		fprintf(struct_header, "%s", allque );
 		isMember = TRUE;
 	}
@@ -132,7 +132,7 @@
 		/* TODO : bad case : struct member initialize */
 		if (isVerbose) printf("error:struct member initialize\n");
 		/* Class Member */
-	    RBuf_allDeque( queue, allque, SBuf_getStr(class_buf) );
+	    RBuf_allDeque( queue, allque);
 		fprintf(struct_header, "%s;", allque );
 		isMember = TRUE;
 	}

@@ -43,6 +43,7 @@
 <CLASS_DEFINE>{
 	{WORD}  {
 		SBuf_setBuf( class_buf, yytext, yyleng);
+	    RBuf_setClass(queue, SBuf_getStr(class_buf));
 		defineClassInSource();
 		defineClassInHeader();
 	    if (isVerbose) printf("BEGIN <CLASS_SCOPE>\n");
@@ -51,6 +52,7 @@
 	
 	{CLASS}  {
 		SBuf_setBuf( class_buf, &(yytext[1]), yyleng-1);
+	    RBuf_setClass(queue, SBuf_getStr(class_buf));
 		defineClassInSource();
 		defineClassInHeader();
 	    if (isVerbose) printf("BEGIN <CLASS_SCOPE>\n");

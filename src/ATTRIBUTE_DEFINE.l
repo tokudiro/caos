@@ -5,7 +5,7 @@
 		if (0 != asterisk) fprintf(public_header, "*");
 		fprintf(public_header, " %s_get_%s(", SBuf_getStr(class_buf), member);
 		if (isThisPointer){
-			fprintf(public_header, "const %s* this", SBuf_getStr(class_buf) );
+			fprintf(public_header, "const %s* %s", SBuf_getStr(class_buf), SBuf_getStr(thispointer_buf) );
 		}else{
 			fprintf(public_header, "%s self", SBuf_getStr(class_buf) );
 		}
@@ -18,13 +18,13 @@
 		if (0 != asterisk) fprintf(source, "*");
 		fprintf(source, " %s_get_%s(", SBuf_getStr(class_buf), member);
 		if (isThisPointer){
-			fprintf(source, "const %s* this", SBuf_getStr(class_buf) );
+			fprintf(source, "const %s* %s", SBuf_getStr(class_buf), SBuf_getStr(thispointer_buf) );
 		}else{
 			fprintf(source, "%s self", SBuf_getStr(class_buf) );
 		}
 		fprintf(source, ") { return ");
 		if (isThisPointer){
-			fprintf(source, "this->%s", member );
+			fprintf(source, "%s->%s", SBuf_getStr(thispointer_buf), member );
 		}else{
 			fprintf(source, "self->%s", member );
 		}
@@ -36,7 +36,7 @@
 		fprintf(public_header, "void");
 		fprintf(public_header, " %s_set_%s(", SBuf_getStr(class_buf), member);
 		if (isThisPointer){
-			fprintf(public_header, "%s* this", SBuf_getStr(class_buf) );
+			fprintf(public_header, "%s* %s", SBuf_getStr(class_buf), SBuf_getStr(thispointer_buf) );
 		}else{
 			fprintf(public_header, "%s self", SBuf_getStr(class_buf) );
 		}
@@ -51,7 +51,7 @@
 		fprintf(source, "void");
 		fprintf(source, " %s_set_%s(", SBuf_getStr(class_buf), member);
 		if (isThisPointer){
-			fprintf(source, "%s* this", SBuf_getStr(class_buf) );
+			fprintf(source, "%s* %s", SBuf_getStr(class_buf), SBuf_getStr(thispointer_buf) );
 		}else{
 			fprintf(source, "%s self", SBuf_getStr(class_buf) );
 		}
@@ -60,7 +60,7 @@
 		if (0 != asterisk) fprintf(source, "*");
 		fprintf(source, " %s) { ", member);
 		if (isThisPointer){
-			fprintf(source, "this->%s = %s", member, member );
+			fprintf(source, "%s->%s = %s", SBuf_getStr(thispointer_buf), member, member );
 		}else{
 			fprintf(source, "self->%s = %s", member, member );
 		}
@@ -96,7 +96,7 @@
 	{COMMENTS} {
         if (RBuf_isWSPACE)
         {
-            RBuf_allDeque( queue, allque, SBuf_getStr(class_buf) );
+            RBuf_allDeque( queue, allque);
             fprintf( (isMember?struct_header:source), "%s", allque);
         }
         fprintf( struct_header, "/*");
@@ -105,7 +105,7 @@
 	{COMMENT}  {
         if (RBuf_isWSPACE)
         {
-            RBuf_allDeque( queue, allque, SBuf_getStr(class_buf) );
+            RBuf_allDeque( queue, allque);
             fprintf( (isMember?struct_header:source), "%s", allque);
         }
 		if (isOldComment) {
@@ -116,7 +116,7 @@
 		BEGIN(ATTRIBUTE_DEFINE_CSS);
 	}
 	\n {
-		fprintf( struct_header, "%s", RBuf_allDeque(queue, allque, SBuf_getStr(class_buf)) );
+		fprintf( struct_header, "%s", RBuf_allDeque(queue, allque) );
 		fprintf( struct_header, "\n");
 		if (isMember) { isMember = FALSE; }
         if (isVerbose) printf("BEGIN <CLASS_SCOPE>\n");
@@ -143,7 +143,7 @@
 			getterInSource((0!=clazz?clazz:type), asterisk, member);
 			setterInSource((0!=clazz?clazz:type), asterisk, member);
 		}
-		fprintf(struct_header, "%s", RBuf_allDeque(queue, allque, SBuf_getStr(class_buf)) );
+		fprintf(struct_header, "%s", RBuf_allDeque(queue, allque) );
 	}
 	\*  { RBuf_enque(queue, yytext, yyleng, T_ASTERISK); }
 	.  { RBuf_enque(queue, yytext, yyleng, T_NON); }

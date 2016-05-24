@@ -23,6 +23,7 @@ FILE* define_header;
 FILE* struct_header;
 
 SBuf* class_buf;
+SBuf* thispointer_buf;
 
 extern RBuf* queue;
 extern char filename[];
@@ -57,10 +58,16 @@ static void outputHELP(){
 
 extern char	*optarg;
 
+static const char default_thispointer_str[] = "this";
+
 int main(int argc, char** argv)
 {
-	int c;
-	while( (c = getopt(argc, argv, "hVLSCo:p")) !=-1 ) {
+	SBuf thispointer_buf_impl;
+	thispointer_buf = &thispointer_buf_impl;
+	SBuf_init(thispointer_buf);
+
+    int c;
+	while( (c = getopt(argc, argv, "hVLSCo:pk:")) !=-1 ) {
 		switch(c){
 		case 'h':
 		    outputHELP();
@@ -84,14 +91,21 @@ int main(int argc, char** argv)
 		case 'p':
 		    isNonPrivateHeader = TRUE;
 		    break;
+		case 'k':
+		    SBuf_setBuf(thispointer_buf, optarg, strlen(optarg));
+		    break;
 		default:
 			break;
 		}
 	}
 	
-	RBuf queue_impl;
+    if ( SBuf_getLen(thispointer_buf) == 0 ) {
+        SBuf_setBuf(thispointer_buf, default_thispointer_str, strlen(default_thispointer_str) );
+    }
+
+    RBuf queue_impl;
 	queue = &queue_impl;
-	RBuf_init(queue, isThisPointer, isVerbose);
+	RBuf_init(queue, SBuf_getStr(thispointer_buf), isVerbose);
 	
 	SBuf class_buf_impl;
 	class_buf = &class_buf_impl;
@@ -113,6 +127,7 @@ int main(int argc, char** argv)
 		printf("file: %s\n", input_filename);
     	printf("------------------------------------------------------\n");
 		printf("Verbose Mode\n\n");
+        printf("thispointer name : %s\n", thispointer_buf);
 	}
 
 	*source_name = 0;

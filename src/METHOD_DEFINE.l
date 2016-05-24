@@ -14,7 +14,7 @@
 	}
 
 	\{ {
-		RBuf_allDeque(queue, allque, SBuf_getStr(class_buf));
+		RBuf_allDeque(queue, allque);
         // source
 	    fprintf( source, "%s{", allque );
 	    // header
@@ -45,7 +45,7 @@
     			if (isThisPointer){
     				RBuf_enque( queue, "*", 1, T_ASTERISK);
     			    RBuf_enque( queue, " ", 1, T_WSPACE);
-    				RBuf_enque( queue, "this", 4, T_KEYWORD);
+    				RBuf_enque( queue, SBuf_getStr(thispointer_buf), SBuf_getLen(thispointer_buf), T_KEYWORD);
     			}else{
     			    RBuf_enque( queue, " ", 1, T_WSPACE);
     				RBuf_enque( queue, "self", 4, T_KEYWORD);

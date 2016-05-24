@@ -43,11 +43,21 @@ char* RBufElement_toString(char* tostring, const char* str, const buftype type) 
 * @brief initialize
 * @memberof RBuf
 */
-void RBuf_init(RBuf* this, const boolean isThisPointer, boolean isVerbose){
+void RBuf_init(RBuf* this, const char* thispointer_str, boolean isVerbose){
     this->first = 0;
     this->last = 0;
-    this->isThisPointer = isThisPointer;
+    this->thispointer_str[0] = 0;
+    strcat( this->thispointer_str, thispointer_str);
     this->isVerbose = isVerbose;
+}
+
+/**
+* @brief set class string
+* @memberof RBuf
+*/
+void RBuf_setClass(RBuf* this, const char* thisclass_str){
+    this->thisclass_str[0] = 0;
+    strcat( this->thisclass_str, thisclass_str);
 }
 
 /**
@@ -86,7 +96,7 @@ boolean RBuf_isEmpty(const RBuf* this){
     return (this->first==this->last?TRUE:FALSE);
 }
 
-char* RBuf_allDeque(RBuf* this, char* buf, const char* class_buf_str) {
+char* RBuf_allDeque(RBuf* this, char* buf) {
     buftype type;
     char* str;
     buf[0] = 0;
@@ -98,14 +108,11 @@ char* RBuf_allDeque(RBuf* this, char* buf, const char* class_buf_str) {
         
         switch(type) {
         case T_OBJECT:
-            if (this->isThisPointer) {
-                strcat(buf, "this->");
-            }else{
-                strcat(buf, "self->");
-            }
+            strcat(buf, this->thispointer_str);
+            strcat(buf, "->");
             break;
         case T_METHOD:
-            strcat(buf, class_buf_str);
+            strcat(buf, this->thisclass_str);
             strcat(buf, "_");
             break;
         }
