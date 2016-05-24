@@ -159,7 +159,6 @@ int main(int argc, char** argv)
     struct_header = define_header;
     
     char guardname[MAX_TEXT] = {0};
-    strcat(guardname, "__");
     SLib_toupper(guardname, filename);
     
 	fprintf( public_header, "#ifndef __%s_H__\n", guardname );

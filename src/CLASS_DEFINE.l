@@ -23,7 +23,11 @@
 	{
 		fprintf( public_header, "/* class %s */\n", SBuf_getStr(class_buf) );
 		if (isLineNo) fprintf(public_header, "#line %d \"%s\"\n", yylineno, input_filename);
-		fprintf( public_header, "typedef struct %s_struct", SBuf_getStr(class_buf) );
+	    if (classType == TYPE_STRUCT) {
+            fprintf( public_header, "typedef struct %s", SBuf_getStr(class_buf) );
+        } else {
+            fprintf( public_header, "typedef struct %s_struct", SBuf_getStr(class_buf) );
+	    }
 		if (!isThisPointer) fprintf( public_header, "*");
 		fprintf( public_header, " %s;\n", SBuf_getStr(class_buf) );
 		if (classType == TYPE_SINGLETON) {
@@ -36,7 +40,11 @@
             fprintf( define_header, "#include \"%s\"\n", public_header_name );
 	    }
 		if (isLineNo) fprintf(struct_header, "#line %d \"%s\"\n", yylineno, input_filename);
-		fprintf( struct_header, "struct %s_struct{\n", SBuf_getStr(class_buf) );
+	    if (classType == TYPE_STRUCT) {
+            fprintf( struct_header, "struct %s{\n", SBuf_getStr(class_buf) );
+        }else{
+            fprintf( struct_header, "struct %s_struct{\n", SBuf_getStr(class_buf) );
+        }
 	}
 %}
 
