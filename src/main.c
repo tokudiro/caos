@@ -39,6 +39,7 @@ extern char* input_filename;
 extern boolean isOldComment;
 extern classtype classType;
 extern boolean isNonPrivateHeader;
+extern boolean isOutputHeader;
 
 extern int countPublicMethod;
 extern int countPrivateMethod;

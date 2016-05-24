@@ -1,29 +1,29 @@
 <INITIAL>{
 	{CLASS}  {
-		fprintf(source, "%s", &(yytext[1]));
-		if (isThisPointer) fprintf(source, "*");
+		fprintf((isOutputHeader?public_header:source), "%s", &(yytext[1]));
+		if (isThisPointer) fprintf((isOutputHeader?public_header:source), "*");
 	}
 
-	{NUMBER} { fprintf(source, "%s", yytext); }
+	{NUMBER} { fprintf((isOutputHeader?public_header:source), "%s", yytext); }
 
-	{OBJECT} { fprintf(source, "%s", &(yytext[1])); }
-	{WORD}   { fprintf(source, "%s", yytext); }
-	{WSPACE} { fprintf(source, "%s", yytext); }
-	{COMMENTS} { fprintf(source, "/*"); BEGIN(INITIAL_CSA); }
+	{OBJECT} { fprintf((isOutputHeader?public_header:source), "%s", &(yytext[1])); }
+	{WORD}   { fprintf((isOutputHeader?public_header:source), "%s", yytext); }
+	{WSPACE} { fprintf((isOutputHeader?public_header:source), "%s", yytext); }
+	{COMMENTS} { fprintf((isOutputHeader?public_header:source), "/*"); BEGIN(INITIAL_CSA); }
 	{COMMENT}  {
 		if (isOldComment) {
-			fprintf(source, "/*"); BEGIN(INITIAL_CSS);
+			fprintf((isOutputHeader?public_header:source), "/*"); BEGIN(INITIAL_CSS);
 		} else {
-			fprintf(source, "//"); BEGIN(INITIAL_CSS);
+			fprintf((isOutputHeader?public_header:source), "//"); BEGIN(INITIAL_CSS);
 		}
 	}
     {DIRECTIVE_COMMENT} {
 		BEGIN(INITIAL_CS);
     }
-	\"  { fprintf( source, "\""); BEGIN(INITIAL_ST); }
+	\"  { fprintf((isOutputHeader?public_header:source), "\""); BEGIN(INITIAL_ST); }
   
 	{DIRECTIVE_IMPORT} {
-		fprintf(source, "#include ");
+		fprintf((isOutputHeader?public_header:source), "#include ");
 		fprintf(define_header, "#include ");
 		BEGIN(IMPORT);
 	}
@@ -31,6 +31,14 @@
 	    if (isVerbose) printf("BEGIN <CLASS_DEFINE>\n");
 	    BEGIN(CLASS_DEFINE);
 	}
+    {DIRECTIVE_HEADER} {
+        if (isVerbose) printf("output header start\n");
+        isOutputHeader = TRUE;
+    }
+    {DIRECTIVE_ENDHEADER} {
+        if (isVerbose) printf("output header end\n");
+        isOutputHeader = FALSE;
+    }
 	{DIRECTIVE_SINGLETON} {
 	    if (isVerbose) printf("#directive singleton\n");
 		classType = TYPE_SINGLETON;
@@ -45,32 +53,32 @@
 		BEGIN(CLASS_DEFINE);
 	}
 	
-	\n { fprintf(source, "\n"); }
-	.  { fprintf(source, "%s", yytext); }
+	\n { fprintf((isOutputHeader?public_header:source), "\n"); }
+	.  { fprintf((isOutputHeader?public_header:source), "%s", yytext); }
 }
 
 <INITIAL_CSA>{
-	{COMMENTE} { fprintf(source, "*/"); BEGIN(INITIAL); }
-	\n { fprintf(source, "\n"); }
-	. { fprintf(source, "%s", yytext); }
+	{COMMENTE} { fprintf((isOutputHeader?public_header:source), "*/"); BEGIN(INITIAL); }
+	\n { fprintf((isOutputHeader?public_header:source), "\n"); }
+	. { fprintf((isOutputHeader?public_header:source), "%s", yytext); }
 }
 
 <INITIAL_CSS>{
 	\n {
 		if (isOldComment) {
-			fprintf(source, "*/\n"); BEGIN(INITIAL);
+			fprintf((isOutputHeader?public_header:source), "*/\n"); BEGIN(INITIAL);
 		} else {
-			fprintf(source, "\n"); BEGIN(INITIAL);
+			fprintf((isOutputHeader?public_header:source), "\n"); BEGIN(INITIAL);
 		}
 	}
-	. { fprintf(source, "%s", yytext); }
+	. { fprintf((isOutputHeader?public_header:source), "%s", yytext); }
 }
 
 <INITIAL_ST>{
-	\\\" { fprintf( source, "\\\""); }
-	\" { fprintf( source, "\""); BEGIN(INITIAL); }
-	\n { fprintf(source, "\n"); }
-	. { fprintf( source, "%s", yytext); }
+	\\\" { fprintf((isOutputHeader?public_header:source), "\\\""); }
+	\" { fprintf((isOutputHeader?public_header:source), "\""); BEGIN(INITIAL); }
+	\n { fprintf((isOutputHeader?public_header:source), "\n"); }
+	. { fprintf((isOutputHeader?public_header:source), "%s", yytext); }
 }
 
 <INITIAL_CS>{

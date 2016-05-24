@@ -1,0 +1,10 @@
+#header
+#define MAX (10)
+#endheader
+
+#class $TEST_INITIAL_01
+    int buf[MAX];
+
+#endclass
+
+int main(){}
