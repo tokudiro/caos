@@ -21,7 +21,6 @@
 
 	void defineClassInHeader()
 	{
-		fprintf( public_header, "/* class %s */\n", SBuf_getStr(class_buf) );
 		if (isLineNo) fprintf(public_header, "#line %d \"%s\"\n", yylineno, input_filename);
 	    if (classType == TYPE_STRUCT) {
             fprintf( public_header, "typedef struct %s", SBuf_getStr(class_buf) );
