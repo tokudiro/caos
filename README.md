@@ -84,7 +84,6 @@ int main(){
 ```c
 #ifndef __SAMPLECLASS_H__
 #define __SAMPLECLASS_H__
-/* class SampleClass */
 typedef struct SampleClass_struct SampleClass;
 int SampleClass_get_publicMember(const SampleClass* this);
 void SampleClass_set_publicMember(SampleClass* this, int publicMember);
@@ -96,7 +95,6 @@ int SampleClass_publicMethod(SampleClass* this);
 
 ```c
 #include "SampleClass.h"
-/* class SampleClass */
 struct SampleClass_struct{
 int publicMember;
 int privateMember;
