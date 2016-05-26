@@ -19,16 +19,16 @@ build environment : gcc + flex
 #include <stdio.h>
 #class $SampleClass
 
-#@ int public_member;
-int private_member;
+#@ int publicMember;
+int privateMember;
 
-#+int public_method(void){
-    @private_method();
-    return @private_member;
+#+int publicMethod(void){
+    @privateMethod();
+    return @privateMember;
 }
 
-#-void private_method(){
-    @private_member = 2 + @public_member;
+#-void privateMethod(){
+    @privateMember = 2 + @publicMember;
     return;
 }
 
@@ -38,9 +38,9 @@ SampleClass obj_impl;
 
 int main(){
     $SampleClass obj = &obj_impl;
-    SampleClass_set_public_member(obj, 1);
-    printf("%d\n", SampleClass_get_public_member(obj) );
-    printf("%d\n", SampleClass_public_method(obj) );
+    SampleClass_set_publicMember(obj, 1);
+    printf("%d\n", SampleClass_get_publicMember(obj) );
+    printf("%d\n", SampleClass_publicMethod(obj) );
 }
 ```
 
@@ -55,18 +55,17 @@ int main(){
 
 #include "SampleClass_define.h"
 #include "SampleClass_private.h"
-/* class SampleClass */
 
-int SampleClass_get_public_member(const SampleClass* this) { return this->public_member; }
-void SampleClass_set_public_member(SampleClass* this, int public_member) { this->public_member = public_member; }
+int SampleClass_get_publicMember(const SampleClass* this) { return this->publicMember; }
+void SampleClass_set_publicMember(SampleClass* this, int publicMember) { this->publicMember = publicMember; }
 
-int SampleClass_public_method(SampleClass* this){
-    SampleClass_private_method(this);
-    return this->private_member;
+int SampleClass_publicMethod(SampleClass* this){
+    SampleClass_privateMethod(this);
+    return this->privateMember;
 }
 
-void SampleClass_private_method(SampleClass* this){
-    this->private_member = 2 + this->public_member;
+void SampleClass_privateMethod(SampleClass* this){
+    this->privateMember = 2 + this->publicMember;
     return;
 }
 
@@ -74,23 +73,23 @@ SampleClass obj_impl;
 
 int main(){
     SampleClass* obj = &obj_impl;
-    SampleClass_set_public_member(obj, 1);
-    printf("%d\n", SampleClass_get_public_member(obj) );
-    printf("%d\n", SampleClass_public_method(obj) );
+    SampleClass_set_publicMember(obj, 1);
+    printf("%d\n", SampleClass_get_publicMember(obj) );
+    printf("%d\n", SampleClass_publicMethod(obj) );
 }
 ```
 
 * SampleClass.h
 
 ```c
-#ifndef __SampleClass_H__
-#define __SampleClass_H__
+#ifndef __SAMPLECLASS_H__
+#define __SAMPLECLASS_H__
 /* class SampleClass */
 typedef struct SampleClass_struct SampleClass;
-int SampleClass_get_public_member(const SampleClass* this);
-void SampleClass_set_public_member(SampleClass* this, int public_member);
-int SampleClass_public_method(SampleClass* this);
-#endif /* __SampleClass_H__ */
+int SampleClass_get_publicMember(const SampleClass* this);
+void SampleClass_set_publicMember(SampleClass* this, int publicMember);
+int SampleClass_publicMethod(SampleClass* this);
+#endif /* __SAMPLECLASS_H__ */
 ```
 
 * SampleClass_define.h
@@ -99,13 +98,13 @@ int SampleClass_public_method(SampleClass* this);
 #include "SampleClass.h"
 /* class SampleClass */
 struct SampleClass_struct{
-int public_member;
-int private_member;
+int publicMember;
+int privateMember;
 };
 ```
 
 * SampleClass_private.h
 
 ```c
-static void SampleClass_private_method(SampleClass* this);
+static void SampleClass_privateMethod(SampleClass* this);
 ```
