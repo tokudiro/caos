@@ -14,6 +14,7 @@
 		if (isLineNo) fprintf(public_header, "#line %d \"%s\"\n", yylineno, input_filename);
 	    countPublicMethod++;
 		methodVisibility = VISIBILITY_PUBLIC;
+	    methodMutability = MUTABILITY_MUTABLE;
 	    methodScope = SCOPE_OBJECT;
 	    if (isVerbose) printf("BEGIN <METHOD_DEFINE>\n");
 		BEGIN(METHOD_DEFINE);
@@ -27,6 +28,18 @@
         }
         countPrivateMethod++;
 		methodVisibility = VISIBILITY_PRIVATE;
+	    methodMutability = MUTABILITY_MUTABLE;
+	    methodScope = SCOPE_OBJECT;
+	    if (isVerbose) printf("BEGIN <METHOD_DEFINE>\n");
+		BEGIN(METHOD_DEFINE);
+	}
+	{DIRECTIVE_PUBLIC_CONST_METHOD} {
+		if (isVerbose) printf("#directive public const method\n");
+		if (isLineNo) fprintf(source, "#line %d \"%s\"\n", yylineno, input_filename);
+		if (isLineNo) fprintf(public_header, "#line %d \"%s\"\n", yylineno, input_filename);
+	    countPublicMethod++;
+		methodVisibility = VISIBILITY_PUBLIC;
+	    methodMutability = MUTABILITY_IMMUTABLE;
 	    methodScope = SCOPE_OBJECT;
 	    if (isVerbose) printf("BEGIN <METHOD_DEFINE>\n");
 		BEGIN(METHOD_DEFINE);
@@ -45,6 +58,7 @@
         }
 	    countClassMethod++;
 		methodVisibility = VISIBILITY_PUBLIC;
+	    methodMutability = MUTABILITY_MUTABLE;
 	    methodScope = SCOPE_CLASS;
 	    if (isVerbose) printf("BEGIN <METHOD_DEFINE>\n");
 		BEGIN(METHOD_DEFINE);

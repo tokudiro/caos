@@ -3,6 +3,9 @@
 #+ void publicMethod(){
 }
 
+#()+ void publicConstMethod(){
+}
+
 #- void privateMethod(){
 }
 
@@ -13,6 +16,7 @@
 
 int main(){
     TEST_METHOD_DEFINE_01_publicMethod(0);
+    TEST_METHOD_DEFINE_01_publicConstMethod(0);
     TEST_METHOD_DEFINE_01_privateMethod(0);
     TEST_METHOD_DEFINE_01_classMethod();
 }

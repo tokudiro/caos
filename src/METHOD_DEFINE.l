@@ -41,12 +41,17 @@
 		RBuf_enque( queue, yytext, yyleng, T_NON);
 		if (isMethod) {
 		    if (methodScope == SCOPE_OBJECT){
-    			RBuf_enque( queue, SBuf_getStr(class_buf), SBuf_getLen(class_buf), T_CLASS);
     			if (isThisPointer){
+    			    if(methodMutability == MUTABILITY_IMMUTABLE) {
+    			        RBuf_enque( queue, "const", 5, T_KEYWORD);
+    			        RBuf_enque( queue, " ", 1, T_WSPACE);
+    			    }
+        			RBuf_enque( queue, SBuf_getStr(class_buf), SBuf_getLen(class_buf), T_CLASS);
     				RBuf_enque( queue, "*", 1, T_ASTERISK);
     			    RBuf_enque( queue, " ", 1, T_WSPACE);
     				RBuf_enque( queue, SBuf_getStr(thispointer_buf), SBuf_getLen(thispointer_buf), T_KEYWORD);
     			}else{
+        			RBuf_enque( queue, SBuf_getStr(class_buf), SBuf_getLen(class_buf), T_CLASS);
     			    RBuf_enque( queue, " ", 1, T_WSPACE);
     				RBuf_enque( queue, "self", 4, T_KEYWORD);
     			}
@@ -66,7 +71,8 @@
 			/* nothing */
 		} else {
 			if (arg_comma) {
-				RBuf_enque(queue, ", ", 2, T_NON);
+    			RBuf_enque(queue, ",", 1, T_COMMA);
+    			RBuf_enque(queue, " ", 1, T_WSPACE);
 				arg_comma=FALSE;
 			}
 			RBuf_enque(queue, yytext, yyleng, T_WORD);

@@ -23,3 +23,8 @@ typedef enum _classtype {
 	TYPE_SINGLETON, 
 	TYPE_STRUCT
 } classtype;
+
+typedef enum _mutability {
+    MUTABILITY_MUTABLE,
+    MUTABILITY_IMMUTABLE
+} mutability;

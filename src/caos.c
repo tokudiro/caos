@@ -37,6 +37,7 @@ boolean isOutputHeader = FALSE;
 
 visibility methodVisibility = VISIBILITY_NONE;
 scope methodScope = SCOPE_OBJECT;
+mutability methodMutability = MUTABILITY_MUTABLE;
 classtype classType = TYPE_CLASS;
 
 int countPublicMethod = 0;
