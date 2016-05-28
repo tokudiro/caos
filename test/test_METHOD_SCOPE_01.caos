@@ -1,3 +1,5 @@
+#include<stdio.h>
+
 int func(int a, int b){return a+b;}
 
 #class $TEST_METHOD_SCOPE_01
@@ -40,6 +42,11 @@ int a;
     @called_func(-1);    /* arg - */
     @called_func((1+2)); /* arg ( */
     @called_func(@a);    /* arg object */
+}
+
+#+void print_func(){
+    printf("print a=%d\n", @a);
+    printf("\"");
 }
 
 #endclass

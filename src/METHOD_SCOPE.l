@@ -92,7 +92,7 @@
     {DIRECTIVE_COMMENT} {
 		BEGIN(METHOD_SCOPE_CS);
     }
-	\"  { fprintf( source, "\""); BEGIN(METHOD_SCOPE_ST); }
+	\"  { RBuf_enque(queue, yytext, yyleng, T_NON); BEGIN(METHOD_SCOPE_ST); }
 	{DOT} {
 		RBuf_enque(queue, yytext, yyleng, T_DOT);
 	}
@@ -127,10 +127,11 @@
 }
 
 <METHOD_SCOPE_ST>{
-	\\\" { fprintf( source, "\\\""); }
-	\" { fprintf( source, "\""); BEGIN(METHOD_SCOPE); }
-	\n { fprintf( source, "\n"); }
-	. { fprintf( source, "%s", yytext); }
+	\\\" { RBuf_enque(queue, yytext, yyleng, T_NON); }
+    {WORD} { RBuf_enque(queue, yytext, yyleng, T_NON); }
+	\"   { RBuf_enque(queue, yytext, yyleng, T_NON); BEGIN(METHOD_SCOPE); }
+	\n   { RBuf_enque(queue, yytext, yyleng, T_NON); }
+	. { RBuf_enque(queue, yytext, yyleng, T_NON); }
 }
 
 <METHOD_SCOPE_CS>{
