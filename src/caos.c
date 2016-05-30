@@ -33,6 +33,7 @@ boolean isThisPointer = TRUE;
 boolean isVerbose = FALSE;
 boolean isOldComment = FALSE;
 boolean isNonPrivateHeader = FALSE;
+boolean isNonDefineHeader = FALSE;
 boolean isOutputHeader = FALSE;
 
 visibility methodVisibility = VISIBILITY_NONE;

@@ -39,6 +39,7 @@ extern char* input_filename;
 extern boolean isOldComment;
 extern classtype classType;
 extern boolean isNonPrivateHeader;
+extern boolean isNonDefineHeader;
 extern boolean isOutputHeader;
 
 extern int countPublicMethod;
@@ -69,7 +70,7 @@ int main(int argc, char** argv)
 	SBuf_init(thispointer_buf);
 
     int c;
-	while( (c = getopt(argc, argv, "hVLSCo:pk:")) !=-1 ) {
+	while( (c = getopt(argc, argv, "hVLSCo:pdk:")) !=-1 ) {
 		switch(c){
 		case 'h':
 		    outputHELP();
@@ -92,6 +93,9 @@ int main(int argc, char** argv)
 		    break;
 		case 'p':
 		    isNonPrivateHeader = TRUE;
+		    break;
+		case 'd':
+		    isNonDefineHeader = TRUE;
 		    break;
 		case 'k':
 		    SBuf_setBuf(thispointer_buf, optarg, strlen(optarg));
@@ -150,14 +154,21 @@ int main(int argc, char** argv)
     if (!isNonPrivateHeader) {
     	private_header = fopen(private_header_name, "w");
     	if (private_header == 0) {printf("private header file error.");exit(-1);}
+    } else {
+        private_header = 0;
     }
 
 	*define_header_name = 0;
 	strcat(define_header_name, filename);
 	strcat(define_header_name, "_define.h");
-	define_header = fopen(define_header_name, "w");
-	if (define_header == 0) {printf("define header file error.");exit(-1);}
-    struct_header = define_header;
+    if (!isNonDefineHeader) {
+	    define_header = fopen(define_header_name, "w");
+	    if (define_header == 0) {printf("define header file error.");exit(-1);}
+        struct_header = define_header;
+    } else {
+        define_header = 0;
+        struct_header = 0;
+    }
     
     char guardname[MAX_TEXT] = {0};
     SLib_toupper(guardname, filename);
@@ -172,7 +183,9 @@ int main(int argc, char** argv)
     if (!isNonPrivateHeader) {
         fclose(private_header);
     }
-	fclose(define_header);
+    if (!isNonDefineHeader) {
+        fclose(define_header);
+    }
     struct_header = 0;
 
     if (isVerbose){

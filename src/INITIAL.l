@@ -24,7 +24,9 @@
   
 	{DIRECTIVE_IMPORT} {
 		fprintf((isOutputHeader?public_header:source), "#include ");
-		fprintf(define_header, "#include ");
+        if (!isNonPrivateHeader) {
+    		fprintf(define_header, "#include ");
+        }
 		BEGIN(IMPORT);
 	}
 	{DIRECTIVE_CLASS} {
@@ -48,7 +50,12 @@
 	{DIRECTIVE_STRUCT} {
 	    if (isVerbose) printf("#directive struct\n");
 		classType = TYPE_STRUCT;
-	    //struct_header = public_header;
+	    if (isVerbose) printf("BEGIN <CLASS_DEFINE>\n");
+		BEGIN(CLASS_DEFINE);
+	}
+	{DIRECTIVE_UTILITY} {
+	    if (isVerbose) printf("#directive utility\n");
+		classType = TYPE_UTILITY;
 	    if (isVerbose) printf("BEGIN <CLASS_DEFINE>\n");
 		BEGIN(CLASS_DEFINE);
 	}

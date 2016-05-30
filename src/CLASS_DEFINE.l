@@ -5,7 +5,11 @@
 	    if (classType == TYPE_STRUCT) {
     	    fprintf( source, "#include \"%s\"\n", public_header_name );
 	    } else {
-    	    fprintf( source, "#include \"%s\"\n", define_header_name );
+            if (!isNonDefineHeader) {
+        	    fprintf( source, "#include \"%s\"\n", define_header_name );
+            }else{
+        	    fprintf( source, "#include \"%s\"\n", public_header_name );
+            }
 	    }
         if (!isNonPrivateHeader) {
     		fprintf( source, "#include \"%s\"\n", private_header_name );
@@ -36,13 +40,23 @@
 		}
 
 	    if (classType != TYPE_STRUCT) {
-            fprintf( define_header, "#include \"%s\"\n", public_header_name );
+            if (!isNonPrivateHeader) {
+                fprintf( define_header, "#include \"%s\"\n", public_header_name );
+	        }
 	    }
-		if (isLineNo) fprintf(struct_header, "#line %d \"%s\"\n", yylineno, input_filename);
+	    if (isLineNo) {
+            if (!isNonDefineHeader) {
+                fprintf(struct_header, "#line %d \"%s\"\n", yylineno, input_filename);
+            }
+	    }
 	    if (classType == TYPE_STRUCT) {
-            fprintf( struct_header, "struct %s{\n", SBuf_getStr(class_buf) );
+            if (!isNonDefineHeader) {
+                fprintf( struct_header, "struct %s{\n", SBuf_getStr(class_buf) );
+            }
         }else{
-            fprintf( struct_header, "struct %s_struct{\n", SBuf_getStr(class_buf) );
+            if (!isNonDefineHeader) {
+                fprintf( struct_header, "struct %s_struct{\n", SBuf_getStr(class_buf) );
+            }
         }
 	}
 %}

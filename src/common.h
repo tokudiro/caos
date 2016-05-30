@@ -21,7 +21,8 @@ typedef enum _scope {
 typedef enum _classtype {
 	TYPE_CLASS, 
 	TYPE_SINGLETON, 
-	TYPE_STRUCT
+	TYPE_STRUCT,
+    TYPE_UTILITY
 } classtype;
 
 typedef enum _mutability {

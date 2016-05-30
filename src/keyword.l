@@ -10,9 +10,10 @@ FLOATE   [fF]
 
 DIRECTIVE_IMPORT    ^#import
 DIRECTIVE_CLASS     ^#class
-DIRECTIVE_ENDCLASS  ^#endclass
+DIRECTIVE_ENDCLASS  ^(#endclass|#endsingleton|#endstruct|#endutility)
 DIRECTIVE_SINGLETON ^#singleton
 DIRECTIVE_STRUCT    ^#struct
+DIRECTIVE_UTILITY   ^#utility
 
 DIRECTIVE_PUBLIC_METHOD    ^(#\+|#public)
 DIRECTIVE_PRIVATE_METHOD   ^(#-|#private)
