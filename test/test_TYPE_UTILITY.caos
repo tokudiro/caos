@@ -1,0 +1,11 @@
+#utility $TEST_TYPE_UTILITY
+
+#$int func()
+{
+    return 1;
+}
+
+#endclass
+
+int main(){
+}
