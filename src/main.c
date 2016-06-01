@@ -176,15 +176,29 @@ int main(int argc, char** argv)
 	fprintf( public_header, "#ifndef __%s_H__\n", guardname );
 	fprintf( public_header, "#define __%s_H__\n", guardname );
 	int ret = yylex();
+    
+    if (!isNonDefineHeader) {
+        fclose(define_header);
+    }
+    if (classType == TYPE_STRUCT) {
+        if (!isNonDefineHeader) {
+            define_header = fopen(define_header_name, "r");
+            if (define_header == 0) {printf("define header file error.");exit(-1);}
+            
+            char readline[MAX_TEXTLINE];
+            while (fgets(readline, MAX_TEXTLINE, define_header) != NULL) {
+                fprintf( public_header, "%s", readline );
+            }
+            fclose(define_header);
+            if (remove(define_header_name) != 0) {printf("define header file error.");exit(-1);}
+        }
+    }
 	fprintf( public_header, "#endif /* __%s_H__ */\n", guardname );
 
 	fclose(source);
 	fclose(public_header);
     if (!isNonPrivateHeader) {
         fclose(private_header);
-    }
-    if (!isNonDefineHeader) {
-        fclose(define_header);
     }
     struct_header = 0;
 

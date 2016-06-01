@@ -20,7 +20,7 @@ gcc test_METHOD_DEFINE_02.c -o test_METHOD_DEFINE_02
 gcc test_TYPE_STRUCT.c -o test_TYPE_STRUCT
 ./test_TYPE_STRUCT
 
-../caos -Ld test_TYPE_UTILITY.caos
+../caos -Ldp test_TYPE_UTILITY.caos
 gcc test_TYPE_UTILITY.c -o test_TYPE_UTILITY
 ./test_TYPE_UTILITY
 

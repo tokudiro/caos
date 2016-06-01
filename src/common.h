@@ -1,5 +1,6 @@
 #define MAX_TEXT (256)
 #define MAX_ARRAYSIZE (256)
+#define MAX_TEXTLINE (1024)
 
 #include "boolean.h"
 #include "buftype.h"

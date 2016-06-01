@@ -82,11 +82,6 @@
         if (!isNonDefineHeader) {
     		fprintf( struct_header, "};\n" );
 	    }
-	    if (classType == TYPE_STRUCT) {
-            if (!isNonDefineHeader) {
-        	    fprintf( public_header, "#include \"%s\"\n", define_header_name );
-            }
-	    }
 		SBuf_init(class_buf);
         if (isVerbose) printf("BEGIN <INITIAL>\n");
 		BEGIN(INITIAL);

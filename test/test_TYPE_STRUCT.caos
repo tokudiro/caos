@@ -7,7 +7,7 @@ int b; /*+<b */
     return @a+@b;
 }
 
-#endclass
+#endstruct
 
 int main(){
 }
