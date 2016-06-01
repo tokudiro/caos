@@ -6,6 +6,7 @@
     	    fprintf( source, "#include \"%s\"\n", public_header_name );
 	    } else {
             if (!isNonDefineHeader) {
+        	    fprintf( source, "#include \"%s\"\n", public_header_name );
         	    fprintf( source, "#include \"%s\"\n", define_header_name );
             }else{
         	    fprintf( source, "#include \"%s\"\n", public_header_name );
@@ -39,11 +40,11 @@
 			fprintf( public_header, " %s_getInstance();\n", SBuf_getStr(class_buf) );
 		}
 
-	    if (classType != TYPE_STRUCT) {
-            if (!isNonPrivateHeader) {
-                fprintf( define_header, "#include \"%s\"\n", public_header_name );
-	        }
-	    }
+	    //if (classType != TYPE_STRUCT) {
+        //    if (!isNonPrivateHeader) {
+        //        fprintf( define_header, "#include \"%s\"\n", public_header_name );
+	    //    }
+	    //}
 	    if (isLineNo) {
             if (!isNonDefineHeader) {
                 fprintf(struct_header, "#line %d \"%s\"\n", yylineno, input_filename);

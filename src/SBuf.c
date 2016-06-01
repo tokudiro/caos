@@ -6,8 +6,8 @@
 * @class SBuf
 * @brief String Buffer
 */
-#include "SBuf_define.h"
 #include "SBuf.h"
+#include "SBuf_define.h"
 
 /**
 * @brief initial
