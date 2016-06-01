@@ -3,14 +3,6 @@
 
 #include "common.h"
 
-/**
-* @class RBuf
-* @brief Ring Buffer
-*/
-
-#include "RBuf_define.h"
-//Class:RBuf 
-
 static const char* TYPE_CAPTION[] = {
     "T_NON      ",
     "T_NUMBER   ",
@@ -38,6 +30,13 @@ char* RBufElement_toString(char* tostring, const char* str, const buftype type) 
     strcat(tostring, str);
     return tostring;
 }
+
+/**
+* @class RBuf
+* @brief Ring Buffer
+*/
+#include "RBuf.h"
+#include "RBuf_define.h"
 
 /**
 * @brief initialize
@@ -240,3 +239,5 @@ char* RBuf_toString(const RBuf* this, char* tostring) {
     }
     return tostring;
 }
+
+

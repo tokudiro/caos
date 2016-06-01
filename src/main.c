@@ -8,6 +8,7 @@
 #include "boolean.h"
 #include "buftype.h"
 
+#include "RBuf.h"
 #include "RBuf_define.h"
 #include "SBuf.h"
 #include "SBuf_define.h"
