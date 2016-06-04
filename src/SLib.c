@@ -23,3 +23,12 @@ void SLib_toupper( char* output, const char* input ){
     }
 }
 
+int SLib_checkLength(char* buf){
+    int length = 0;
+    while(*buf!=0){
+        length++;
+        buf++;
+    }
+    return length;
+}
+

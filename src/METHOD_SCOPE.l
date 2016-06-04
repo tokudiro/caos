@@ -16,7 +16,10 @@
 	}
 
 	{CLASS}  {
-		fprintf(source, "%s", &(yytext[1]));
+	    int length = SLib_checkLength( &(yytext[1]) );
+	    RBuf_enque(queue, &(yytext[1]), length, T_WORD);
+	    RBuf_enque(queue, "*", 1, T_ASTERISK);
+        fprintf( source, "%s", RBuf_allDeque(queue, allque) );
 	}
 
 	\{ {
@@ -81,12 +84,17 @@
 			RBuf_enque(queue, yytext, yyleng, T_WSPACE);
 		}
 	}
-	{COMMENTS} { fprintf( source, "/*"); BEGIN(METHOD_SCOPE_CSA); }
+	{COMMENTS} {
+        RBuf_enque(queue, yytext, yyleng, T_NON);
+	    BEGIN(METHOD_SCOPE_CSA);
+	}
 	{COMMENT}  {
 		if (isOldComment) {
-			fprintf( source, "/*"); BEGIN(METHOD_SCOPE_CSS);
+            RBuf_enque(queue, "/*", 2, T_NON);
+			BEGIN(METHOD_SCOPE_CSS);
 		} else {
-			fprintf( source, "//"); BEGIN(METHOD_SCOPE_CSS);
+            RBuf_enque(queue, yytext, yyleng, T_NON);
+            BEGIN(METHOD_SCOPE_CSS);
 		}
 	}
     {DIRECTIVE_COMMENT} {
@@ -96,7 +104,7 @@
 	{DOT} {
 		RBuf_enque(queue, yytext, yyleng, T_DOT);
 	}
-	\n { fprintf( source, "\n"); }
+    \n { RBuf_enque(queue, yytext, yyleng, T_NON); }
 	;  {
 	    RBuf_enque(queue, yytext, yyleng, T_SEMICOLON);
 		fprintf( source, "%s", RBuf_allDeque(queue, allque) );
@@ -110,28 +118,36 @@
 }
 
 <METHOD_SCOPE_CSA>{
-	{COMMENTE} { fprintf(source, "*/"); BEGIN(METHOD_SCOPE); }
-	\n { fprintf( source, "\n"); }
-	. { fprintf( source, "%s", yytext); }
+    {COMMENTE} {
+        RBuf_enque(queue, yytext, yyleng, T_NON);
+        BEGIN(METHOD_SCOPE);
+    }
+    {WORD} { RBuf_enque(queue, yytext, yyleng, T_NON); }
+    \n { RBuf_enque(queue, yytext, yyleng, T_NON); }
+	.  { RBuf_enque(queue, yytext, yyleng, T_NON); }
 }
 
 <METHOD_SCOPE_CSS>{
+    {WORD} { RBuf_enque(queue, yytext, yyleng, T_NON); }
 	\n {
 		if (isOldComment) {
-			fprintf( source, "*/\n"); BEGIN(METHOD_SCOPE);
+            RBuf_enque(queue, "*/", 2, T_NON);
+            RBuf_enque(queue, yytext, yyleng, T_NON);
+		    BEGIN(METHOD_SCOPE);
 		} else {
-			fprintf( source, "\n"); BEGIN(METHOD_SCOPE);
+            RBuf_enque(queue, yytext, yyleng, T_NON);
+            BEGIN(METHOD_SCOPE);
 		}
 	}
-	. { fprintf( source, "%s", yytext); }
+	.  { RBuf_enque(queue, yytext, yyleng, T_NON); }
 }
 
 <METHOD_SCOPE_ST>{
-	\\\" { RBuf_enque(queue, yytext, yyleng, T_NON); }
+    \\\" { RBuf_enque(queue, yytext, yyleng, T_NON); }
     {WORD} { RBuf_enque(queue, yytext, yyleng, T_NON); }
-	\"   { RBuf_enque(queue, yytext, yyleng, T_NON); BEGIN(METHOD_SCOPE); }
-	\n   { RBuf_enque(queue, yytext, yyleng, T_NON); }
-	. { RBuf_enque(queue, yytext, yyleng, T_NON); }
+    \"   { RBuf_enque(queue, yytext, yyleng, T_NON); BEGIN(METHOD_SCOPE); }
+    \n   { RBuf_enque(queue, yytext, yyleng, T_NON); }
+    . { RBuf_enque(queue, yytext, yyleng, T_NON); }
 }
 
 <METHOD_SCOPE_CS>{

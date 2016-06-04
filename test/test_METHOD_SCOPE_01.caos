@@ -2,6 +2,10 @@
 
 int func(int a, int b){return a+b;}
 
+typedef struct ClassA{
+    int a;
+}ClassA;
+
 #class $TEST_METHOD_SCOPE_01
 int a;
 
@@ -47,6 +51,10 @@ int a;
 #+void print_func(){
     printf("print a=%d\n", @a);
     printf("\"");
+}
+
+#+void func_check(){
+    $ClassA x = ($ClassA)0;
 }
 
 #endclass
