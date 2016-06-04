@@ -53,9 +53,9 @@ int a;
     printf("\"");
 }
 
-#+void func_check(){
+#+void func_check(){ /* func_check */
     $ClassA x = ($ClassA)0;
-}
+} /* end_func_check */
 
 #endclass
 
