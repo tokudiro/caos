@@ -15,9 +15,9 @@
 
 	\{ {
 		RBuf_allDeque(queue, allque);
-        // source
+        /* source */
 	    fprintf( source, "%s{", allque );
-	    // header
+	    /* header */
 	        SLib_chopRet(allque);
 		switch(methodVisibility){
 		case VISIBILITY_PUBLIC:

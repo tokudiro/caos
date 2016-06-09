@@ -142,23 +142,24 @@
 		BEGIN(CLASS_SCOPE);
 	}
 	;  {
+        boolean isType;
 	    RBuf_enque(queue, yytext, yyleng, T_SEMICOLON);
 	    RBuf_trimQue(queue);
 		/* Class Member */
 	    countAttribute++;
 	    
 		isMember = RBuf_back_retype(queue, T_WORD, T_PARAMETER);
-		boolean isType = RBuf_back_retype(queue, T_WORD, T_TYPE);
+		isType = RBuf_back_retype(queue, T_WORD, T_TYPE);
 		const char* clazz = RBuf_back_getStr(queue, T_CLASS);
 		if (isMember && (isType || 0!=clazz) ) {
 			const char* member = RBuf_back_getStr(queue, T_PARAMETER);
 			const char* asterisk = RBuf_back_getStr(queue, T_ASTERISK);
 			const char* type = RBuf_back_getStr(queue, T_TYPE);
 			
-			// getter,setter in header
+			/* getter,setter in header */
 			getterInHeader((0!=clazz?clazz:type), asterisk, member);
 			setterInHeader((0!=clazz?clazz:type), asterisk, member);
-			// getter,setter in source
+			/* getter,setter in source */
 			getterInSource((0!=clazz?clazz:type), asterisk, member);
 			setterInSource((0!=clazz?clazz:type), asterisk, member);
 		}

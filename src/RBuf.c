@@ -151,10 +151,11 @@ const char* RBuf_back_getStr(const RBuf* this, const buftype find) {
 }
 
 void RBuf_trimQue(RBuf* this){
+    int i;
     if (this->first == this->last) return;
 
     if (this->first < this->last) {
-        for (int i = this->first; i<this->last; i++)
+        for (i = this->first; i<this->last; i++)
         {
             if( this->type[i] == T_WSPACE ) {
                 this->first++;
@@ -164,7 +165,7 @@ void RBuf_trimQue(RBuf* this){
         }
     } else {
         boolean isContinue = TRUE;
-        for (int i = this->first; i<MAX_ARRAYSIZE; i++)
+        for (i = this->first; i<MAX_ARRAYSIZE; i++)
         {
             if( this->type[i] == T_WSPACE ) {
                 this->first++;
@@ -174,7 +175,7 @@ void RBuf_trimQue(RBuf* this){
             }
         }
         if (isContinue) {
-            for (int i = 0; i<this->last; i++)
+            for (i = 0; i<this->last; i++)
             {
                 if( this->type[i] == T_WSPACE ) {
                     this->first++;
@@ -188,19 +189,20 @@ void RBuf_trimQue(RBuf* this){
 }
 
 boolean RBuf_isWSPACE(RBuf* this){
+    int i;
     if (this->first == this->last) return FALSE;
 
     if (this->first < this->last) {
-        for (int i = this->first; i<this->last; i++)
+        for (i = this->first; i<this->last; i++)
         {
             if(this->type[i]!=T_WSPACE) return FALSE;
         }
     } else {
-        for (int i = this->first; i<MAX_ARRAYSIZE; i++)
+        for (i = this->first; i<MAX_ARRAYSIZE; i++)
         {
             if(this->type[i]!=T_WSPACE) return FALSE;
         }
-        for (int i = 0; i<this->last; i++)
+        for (i = 0; i<this->last; i++)
         {
             if(this->type[i]!=T_WSPACE) return FALSE;
         }
@@ -214,23 +216,24 @@ boolean RBuf_isWSPACE(RBuf* this){
 * @return A string that represents the current object.
 */
 char* RBuf_toString(const RBuf* this, char* tostring) {
+    int i;
     if (this->first == this->last) return tostring;
 
     if (this->first < this->last) {
-        for (int i = this->first; i<this->last; i++)
+        for (i = this->first; i<this->last; i++)
         {
             char element_tostring[MAX_ARRAYSIZE] = {0};
             strcat(tostring, RBufElement_toString(element_tostring, this->buf[i], this->type[i]) );
             strcat(tostring, "\n");
         }
     } else {
-        for (int i = this->first; i<MAX_ARRAYSIZE; i++)
+        for (i = this->first; i<MAX_ARRAYSIZE; i++)
         {
             char element_tostring[MAX_ARRAYSIZE] = {0};
             strcat(tostring, RBufElement_toString(element_tostring, this->buf[i], this->type[i]) );
             strcat(tostring, "\n");
         }
-        for (int i = 0; i<this->last; i++)
+        for (i = 0; i<this->last; i++)
         {
             char element_tostring[MAX_ARRAYSIZE] = {0};
             strcat(tostring, RBufElement_toString(element_tostring, this->buf[i], this->type[i]) );

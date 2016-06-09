@@ -1,6 +1,5 @@
 %{
-	void defineClassInSource()
-	{
+	void defineClassInSource() {
 		if (isVerbose) printf("class %s\n", SBuf_getStr(class_buf) );
 	    if (classType == TYPE_STRUCT) {
     	    fprintf( source, "#include \"%s\"\n", public_header_name );
@@ -24,8 +23,7 @@
 		if (isLineNo) fprintf(source, "#line %d \"%s\"\n", yylineno, input_filename);
 	}
 
-	void defineClassInHeader()
-	{
+	void defineClassInHeader() {
 		if (isLineNo) fprintf(public_header, "#line %d \"%s\"\n", yylineno, input_filename);
 	    if (classType == TYPE_STRUCT) {
             fprintf( public_header, "typedef struct %s", SBuf_getStr(class_buf) );
@@ -40,11 +38,6 @@
 			fprintf( public_header, " %s_getInstance();\n", SBuf_getStr(class_buf) );
 		}
 
-	    //if (classType != TYPE_STRUCT) {
-        //    if (!isNonPrivateHeader) {
-        //        fprintf( define_header, "#include \"%s\"\n", public_header_name );
-	    //    }
-	    //}
 	    if (isLineNo) {
             if (!isNonDefineHeader) {
                 fprintf(struct_header, "#line %d \"%s\"\n", yylineno, input_filename);

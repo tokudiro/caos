@@ -68,10 +68,13 @@ static const char default_thispointer_str[] = "this";
 int main(int argc, char** argv)
 {
 	SBuf thispointer_buf_impl;
-	thispointer_buf = &thispointer_buf_impl;
+    RBuf queue_impl;
+	SBuf class_buf_impl;
+    int c;
+
+    thispointer_buf = &thispointer_buf_impl;
 	SBuf_init(thispointer_buf);
 
-    int c;
 	while( (c = getopt(argc, argv, "hVLSCo:pdk:")) !=-1 ) {
 		switch(c){
 		case 'h':
@@ -111,11 +114,9 @@ int main(int argc, char** argv)
         SBuf_setBuf(thispointer_buf, default_thispointer_str, strlen(default_thispointer_str) );
     }
 
-    RBuf queue_impl;
 	queue = &queue_impl;
 	RBuf_init(queue, SBuf_getStr(thispointer_buf), isVerbose);
 	
-	SBuf class_buf_impl;
 	class_buf = &class_buf_impl;
 	SBuf_init(class_buf);
 
@@ -135,7 +136,7 @@ int main(int argc, char** argv)
 		printf("file: %s\n", input_filename);
     	printf("------------------------------------------------------\n");
 		printf("Verbose Mode\n\n");
-        printf("thispointer name : %s\n", thispointer_buf);
+        printf("thispointer name : %s\n", SBuf_getStr(thispointer_buf));
 	}
 
 	*source_name = 0;

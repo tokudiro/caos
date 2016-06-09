@@ -44,12 +44,7 @@
 	    if (isVerbose) printf("BEGIN <METHOD_DEFINE>\n");
 		BEGIN(METHOD_DEFINE);
 	}
-	{DIRECTIVE_PROTECTED_METHOD} {
-		//if (isLineNo) fprintf(source, "#line %d \"%s\"\n", yylineno, input_filename);
-		//if (isLineNo) fprintf(protected_header, "#line %d \"%s\"\n", yylineno, input_filename);
-		//methodVisibility = VISIBILITY_PROTECTED;
-		//BEGIN(METHOD_DEFINE);
-	}
+	{DIRECTIVE_PROTECTED_METHOD} {}
 	{DIRECTIVE_CLASS_METHOD} {
 		if (isVerbose) printf("#directive class method\n");
 		if (isLineNo) fprintf(source, "#line %d \"%s\"\n", yylineno, input_filename);
