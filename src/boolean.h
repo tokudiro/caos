@@ -1,4 +1,4 @@
-#ifndef __BOOLEAN_H__
-#define __BOOLEAN_H__
+#ifndef BOOLEAN_H__
+#define BOOLEAN_H__
 typedef enum _boolean { FALSE = 0, TRUE = 1} boolean;
-#endif /* __BOOLEAN_H__ */
+#endif /* BOOLEAN_H__ */

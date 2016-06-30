@@ -1,6 +1,6 @@
-#ifndef __SLIB_H__
-#define __SLIB_H__
+#ifndef SLIB_H__
+#define SLIB_H__
 char* SLib_chopRet(char* buf);
 void SLib_toupper( char* output, const char* input );
 int SLib_checkLength(char* buf);
-#endif /* __SLIB_H__ */
+#endif /* SLIB_H__ */

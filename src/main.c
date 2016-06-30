@@ -176,8 +176,8 @@ int main(int argc, char** argv)
     char guardname[MAX_TEXT] = {0};
     SLib_toupper(guardname, filename);
     
-	fprintf( public_header, "#ifndef __%s_H__\n", guardname );
-	fprintf( public_header, "#define __%s_H__\n", guardname );
+	fprintf( public_header, "#ifndef %s_H__\n", guardname );
+	fprintf( public_header, "#define %s_H__\n", guardname );
 	int ret = yylex();
     
     if (!isNonDefineHeader) {
@@ -196,7 +196,7 @@ int main(int argc, char** argv)
             if (remove(define_header_name) != 0) {printf("define header file error.");exit(-1);}
         }
     }
-	fprintf( public_header, "#endif /* __%s_H__ */\n", guardname );
+	fprintf( public_header, "#endif /* %s_H__ */\n", guardname );
 
 	fclose(source);
 	fclose(public_header);

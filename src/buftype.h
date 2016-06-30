@@ -1,5 +1,5 @@
-#ifndef __BUFTYPE__H__
-#define __BUFTYPE__H__
+#ifndef BUFTYPE_H__
+#define BUFTYPE_H__
 typedef enum _buftype { 
 	T_NON, 
 	T_NUMBER, 
@@ -15,4 +15,4 @@ typedef enum _buftype {
     T_SEMICOLON,
 	T_WSPACE,
 	T_COMMA} buftype;
-#endif /* __BUFTYPE__H__ */
+#endif /* BUFTYPE_H__ */

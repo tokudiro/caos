@@ -1,5 +1,5 @@
-#ifndef __RBUF_H__
-#define __RBUF_H__
+#ifndef RBUF_H__
+#define RBUF_H__
 typedef struct RBuf_struct RBuf;
 void RBuf_init(RBuf* this, const char* thispointer_str, boolean isVerbose);
 void RBuf_setClass(RBuf* this, const char* thisclass_str);
@@ -12,4 +12,4 @@ const char* RBuf_back_getStr(const RBuf* this, const buftype find) ;
 void RBuf_trimQue(RBuf* this);
 boolean RBuf_isWSPACE(RBuf* this);
 char* RBuf_toString(const RBuf* this, char* tostring) ;
-#endif /* __RBUF_H__ */
+#endif /* RBUF_H__ */
