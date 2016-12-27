@@ -1,3 +1,10 @@
+.PHONY: all
+all : caos
+
+.PHONY: clean
+clean :
+	$(RM) caos ./obj/caos.l ./obj/caos.yy.c
+
 ./obj/caos.l : ./src/*.l
 	echo %{>  ./obj/caos.l
 	cat ./src/caos.c    >> ./obj/caos.l
@@ -20,9 +27,3 @@
 caos : ./obj/caos.yy.c ./src/RBuf.c ./src/main.c ./src/SBuf.c ./src/SLib.c -lfl
 	$(CC) -o caos ./obj/caos.yy.c ./src/RBuf.c ./src/main.c ./src/SBuf.c ./src/SLib.c -L/usr/lib -lfl -I./src
 
-.PHONY: clean
-clean :
-	$(RM) caos ./obj/caos.l ./obj/caos.yy.c
-
-.PHONY: all
-all : caos
