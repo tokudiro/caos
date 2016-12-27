@@ -9,7 +9,7 @@ It implements only my minimum necessary functions .
 ## Build
 build environment : gcc + flex
 
-``` ./build.sh ```
+``` make ```
 
 ## Sample Code
 
