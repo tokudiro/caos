@@ -17,7 +17,7 @@
 		if (classType == TYPE_SINGLETON) {
 			fprintf( source, "static struct %s_struct instance;\n", SBuf_getStr(class_buf) );
 			fprintf( source, "%s", SBuf_getStr(class_buf) );
-			if (isThisPointer) fprintf( source, "*");
+			fprintf( source, "*");
 			fprintf( source, " %s_getInstance() { return &instance; }\n", SBuf_getStr(class_buf) );
 		}
 		if (isLineNo) fprintf(source, "#line %d \"%s\"\n", yylineno, input_filename);
@@ -30,11 +30,10 @@
         } else {
             fprintf( public_header, "typedef struct %s_struct", SBuf_getStr(class_buf) );
 	    }
-		if (!isThisPointer) fprintf( public_header, "*");
 		fprintf( public_header, " %s;\n", SBuf_getStr(class_buf) );
 		if (classType == TYPE_SINGLETON) {
 			fprintf( public_header, "%s", SBuf_getStr(class_buf) );
-			if (isThisPointer) fprintf( public_header, "*");
+			fprintf( public_header, "*");
 			fprintf( public_header, " %s_getInstance();\n", SBuf_getStr(class_buf) );
 		}
 
@@ -66,6 +65,10 @@
 	}
 	
 	{CLASS}  {
+	    Element* e = Element_new();
+	    Element_init(e, &(yytext[1]), yyleng-1, 0);
+	    ListBuf_append(Caos_list(caos), e);
+	    
 		SBuf_setBuf( class_buf, &(yytext[1]), yyleng-1);
 	    RBuf_setClass(queue, SBuf_getStr(class_buf));
 		defineClassInSource();

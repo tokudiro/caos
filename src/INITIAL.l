@@ -1,7 +1,7 @@
 <INITIAL>{
 	{CLASS}  {
 		fprintf((isOutputHeader?public_header:source), "%s", &(yytext[1]));
-		if (isThisPointer) fprintf((isOutputHeader?public_header:source), "*");
+		fprintf((isOutputHeader?public_header:source), "*");
 	}
 
 	{NUMBER} { fprintf((isOutputHeader?public_header:source), "%s", yytext); }

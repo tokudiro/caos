@@ -56,16 +56,16 @@ int main(){
 #include "SampleClass_define.h"
 #include "SampleClass_private.h"
 
-int SampleClass_get_publicMember(const SampleClass* this) { return this->publicMember; }
-void SampleClass_set_publicMember(SampleClass* this, int publicMember) { this->publicMember = publicMember; }
+int SampleClass_get_publicMember(const SampleClass* pthis) { return pthis->publicMember; }
+void SampleClass_set_publicMember(SampleClass* pthis, int publicMember) { pthis->publicMember = publicMember; }
 
-int SampleClass_publicMethod(SampleClass* this){
-    SampleClass_privateMethod(this);
-    return this->privateMember;
+int SampleClass_publicMethod(SampleClass* pthis){
+    SampleClass_privateMethod(pthis);
+    return pthis->privateMember;
 }
 
-void SampleClass_privateMethod(SampleClass* this){
-    this->privateMember = 2 + this->publicMember;
+void SampleClass_privateMethod(SampleClass* pthis){
+    pthis->privateMember = 2 + pthis->publicMember;
     return;
 }
 
@@ -85,9 +85,9 @@ int main(){
 #ifndef __SAMPLECLASS_H__
 #define __SAMPLECLASS_H__
 typedef struct SampleClass_struct SampleClass;
-int SampleClass_get_publicMember(const SampleClass* this);
-void SampleClass_set_publicMember(SampleClass* this, int publicMember);
-int SampleClass_publicMethod(SampleClass* this);
+int SampleClass_get_publicMember(const SampleClass* pthis);
+void SampleClass_set_publicMember(SampleClass* pthis, int publicMember);
+int SampleClass_publicMethod(SampleClass* pthis);
 #endif /* __SAMPLECLASS_H__ */
 ```
 
@@ -104,5 +104,5 @@ int privateMember;
 * SampleClass_private.h
 
 ```c
-static void SampleClass_privateMethod(SampleClass* this);
+static void SampleClass_privateMethod(SampleClass* pthis);
 ```

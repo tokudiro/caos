@@ -10,7 +10,7 @@ clean :
 		mkdir obj; \
 	fi
 	echo %{>  ./obj/caos.l
-	cat ./src/caos.c    >> ./obj/caos.l
+	cat ./src/Caos.c    >> ./obj/caos.l
 	echo %}>> ./obj/caos.l
 	cat ./src/keyword.l >> ./obj/caos.l
 	echo %%>> ./obj/caos.l
@@ -27,8 +27,8 @@ clean :
 ./obj/caos.yy.c : ./obj/caos.l
 	$(LEX) -o./obj/caos.yy.c ./obj/caos.l
 
-caos : ./obj/caos.yy.c ./src/RBuf.c ./src/main.c ./src/SBuf.c ./src/SLib.c -lfl
-	$(CC) -o caos ./obj/caos.yy.c ./src/RBuf.c ./src/main.c ./src/SBuf.c ./src/SLib.c -L/usr/lib -lfl -I./src
+caos : ./obj/caos.yy.c ./src/RBuf.c ./src/main.c ./src/SBuf.c ./src/SLib.c ./src/Element.c ./src/ListBuf.c -lfl
+	$(CC) -o caos ./obj/caos.yy.c ./src/RBuf.c ./src/main.c ./src/SBuf.c ./src/SLib.c ./src/Element.c ./src/ListBuf.c -L/usr/lib -lfl -I./src
 
 .PHONY: test
 test :

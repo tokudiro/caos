@@ -10,9 +10,11 @@
 
 #include "RBuf.h"
 #include "RBuf_define.h"
+#include "ListBuf.h"
 #include "SBuf.h"
 #include "SBuf_define.h"
 #include "SLib.h"
+#include "Caos.h"
 
 /* flex extern */
 extern FILE *yyin;
@@ -28,6 +30,8 @@ SBuf* class_buf;
 SBuf* thispointer_buf;
 
 extern RBuf* queue;
+extern Caos* caos;
+
 extern char filename[];
 extern char source_name[];
 extern char public_header_name[];
@@ -35,7 +39,6 @@ extern char private_header_name[];
 extern char define_header_name[];
 
 extern boolean isLineNo;
-extern boolean isThisPointer;
 extern boolean isVerbose;
 extern char* input_filename;
 extern boolean isOldComment;
@@ -56,14 +59,13 @@ static void outputHELP(){
 	printf("h : HELP\n");
 	printf("V : verbose\n");
 	printf("L : LINENO OFF\n");
-	printf("S : self object\n");
 	printf("C : replace to old style comment\n");
     printf("k : change thispointer string\n");
 }
 
 extern char	*optarg;
 
-static const char default_thispointer_str[] = "this";
+static const char default_thispointer_str[] = "pthis";
 
 int main(int argc, char** argv)
 {
@@ -75,7 +77,7 @@ int main(int argc, char** argv)
     thispointer_buf = &thispointer_buf_impl;
 	SBuf_init(thispointer_buf);
 
-	while( (c = getopt(argc, argv, "hVLSCo:pdk:")) !=-1 ) {
+	while( (c = getopt(argc, argv, "hVLCo:pdk:")) !=-1 ) {
 		switch(c){
 		case 'h':
 		    outputHELP();
@@ -86,9 +88,6 @@ int main(int argc, char** argv)
 			break;
 		case 'L':
 			isLineNo = FALSE;
-			break;
-		case 'S':
-			isThisPointer = FALSE;
 			break;
 		case 'C':
 			isOldComment = TRUE;
@@ -117,6 +116,9 @@ int main(int argc, char** argv)
 	queue = &queue_impl;
 	RBuf_init(queue, SBuf_getStr(thispointer_buf), isVerbose);
 	
+    caos = Caos_getInstance();
+    Caos_init(caos);
+    
 	class_buf = &class_buf_impl;
 	SBuf_init(class_buf);
 
@@ -131,11 +133,11 @@ int main(int argc, char** argv)
 	sscanf(input_filename, "%[^.]]", filename);
 	
 	if (isVerbose){
-    	printf("------------------------------------------------------\n");
-    	printf("C-language Addtional Object-oriented Source Transpiler\n");
-		printf("file: %s\n", input_filename);
-    	printf("------------------------------------------------------\n");
-		printf("Verbose Mode\n\n");
+        printf("------------------------------------------------------\n");
+        printf("C-language Addtional Object-oriented Source Transpiler\n");
+        printf("file: %s\n", input_filename);
+        printf("------------------------------------------------------\n");
+        printf("Verbose Mode\n\n");
         printf("thispointer name : %s\n", SBuf_getStr(thispointer_buf));
 	}
 
@@ -212,6 +214,11 @@ int main(int argc, char** argv)
         printf("CLASS   METHOD: %d\n", countClassMethod);
         printf("------------------------------------------------------\n");
         printf("ATTRIBUTE     : %d\n", countAttribute);
+        printf("------------------------------------------------------\n");
+        printf("list.length   : %d\n", ListBuf_length(Caos_list(caos)) );
     }
+    
+    ListBuf_finish( Caos_list(caos) );
+    
     return ret;
 }

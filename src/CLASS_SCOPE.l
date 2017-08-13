@@ -5,7 +5,7 @@
 
 	{CLASS}  {
 		RBuf_enque(queue, &(yytext[1]), yyleng-1, T_CLASS);
-		if(isThisPointer) RBuf_enque(queue, "*", 1, T_KEYWORD);
+		RBuf_enque(queue, "*", 1, T_KEYWORD);
 	}
 
 	{DIRECTIVE_PUBLIC_METHOD} {

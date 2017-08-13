@@ -45,11 +45,7 @@
 		boolean isMethod = RBuf_back_retype(queue, T_OBJECT, T_METHOD);
 		RBuf_enque( queue, yytext, yyleng, T_NON);
 		if (isMethod) {
-			if (isThisPointer){
-				RBuf_enque( queue, SBuf_getStr(thispointer_buf), SBuf_getLen(thispointer_buf), T_KEYWORD);
-			}else{
-				RBuf_enque( queue, "self", 4, T_KEYWORD);
-			}
+			RBuf_enque( queue, SBuf_getStr(thispointer_buf), SBuf_getLen(thispointer_buf), T_KEYWORD);
 			arg_comma = TRUE;
 		}
 	}
@@ -67,11 +63,7 @@
 	}
 	{SELF_OBJECT} {
 		fprintf( source, "%s", RBuf_allDeque(queue, allque) );
-		if (isThisPointer) {
-			RBuf_enque(queue, SBuf_getStr(thispointer_buf), SBuf_getLen(thispointer_buf), T_KEYWORD);
-		}else{
-			RBuf_enque(queue, "self", 4, T_KEYWORD);
-		}
+		RBuf_enque(queue, SBuf_getStr(thispointer_buf), SBuf_getLen(thispointer_buf), T_KEYWORD);
 	}
 	{WORD}   {
 	    check_arg_comma();
