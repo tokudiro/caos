@@ -4,11 +4,7 @@
 		fprintf(public_header, "%s", type);
 		if (0 != asterisk) fprintf(public_header, "*");
 		fprintf(public_header, " %s_get_%s(", SBuf_getStr(class_buf), member);
-		if (isThisPointer){
-			fprintf(public_header, "const %s* %s", SBuf_getStr(class_buf), SBuf_getStr(thispointer_buf) );
-		}else{
-			fprintf(public_header, "%s self", SBuf_getStr(class_buf) );
-		}
+		fprintf(public_header, "const %s* %s", SBuf_getStr(class_buf), SBuf_getStr(thispointer_buf) );
 		fprintf(public_header, ");\n");
 	}
 
@@ -17,17 +13,9 @@
 		fprintf(source, "%s", type);
 		if (0 != asterisk) fprintf(source, "*");
 		fprintf(source, " %s_get_%s(", SBuf_getStr(class_buf), member);
-		if (isThisPointer){
-			fprintf(source, "const %s* %s", SBuf_getStr(class_buf), SBuf_getStr(thispointer_buf) );
-		}else{
-			fprintf(source, "%s self", SBuf_getStr(class_buf) );
-		}
+		fprintf(source, "const %s* %s", SBuf_getStr(class_buf), SBuf_getStr(thispointer_buf) );
 		fprintf(source, ") { return ");
-		if (isThisPointer){
-			fprintf(source, "%s->%s", SBuf_getStr(thispointer_buf), member );
-		}else{
-			fprintf(source, "self->%s", member );
-		}
+		fprintf(source, "%s->%s", SBuf_getStr(thispointer_buf), member );
 		fprintf(source, "; }\n");
 	}
 
@@ -35,11 +23,7 @@
 	{
 		fprintf(public_header, "void");
 		fprintf(public_header, " %s_set_%s(", SBuf_getStr(class_buf), member);
-		if (isThisPointer){
-			fprintf(public_header, "%s* %s", SBuf_getStr(class_buf), SBuf_getStr(thispointer_buf) );
-		}else{
-			fprintf(public_header, "%s self", SBuf_getStr(class_buf) );
-		}
+		fprintf(public_header, "%s* %s", SBuf_getStr(class_buf), SBuf_getStr(thispointer_buf) );
 		fprintf(public_header, ", ");
 		fprintf(public_header, "%s", type);
 		if (0 != asterisk) fprintf(public_header, "*");
@@ -50,20 +34,12 @@
 	{
 		fprintf(source, "void");
 		fprintf(source, " %s_set_%s(", SBuf_getStr(class_buf), member);
-		if (isThisPointer){
-			fprintf(source, "%s* %s", SBuf_getStr(class_buf), SBuf_getStr(thispointer_buf) );
-		}else{
-			fprintf(source, "%s self", SBuf_getStr(class_buf) );
-		}
+		fprintf(source, "%s* %s", SBuf_getStr(class_buf), SBuf_getStr(thispointer_buf) );
 		fprintf(source, ", ");
 		fprintf(source, "%s", type);
 		if (0 != asterisk) fprintf(source, "*");
 		fprintf(source, " %s) { ", member);
-		if (isThisPointer){
-			fprintf(source, "%s->%s = %s", SBuf_getStr(thispointer_buf), member, member );
-		}else{
-			fprintf(source, "self->%s = %s", member, member );
-		}
+		fprintf(source, "%s->%s = %s", SBuf_getStr(thispointer_buf), member, member );
 		fprintf(source, "; }\n");
 	}
 %}
