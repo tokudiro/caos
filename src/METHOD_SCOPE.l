@@ -65,6 +65,10 @@
 		fprintf( source, "%s", RBuf_allDeque(queue, allque) );
 		RBuf_enque(queue, SBuf_getStr(thispointer_buf), SBuf_getLen(thispointer_buf), T_KEYWORD);
 	}
+	{TYPE}   {
+	    check_arg_comma();
+		RBuf_enque(queue, yytext, yyleng, T_TYPE);
+	}
 	{WORD}   {
 	    check_arg_comma();
 		RBuf_enque(queue, yytext, yyleng, T_WORD);

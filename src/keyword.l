@@ -28,6 +28,8 @@ DIRECTIVE_COMMENT ^(#'|#comment|#COMMENT)
 DIRECTIVE_HEADER     ^#header\n
 DIRECTIVE_ENDHEADER  ^#endheader\n
 
+TYPE     (int|char|short|long|float|double)
+
 NUMBER   {FLOAT}{FLOATE}?
 WSPACE   [[:blank:]]+
 WORD     ({ALPHABET}{CHARCTOR}*)
