@@ -11,6 +11,7 @@ typedef enum _buftype {
 	T_METHOD, 
 	T_PARAMETER,
 	T_ASTERISK,
+    T_POINTER,
 	T_TYPE,
     T_SEMICOLON,
 	T_WSPACE,

@@ -14,6 +14,7 @@ static const char* TYPE_CAPTION[] = {
     "T_METHOD   ",
     "T_PARAMETER",
     "T_ASTERISK ",
+    "T_POINTER  ",
     "T_TYPE     ",
     "T_SEMICOLON",
     "T_WSPACE   ",

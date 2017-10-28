@@ -29,6 +29,7 @@ DIRECTIVE_HEADER     ^#header\n
 DIRECTIVE_ENDHEADER  ^#endheader\n
 
 TYPE     (int|char|short|long|float|double)
+KEYWORD  (return)
 
 NUMBER   {FLOAT}{FLOATE}?
 WSPACE   [[:blank:]]+
