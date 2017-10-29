@@ -118,6 +118,7 @@ char* RBuf_allDeque(RBuf* pthis, char* buf) {
         }
         strcat(buf,  str);
     }
+    if (pthis->isVerbose) printf("----------\n");
     return buf;
 }
 

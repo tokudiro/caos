@@ -30,6 +30,7 @@ DIRECTIVE_ENDHEADER  ^#endheader\n
 
 TYPE     (int|char|short|long|float|double)
 KEYWORD  (return)
+VOID     (void)
 
 NUMBER   {FLOAT}{FLOATE}?
 WSPACE   [[:blank:]]+
