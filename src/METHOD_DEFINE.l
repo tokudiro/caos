@@ -31,26 +31,41 @@
         default:
             break;
         }
+        arg_analysis = FALSE;
         if (isVerbose) printf("BEGIN <METHOD_SCOPE>\n");
         BEGIN(METHOD_SCOPE);
     }
 
     \( {
-        boolean isMethod = RBuf_back_retype(queue, T_WORD, T_METHOD);
-        RBuf_trimQue(queue);
-        RBuf_enque( queue, yytext, yyleng, T_NON);
-        if (isMethod) {
-            if (methodScope == SCOPE_OBJECT){
-                if(methodMutability == MUTABILITY_IMMUTABLE) {
-                    RBuf_enque( queue, "const", 5, T_KEYWORD);
-                    RBuf_enque( queue, " ", 1, T_WSPACE);
-                }
-                RBuf_enque( queue, SBuf_getStr(class_buf), SBuf_getLen(class_buf), T_CLASS);
-                RBuf_enque( queue, "*", 1, T_POINTER);
-                RBuf_enque( queue, " ", 1, T_WSPACE);
-                RBuf_enque( queue, SBuf_getStr(thispointer_buf), SBuf_getLen(thispointer_buf), T_VALUE);
-                arg_comma = TRUE;
+        boolean isMethod;
+        if (arg_analysis)
+        {
+            if (arg_comma) {
+                RBuf_enque(queue, ",", 1, T_COMMA);
+                RBuf_enque(queue, " ", 1, T_WSPACE);
+                arg_comma=FALSE;
             }
+            RBuf_enque( queue, yytext, yyleng, T_NON);
+        }
+        else
+        {
+            isMethod = RBuf_back_retype(queue, T_WORD, T_METHOD);
+            RBuf_trimQue(queue);
+            RBuf_enque( queue, yytext, yyleng, T_NON);
+            if (isMethod) {
+                if (methodScope == SCOPE_OBJECT){
+                    if(methodMutability == MUTABILITY_IMMUTABLE) {
+                        RBuf_enque( queue, "const", 5, T_KEYWORD);
+                        RBuf_enque( queue, " ", 1, T_WSPACE);
+                    }
+                    RBuf_enque( queue, SBuf_getStr(class_buf), SBuf_getLen(class_buf), T_CLASS);
+                    RBuf_enque( queue, "*", 1, T_POINTER);
+                    RBuf_enque( queue, " ", 1, T_WSPACE);
+                    RBuf_enque( queue, SBuf_getStr(thispointer_buf), SBuf_getLen(thispointer_buf), T_VALUE);
+                    arg_comma = TRUE;
+                }
+            }
+            arg_analysis = TRUE;
         }
     }
 

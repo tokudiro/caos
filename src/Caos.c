@@ -19,6 +19,7 @@ extern FILE* define_header;
 extern FILE* struct_header;
 
 int bracket = 0;
+boolean arg_analysis = FALSE;
 boolean arg_comma = FALSE;
 boolean isMember = FALSE;
 
