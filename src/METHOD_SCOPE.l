@@ -17,7 +17,7 @@
 
     {CLASS}  {
         int length = SLib_checkLength( &(yytext[1]) );
-        RBuf_enque(queue, &(yytext[1]), length, T_WORD);
+        RBuf_enque(queue, &(yytext[1]), length, T_CLASS);
         RBuf_enque(queue, "*", 1, T_POINTER);
         //fprintf( source, "%s", RBuf_allDeque(queue, allque) );
     }
@@ -45,7 +45,7 @@
         boolean isMethod = RBuf_back_retype(queue, T_OBJECT, T_METHOD);
         RBuf_enque( queue, yytext, yyleng, T_NON);
         if (isMethod) {
-            RBuf_enque( queue, SBuf_getStr(thispointer_buf), SBuf_getLen(thispointer_buf), T_KEYWORD);
+            RBuf_enque( queue, SBuf_getStr(thispointer_buf), SBuf_getLen(thispointer_buf), T_VALUE);
             arg_comma = TRUE;
         }
     }
@@ -63,7 +63,7 @@
     }
     {SELF_OBJECT} {
         fprintf( source, "%s", RBuf_allDeque(queue, allque) );
-        RBuf_enque(queue, SBuf_getStr(thispointer_buf), SBuf_getLen(thispointer_buf), T_KEYWORD);
+        RBuf_enque(queue, SBuf_getStr(thispointer_buf), SBuf_getLen(thispointer_buf), T_VALUE);
     }
     {TYPE}   {
         check_arg_comma();

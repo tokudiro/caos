@@ -48,7 +48,7 @@
                 RBuf_enque( queue, SBuf_getStr(class_buf), SBuf_getLen(class_buf), T_CLASS);
                 RBuf_enque( queue, "*", 1, T_POINTER);
                 RBuf_enque( queue, " ", 1, T_WSPACE);
-                RBuf_enque( queue, SBuf_getStr(thispointer_buf), SBuf_getLen(thispointer_buf), T_KEYWORD);
+                RBuf_enque( queue, SBuf_getStr(thispointer_buf), SBuf_getLen(thispointer_buf), T_VALUE);
                 arg_comma = TRUE;
             }
         }
@@ -72,7 +72,7 @@
         if (arg_comma) {
             /* nothing */
         } else {
-            RBuf_enque(queue, yytext, yyleng, T_WORD);
+            RBuf_enque(queue, yytext, yyleng, T_KEYWORD);
         }
     }
     {WORD}   {
