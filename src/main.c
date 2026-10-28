@@ -61,11 +61,28 @@ static void outputHELP(){
 	printf("L : LINENO OFF\n");
 	printf("C : replace to old style comment\n");
     printf("k : change thispointer string\n");
+    printf("p : do not output private header\n");
+    printf("d : do not output define header\n");
+    printf("o : output folder\n");
 }
 
 extern char	*optarg;
 
 static const char default_thispointer_str[] = "pthis";
+
+/* -o option: output folder (default: the folder of the input file) */
+static const char* output_dir = 0;
+
+/* path of "<dir>/<filename><suffix>" ; dir may be empty */
+static void makePath(char* path, const char* dir, const char* suffix) {
+    path[0] = 0;
+    if (dir[0] != 0) {
+        strcat(path, dir);
+        if (dir[strlen(dir)-1] != '/') strcat(path, "/");
+    }
+    strcat(path, filename);
+    strcat(path, suffix);
+}
 
 int main(int argc, char** argv)
 {
@@ -93,7 +110,7 @@ int main(int argc, char** argv)
 			isOldComment = TRUE;
 			break;
 		case 'o':
-		    printf("output :%s\n", optarg);
+		    output_dir = optarg;
 		    break;
 		case 'p':
 		    isNonPrivateHeader = TRUE;
@@ -130,7 +147,17 @@ int main(int argc, char** argv)
 	    exit(0);
 	}
 
-	sscanf(input_filename, "%[^.]]", filename);
+	/* filename : the input file name without folder and extension */
+	char input_dir[MAX_TEXT] = {0};
+	const char* slash = strrchr(input_filename, '/');
+	const char* base = slash ? slash + 1 : input_filename;
+	if (slash) {
+		strncpy(input_dir, input_filename, slash - input_filename + 1);
+	}
+	strncpy(filename, base, MAX_TEXT - 1);
+	char* dot = strrchr(filename, '.');
+	if (dot) *dot = 0;
+	const char* dir = output_dir ? output_dir : input_dir;
 	
 	if (isVerbose){
         printf("------------------------------------------------------\n");
@@ -141,34 +168,38 @@ int main(int argc, char** argv)
         printf("thispointer name : %s\n", SBuf_getStr(thispointer_buf));
 	}
 
-	*source_name = 0;
-	strcat(source_name, filename);
-	strcat(source_name, ".c");
-	source = fopen(source_name, "w");
-	if (source == 0) {printf("source file error.");exit(-1);}
+	/* names used in #include (same folder as the including file) */
+	makePath(source_name, "", ".c");
+	makePath(public_header_name, "", ".h");
+	makePath(private_header_name, "", "_private.h");
+	makePath(define_header_name, "", "_define.h");
 
-	*public_header_name = 0;
-	strcat(public_header_name, filename);
-	strcat(public_header_name, ".h");
-	public_header = fopen(public_header_name, "w");
-	if (public_header == 0) {printf("public header file error.");exit(-1);}
+	/* paths to open */
+	char source_path[MAX_TEXT*2];
+	char public_header_path[MAX_TEXT*2];
+	char private_header_path[MAX_TEXT*2];
+	char define_header_path[MAX_TEXT*2];
+	makePath(source_path, dir, ".c");
+	makePath(public_header_path, dir, ".h");
+	makePath(private_header_path, dir, "_private.h");
+	makePath(define_header_path, dir, "_define.h");
 
-	*private_header_name = 0;
-	strcat(private_header_name, filename);
-	strcat(private_header_name, "_private.h");
+	source = fopen(source_path, "w");
+	if (source == 0) {printf("source file error: %s\n", source_path);exit(-1);}
+
+	public_header = fopen(public_header_path, "w");
+	if (public_header == 0) {printf("public header file error: %s\n", public_header_path);exit(-1);}
+
     if (!isNonPrivateHeader) {
-    	private_header = fopen(private_header_name, "w");
-    	if (private_header == 0) {printf("private header file error.");exit(-1);}
+    	private_header = fopen(private_header_path, "w");
+    	if (private_header == 0) {printf("private header file error: %s\n", private_header_path);exit(-1);}
     } else {
         private_header = 0;
     }
 
-	*define_header_name = 0;
-	strcat(define_header_name, filename);
-	strcat(define_header_name, "_define.h");
     if (!isNonDefineHeader) {
-	    define_header = fopen(define_header_name, "w");
-	    if (define_header == 0) {printf("define header file error.");exit(-1);}
+	    define_header = fopen(define_header_path, "w");
+	    if (define_header == 0) {printf("define header file error: %s\n", define_header_path);exit(-1);}
         struct_header = define_header;
     } else {
         define_header = 0;
@@ -187,7 +218,7 @@ int main(int argc, char** argv)
     }
     if (classType == TYPE_STRUCT) {
         if (!isNonDefineHeader) {
-            define_header = fopen(define_header_name, "r");
+            define_header = fopen(define_header_path, "r");
             if (define_header == 0) {printf("define header file error.");exit(-1);}
             
             char readline[MAX_TEXTLINE];
@@ -195,7 +226,7 @@ int main(int argc, char** argv)
                 fprintf( public_header, "%s", readline );
             }
             fclose(define_header);
-            if (remove(define_header_name) != 0) {printf("define header file error.");exit(-1);}
+            if (remove(define_header_path) != 0) {printf("define header file error.");exit(-1);}
         }
     }
 	fprintf( public_header, "#endif /* %s_H__ */\n", guardname );

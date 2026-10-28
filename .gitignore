@@ -2,3 +2,4 @@
 /obj/
 /test/test_*
 !/test/test_*.caos
+/test/out/

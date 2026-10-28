@@ -48,4 +48,16 @@ run_test -Lp  TYPE_STRUCT
 run_test -Ldp TYPE_UTILITY
 run_test -L   INITIAL_01
 
+# -o : files go to the given folder with the same content
+rm -rf out && mkdir out
+if ../caos -L -o out test_INITIAL_01.caos \
+    && [ ! -e out/test_INITIAL_01.caos ] \
+    && (cd out && for f in test_INITIAL_01*; do diff -u "../expected/$f" "$f" || exit 1; done); then
+    echo "PASS: output folder option"
+else
+    echo "FAIL: output folder option"
+    failed=1
+fi
+rm -rf out
+
 exit $failed

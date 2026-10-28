@@ -73,7 +73,7 @@ After an intended change of the output, regenerate the snapshots with `UPDATE=1 
 | `-k <str>` | change the this-pointer name (default `pthis`) |
 | `-p` | do not output the private header |
 | `-d` | do not output the define header |
-| `-o <path>` | output folder (not implemented yet, see issue #2) |
+| `-o <path>` | output folder (default: the folder of the input file) |
 
 ## Generate files
 ```caos -L SampleClass.caos```
