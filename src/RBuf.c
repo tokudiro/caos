@@ -40,6 +40,9 @@ char* RBufElement_toString(char* tostring, const char* str, const buftype type) 
 #include "RBuf.h"
 #include "RBuf_define.h"
 
+
+
+
 /**
 * @brief initialize
 * @memberof RBuf
@@ -81,7 +84,7 @@ void RBuf_enque(RBuf* pthis, const char* str, const int len, const buftype type)
 * @brief deque
 * @memberof RBuf
 */
-char* RBuf_deque(RBuf* pthis, buftype* p_type) {
+char* RBuf_deque(RBuf* pthis, buftype* p_type){
     char* ret = pthis->buf[pthis->first];
     *p_type = pthis->type[pthis->first];
     pthis->first++;
@@ -97,7 +100,7 @@ boolean RBuf_isEmpty(const RBuf* pthis){
     return (pthis->first==pthis->last?TRUE:FALSE);
 }
 
-char* RBuf_allDeque(RBuf* pthis, char* buf) {
+char* RBuf_allDeque(RBuf* pthis, char* buf){
     buftype type;
     char* str;
     buf[0] = 0;
@@ -123,7 +126,7 @@ char* RBuf_allDeque(RBuf* pthis, char* buf) {
     return buf;
 }
 
-boolean RBuf_back_retype(RBuf* pthis, const buftype find, const buftype replace) {
+boolean RBuf_back_retype(RBuf* pthis, const buftype find, const buftype replace){
     if (RBuf_isEmpty(pthis) ) return FALSE;
     
     int index = pthis->last;
@@ -139,7 +142,7 @@ boolean RBuf_back_retype(RBuf* pthis, const buftype find, const buftype replace)
     return FALSE;
 }
 
-const char* RBuf_back_getStr(const RBuf* pthis, const buftype find) {
+const char* RBuf_back_getStr(const RBuf* pthis, const buftype find){
     if (RBuf_isEmpty(pthis) ) return 0;
     
     int index = pthis->last;
@@ -218,7 +221,7 @@ boolean RBuf_isWSPACE(RBuf* pthis){
 * @param buf A string that represents the current object.
 * @return A string that represents the current object.
 */
-char* RBuf_toString(const RBuf* pthis, char* tostring) {
+char* RBuf_toString(const RBuf* pthis, char* tostring){
     int i;
     if (pthis->first == pthis->last) return tostring;
 

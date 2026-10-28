@@ -1,0 +1,46 @@
+#include <string.h>
+#include <stdlib.h>
+
+#header
+#include "common.h"
+#endheader
+#struct $Element
+
+char* string;
+int length;
+int type;
+
+#$Element* new()
+{
+    return (Element*)malloc( sizeof(Element) );
+}
+
+#+void delete()
+{
+    if(@@)
+    {
+        free(pthis);
+    }
+}
+
+#+void init(const char* string, int length, int type)
+{
+    @length = length;
+    @string = malloc(@length+1);
+    strcpy(@string, string);
+}
+
+#+char* string()
+{
+    return @string;
+}
+
+#+void finish()
+{
+    if(@string)
+    {
+        free(@string);
+    }
+}
+
+#endstruct

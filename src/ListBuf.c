@@ -1,6 +1,5 @@
 #include <stdlib.h>
 
-
 #include "Element.h"
 
 #include "ListBuf.h"
@@ -10,12 +9,10 @@ ListBuf* ListBuf_getInstance() { return &instance; }
 
 
 
-
 void ListBuf_init(ListBuf* pthis)
 {
     pthis->length = 0;
 }
-
 
 void ListBuf_append(ListBuf* pthis, Element* element)
 {
@@ -26,18 +23,15 @@ void ListBuf_append(ListBuf* pthis, Element* element)
     }
 }
 
-
 int ListBuf_length(ListBuf* pthis)
 {
     return pthis->length;
 }
 
-
 Element* ListBuf_element(ListBuf* pthis, int index)
 {
     return pthis->elements[index];
 }
-
 
 void ListBuf_finish(ListBuf* pthis)
 {

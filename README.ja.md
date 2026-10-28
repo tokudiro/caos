@@ -14,9 +14,10 @@ C言語向けのオブジェクト指向ソーストランスパイラです。
 ``` make ```
 
 ## セルフホスト
-`Caos` クラス（`src/Caos.c`、`src/Caos.h`、`src/Caos_define.h`）は `src/Caos.caos` に書かれ、caos 自身が生成します。
-生成物はコミットしてあるので、caos がなくても caos をビルドできます。
-`Caos.caos` を編集したら `make regen` を実行してください。`make test` で、コミット済みのファイルと一致しているかを確認します。
+caos 自身のクラス（`Caos`、`SBuf`、`RBuf`、`ListBuf`、`Element`、`SLib`）は `src/*.caos` に書かれ、caos が生成します。
+生成された `.c` / `.h` はコミットしてあるので、caos がなくても caos をビルドできます。
+`.caos` を編集したら `make regen` を実行してください。`make test` で、コミット済みのファイルと caos の生成結果が一致するかを確認します。
+字句解析部（`src/*.l`、`src/prolog.c`）と `main.c` は C / flex で書かれています。
 
 ## サンプルコード
 

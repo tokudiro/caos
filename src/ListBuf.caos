@@ -1,0 +1,47 @@
+#include <stdlib.h>
+
+#include "Element.h"
+
+#header
+typedef struct Element Element;
+#endheader
+#singleton $ListBuf
+
+int length;
+Element** elements;
+
+#+void init()
+{
+    @length = 0;
+}
+
+#+void append(Element* element)
+{
+    @length++;
+    @elements = realloc(@elements, sizeof(Element*)*@length);
+    if (@elements) {
+        @elements[@length-1] = element;
+    }
+}
+
+#+int length()
+{
+    return @length;
+}
+
+#+Element* element(int index)
+{
+    return @elements[index];
+}
+
+#+void finish()
+{
+    while ( @length<0 ) {
+        Element_finish(@elements[@length-1]);
+        Element_delete(@elements[@length-1]);
+        @length--;
+    }
+    free(@elements);
+}
+
+#endsingleton

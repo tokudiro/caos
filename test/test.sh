@@ -61,17 +61,29 @@ else
 fi
 rm -rf out
 
-# self-hosting : caos regenerates the Caos class (src/Caos.*) from Caos.caos
+# self-hosting : caos regenerates its own classes (src/*.caos) with identical output
 rm -rf out && mkdir out
-if ../caos -Lp -o out ../src/Caos.caos \
-    && diff -u ../src/Caos.c out/Caos.c \
-    && diff -u ../src/Caos.h out/Caos.h \
-    && diff -u ../src/Caos_define.h out/Caos_define.h; then
-    echo "PASS: self-hosting (Caos.caos)"
-else
-    echo "FAIL: self-hosting (Caos.caos)"
-    failed=1
-fi
+selfhost() {
+    opt=$1
+    name=$2
+    if ../caos "$opt" -o out "../src/$name.caos"; then
+        for f in out/*; do
+            diff -u "../src/$(basename "$f")" "$f" || return 1
+        done
+    else
+        return 1
+    fi
+}
+for c in Caos SBuf RBuf ListBuf Element SLib; do
+    rm -rf out/*
+    case $c in SLib) opt=-Lpd ;; *) opt=-Lp ;; esac
+    if selfhost "$opt" "$c"; then
+        echo "PASS: self-hosting ($c.caos)"
+    else
+        echo "FAIL: self-hosting ($c.caos)"
+        failed=1
+    fi
+done
 rm -rf out
 
 exit $failed

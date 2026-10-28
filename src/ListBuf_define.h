@@ -1,4 +1,4 @@
 struct ListBuf_struct{
-    int length;
-    Element** elements;
+int length;
+Element** elements;
 };

@@ -1,0 +1,51 @@
+#include <string.h>
+
+#include "common.h"
+
+/**
+* @class SBuf
+* @brief String Buffer
+*/
+#class $SBuf
+
+char str[MAX_TEXT];
+boolean exist;
+int len;
+
+/**
+* @brief initial
+* @memeberof SBuf
+*/
+#+void init() {
+	memset(&(@str[0]), 0, MAX_TEXT);
+	@exist = FALSE;
+	@len = 0;
+}
+
+/**
+* @brief set String
+* @memeberof SBuf
+*/
+#+void setBuf(const char* top, const int len) {
+	strncpy(@str, top, len);
+	@len = len;
+	@exist = TRUE;
+}
+
+/**
+* @brief get String
+* @memeberof SBuf
+*/
+#()+const char* getStr() {
+	return @str;
+}
+
+/**
+* @brief get Length
+* @memeberof SBuf
+*/
+#()+int getLen() {
+	return @len;
+}
+
+#endclass

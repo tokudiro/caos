@@ -1,0 +1,257 @@
+#include <stdio.h>
+#include <string.h>
+
+#include "common.h"
+
+static const char* TYPE_CAPTION[] = {
+    "T_NON      ",
+    "T_NUMBER   ",
+    "T_WORD     ",
+    "T_OBJECT   ",
+    "T_CLASS    ", 
+    "T_DOT      ",
+    "T_KEYWORD  ",
+    "T_METHOD   ",
+    "T_PARAMETER",
+    "T_ASTERISK ",
+    "T_POINTER  ",
+    "T_TYPE     ",
+    "T_VALUE    ",
+    "T_SEMICOLON",
+    "T_WSPACE   ",
+    "T_COMMA    "};
+
+char* RBufElement_toString(char* tostring, const char* str, const buftype type) {
+    
+    if ( type < sizeof(TYPE_CAPTION)/sizeof(TYPE_CAPTION[0]) ) {
+        strcat(tostring, TYPE_CAPTION[type]);
+    } else {
+        strcat(tostring, "UNKNOWN    ");
+    }
+    strcat(tostring, ":");
+    strcat(tostring, str);
+    return tostring;
+}
+
+/**
+* @class RBuf
+* @brief Ring Buffer
+*/
+#class $RBuf
+
+char buf[MAX_ARRAYSIZE][MAX_TEXT];   /* buf */
+buftype type[MAX_ARRAYSIZE];
+char thispointer_str[MAX_TEXT];
+char thisclass_str[MAX_TEXT];
+boolean isVerbose;
+int first;
+int last;
+
+
+/**
+* @brief initialize
+* @memberof RBuf
+*/
+#+void init(const char* thispointer_str, boolean isVerbose){
+    @first = 0;
+    @last = 0;
+    @thispointer_str[0] = 0;
+    strcat( @thispointer_str, thispointer_str);
+    @isVerbose = isVerbose;
+}
+
+/**
+* @brief set class string
+* @memberof RBuf
+*/
+#+void setClass(const char* thisclass_str){
+    @thisclass_str[0] = 0;
+    strcat( @thisclass_str, thisclass_str);
+}
+
+/**
+* @brief enque
+* @memberof RBuf
+*/
+#+void enque(const char* str, const int len, const buftype type){
+    memset(&(@buf[@last][0]), 0, MAX_TEXT);
+    strcpy( &(@buf[@last][0]), str);
+    @type[@last] = type;
+    @last++;
+    if (@first == @last) {
+        /* buffer over */
+        if (@isVerbose) { printf("error:buffer over.\n"); }
+    }
+    if (@last==MAX_ARRAYSIZE) {@last=0;}
+}
+
+/**
+* @brief deque
+* @memberof RBuf
+*/
+#+char* deque(buftype* p_type){
+    char* ret = @buf[@first];
+    *p_type = @type[@first];
+    @first++;
+    if (@first==MAX_ARRAYSIZE) {@first=0;}
+    return ret;
+}
+
+/**
+* @brief empty check
+* @memberof RBuf
+*/
+#()+boolean isEmpty(){
+    return (@first==@last?TRUE:FALSE);
+}
+
+#+char* allDeque(char* buf){
+    buftype type;
+    char* str;
+    buf[0] = 0;
+    while(@isEmpty() == FALSE) {
+        str = @deque(&type);
+        
+        char tostring[MAX_TEXT] = {0};
+        if (@isVerbose) printf("element :%s\n", RBufElement_toString(tostring, str, type) );
+        
+        switch(type) {
+        case T_OBJECT:
+            strcat(buf, @thispointer_str);
+            strcat(buf, "->");
+            break;
+        case T_METHOD:
+            strcat(buf, @thisclass_str);
+            strcat(buf, "_");
+            break;
+        }
+        strcat(buf,  str);
+    }
+    if (@isVerbose) printf("----------\n");
+    return buf;
+}
+
+#+boolean back_retype(const buftype find, const buftype replace){
+    if (@isEmpty() ) return FALSE;
+    
+    int index = @last;
+    while( index != @first) {
+        index--;
+        if ( index < 0 ) index=MAX_ARRAYSIZE-1;
+        if ( @type[index] == T_DOT || @type[index] == T_ASTERISK ) { return FALSE; }
+        if ( @type[index] == find ) {
+            @type[index] = replace;
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+#()+const char* back_getStr(const buftype find){
+    if (@isEmpty() ) return 0;
+    
+    int index = @last;
+    while( index != @first) {
+        index--;
+        if ( index < 0 ) index=MAX_ARRAYSIZE-1;
+        if ( @type[index] == find ) {
+            return @buf[index];
+        }
+    }
+    return 0;
+}
+
+#+void trimQue(){
+    int i;
+    if (@first == @last) return;
+
+    if (@first < @last) {
+        for (i = @first; i<@last; i++)
+        {
+            if( @type[i] == T_WSPACE ) {
+                @first++;
+            } else {
+                break;
+            }
+        }
+    } else {
+        boolean isContinue = TRUE;
+        for (i = @first; i<MAX_ARRAYSIZE; i++)
+        {
+            if( @type[i] == T_WSPACE ) {
+                @first++;
+            } else {
+                isContinue = FALSE;
+                break;
+            }
+        }
+        if (isContinue) {
+            for (i = 0; i<@last; i++)
+            {
+                if( @type[i] == T_WSPACE ) {
+                    @first++;
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+    return;
+}
+
+#+boolean isWSPACE(){
+    int i;
+    if (@first == @last) return FALSE;
+
+    if (@first < @last) {
+        for (i = @first; i<@last; i++)
+        {
+            if(@type[i]!=T_WSPACE) return FALSE;
+        }
+    } else {
+        for (i = @first; i<MAX_ARRAYSIZE; i++)
+        {
+            if(@type[i]!=T_WSPACE) return FALSE;
+        }
+        for (i = 0; i<@last; i++)
+        {
+            if(@type[i]!=T_WSPACE) return FALSE;
+        }
+    }
+    return TRUE;
+}
+
+/**
+* @brief toString
+* @param buf A string that represents the current object.
+* @return A string that represents the current object.
+*/
+#()+char* toString(char* tostring){
+    int i;
+    if (@first == @last) return tostring;
+
+    if (@first < @last) {
+        for (i = @first; i<@last; i++)
+        {
+            char element_tostring[MAX_ARRAYSIZE] = {0};
+            strcat(tostring, RBufElement_toString(element_tostring, @buf[i], @type[i]) );
+            strcat(tostring, "\n");
+        }
+    } else {
+        for (i = @first; i<MAX_ARRAYSIZE; i++)
+        {
+            char element_tostring[MAX_ARRAYSIZE] = {0};
+            strcat(tostring, RBufElement_toString(element_tostring, @buf[i], @type[i]) );
+            strcat(tostring, "\n");
+        }
+        for (i = 0; i<@last; i++)
+        {
+            char element_tostring[MAX_ARRAYSIZE] = {0};
+            strcat(tostring, RBufElement_toString(element_tostring, @buf[i], @type[i]) );
+            strcat(tostring, "\n");
+        }
+    }
+    return tostring;
+}
+
+#endclass

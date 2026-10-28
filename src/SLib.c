@@ -4,6 +4,7 @@
 
 #include "SLib.h"
 
+
 char* SLib_chopRet(char* buf){
     unsigned int len;
     for (len=0; len<MAX_TEXT*MAX_ARRAYSIZE; len++) {
@@ -31,4 +32,5 @@ int SLib_checkLength(char* buf){
     }
     return length;
 }
+
 
