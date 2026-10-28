@@ -1,6 +1,10 @@
 .PHONY: all
 all : caos
 
+.PHONY: test
+test : caos
+	sh ./test/test.sh
+
 .PHONY: clean
 clean :
 	$(RM) caos ./obj/caos.l ./obj/caos.yy.c

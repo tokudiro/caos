@@ -1,24 +1,30 @@
 #!/bin/sh
-rm test_*.c
-rm test_*.h
+# usage: test.sh  (run from any directory; requires ../caos to be built)
+cd "$(dirname "$0")" || exit 1
 
-../caos -L test_METHOD_SCOPE_01.caos
-gcc test_METHOD_SCOPE_01.c -o test_METHOD_SCOPE_01
-../caos -L test_METHOD_DEFINE_01.caos
-gcc test_METHOD_DEFINE_01.c -o test_METHOD_DEFINE_01
-./test_METHOD_DEFINE_01
+rm -f test_*.c test_*.h
 
-../caos -L test_METHOD_DEFINE_02.caos
-gcc test_METHOD_DEFINE_02.c -o test_METHOD_DEFINE_02
-./test_METHOD_DEFINE_02
+failed=0
 
-../caos -Lp test_TYPE_STRUCT.caos
-gcc test_TYPE_STRUCT.c -o test_TYPE_STRUCT
-./test_TYPE_STRUCT
+# run_test <caos option> <test name>
+run_test() {
+    opt=$1
+    name=test_$2
+    if ../caos "$opt" "$name.caos" \
+        && gcc "$name.c" -o "$name" \
+        && "./$name"; then
+        echo "PASS: $name"
+    else
+        echo "FAIL: $name"
+        failed=1
+    fi
+}
 
-../caos -Ldp test_TYPE_UTILITY.caos
-gcc test_TYPE_UTILITY.c -o test_TYPE_UTILITY
-./test_TYPE_UTILITY
+run_test -L   METHOD_SCOPE_01
+run_test -L   METHOD_DEFINE_01
+run_test -L   METHOD_DEFINE_02
+run_test -Lp  TYPE_STRUCT
+run_test -Ldp TYPE_UTILITY
+run_test -L   INITIAL_01
 
-../caos -L test_INITIAL_01.caos
-gcc test_INITIAL_01.c -o test_INITIAL_01
+exit $failed
