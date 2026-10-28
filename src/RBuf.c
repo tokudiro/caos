@@ -130,7 +130,7 @@ boolean RBuf_back_retype(RBuf* pthis, const buftype find, const buftype replace)
     while( index != pthis->first) {
         index--;
         if ( index < 0 ) index=MAX_ARRAYSIZE;
-        if ( pthis->type[index] == T_DOT ) { return FALSE; }
+        if ( pthis->type[index] == T_DOT || pthis->type[index] == T_ASTERISK ) { return FALSE; }
         if ( pthis->type[index] == find ) {
             pthis->type[index] = replace;
             return TRUE;
