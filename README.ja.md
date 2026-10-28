@@ -13,6 +13,11 @@ C言語向けのオブジェクト指向ソーストランスパイラです。
 
 ``` make ```
 
+## セルフホスト
+`Caos` クラス（`src/Caos.c`、`src/Caos.h`、`src/Caos_define.h`）は `src/Caos.caos` に書かれ、caos 自身が生成します。
+生成物はコミットしてあるので、caos がなくても caos をビルドできます。
+`Caos.caos` を編集したら `make regen` を実行してください。`make test` で、コミット済みのファイルと一致しているかを確認します。
+
 ## サンプルコード
 
 * SampleClass.caos

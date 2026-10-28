@@ -61,4 +61,17 @@ else
 fi
 rm -rf out
 
+# self-hosting : caos regenerates the Caos class (src/Caos.*) from Caos.caos
+rm -rf out && mkdir out
+if ../caos -Lp -o out ../src/Caos.caos \
+    && diff -u ../src/Caos.c out/Caos.c \
+    && diff -u ../src/Caos.h out/Caos.h \
+    && diff -u ../src/Caos_define.h out/Caos_define.h; then
+    echo "PASS: self-hosting (Caos.caos)"
+else
+    echo "FAIL: self-hosting (Caos.caos)"
+    failed=1
+fi
+rm -rf out
+
 exit $failed

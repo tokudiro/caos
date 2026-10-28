@@ -1,3 +1,3 @@
 struct Caos_struct{
-    ListBuf* list;
+ListBuf* list;
 };
