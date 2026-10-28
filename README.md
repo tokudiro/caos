@@ -1,5 +1,6 @@
 # caos
 C-language additional object-oriented source
+English | [日本語](README.ja.md)
 
 ## Description
 object-oriented source transpiler for C-language.
