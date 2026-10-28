@@ -130,19 +130,52 @@ char* RBuf_allDeque(RBuf* pthis, char* buf){
 }
 
 boolean RBuf_back_retype(RBuf* pthis, const buftype find, const buftype replace){
+    return RBuf_back_retype_stop(pthis, find, replace, T_DOT);
+}
+
+/**
+* @brief retype the nearest element of type find before the end,
+*        giving up at T_DOT or at the type stop
+* @memberof RBuf
+*/
+boolean RBuf_back_retype_stop(RBuf* pthis, const buftype find, const buftype replace, const buftype stop){
     if (RBuf_isEmpty(pthis) ) return FALSE;
     
     int index = pthis->last;
     while( index != pthis->first) {
         index--;
         if ( index < 0 ) index=MAX_ARRAYSIZE-1;
-        if ( pthis->type[index] == T_DOT || pthis->type[index] == T_ASTERISK ) { return FALSE; }
+        if ( pthis->type[index] == T_DOT || pthis->type[index] == stop ) { return FALSE; }
         if ( pthis->type[index] == find ) {
             pthis->type[index] = replace;
             return TRUE;
         }
     }
     return FALSE;
+}
+
+/**
+* @brief copy the text before the T_PARAMETER element (the declared type)
+* @return out, or 0 if there is no T_PARAMETER element
+* @memberof RBuf
+*/
+char* RBuf_typeBeforeParameter(const RBuf* pthis, char* out){
+    int i = pthis->first;
+    int len;
+    out[0] = 0;
+    while (i != pthis->last) {
+        if (pthis->type[i] == T_PARAMETER) {
+            len = strlen(out);
+            while (len > 0 && out[len-1] == ' ') {
+                out[--len] = 0;
+            }
+            return out;
+        }
+        strcat(out, pthis->buf[i]);
+        i++;
+        if (i == MAX_ARRAYSIZE) i = 0;
+    }
+    return 0;
 }
 
 const char* RBuf_back_getStr(const RBuf* pthis, const buftype find){

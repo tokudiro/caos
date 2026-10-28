@@ -226,5 +226,5 @@ int main(int argc, char** argv)
     
     ListBuf_finish( Caos_list(caos) );
     
-    return ret;
+    return (ret != 0 || errorCount != 0) ? 1 : 0;
 }

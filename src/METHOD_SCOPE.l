@@ -42,7 +42,7 @@
 
     \( {
         check_arg_comma();
-        boolean isMethod = RBuf_back_retype(queue, T_OBJECT, T_METHOD);
+        boolean isMethod = RBuf_back_retype_stop(queue, T_OBJECT, T_METHOD, T_ASTERISK);
         RBuf_enque( queue, yytext, yyleng, T_NON);
         if (isMethod) {
             RBuf_enque( queue, SBuf_getStr(thispointer_buf), SBuf_getLen(thispointer_buf), T_VALUE);

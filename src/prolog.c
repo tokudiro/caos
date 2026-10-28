@@ -83,3 +83,12 @@ int countPublicMethod = 0;
 int countPrivateMethod = 0;
 int countClassMethod = 0;
 int countAttribute = 0;
+
+/* errors found while translating : main() exits with non-zero status */
+int errorCount = 0;
+
+static void reportError(const char* message)
+{
+    fprintf(stderr, "%s:%d: error: %s\n", input_filename, yylineno, message);
+    errorCount++;
+}

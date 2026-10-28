@@ -8,6 +8,8 @@ char* RBuf_deque(RBuf* pthis, buftype* p_type);
 boolean RBuf_isEmpty(const RBuf* pthis);
 char* RBuf_allDeque(RBuf* pthis, char* buf);
 boolean RBuf_back_retype(RBuf* pthis, const buftype find, const buftype replace);
+boolean RBuf_back_retype_stop(RBuf* pthis, const buftype find, const buftype replace, const buftype stop);
+char* RBuf_typeBeforeParameter(const RBuf* pthis, char* out);
 const char* RBuf_back_getStr(const RBuf* pthis, const buftype find);
 void RBuf_trimQue(RBuf* pthis);
 boolean RBuf_isWSPACE(RBuf* pthis);

@@ -43,5 +43,6 @@ extern int countPublicMethod;
 extern int countPrivateMethod;
 extern int countClassMethod;
 extern int countAttribute;
+extern int errorCount;
 
 #endif /* GLOBAL_H__ */

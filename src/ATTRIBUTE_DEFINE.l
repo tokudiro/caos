@@ -1,46 +1,40 @@
 %{
-	void getterInHeader(const char* type, const char* asterisk, const char* member)
+	void getterInHeader(const char* type, const char* member)
 	{
-		fprintf(public_header, "%s", type);
-		if (0 != asterisk) fprintf(public_header, "*");
-		fprintf(public_header, " %s_get_%s(", SBuf_getStr(class_buf), member);
+		fprintf(public_header, "%s %s_get_%s(", type, SBuf_getStr(class_buf), member);
 		fprintf(public_header, "const %s* %s", SBuf_getStr(class_buf), SBuf_getStr(thispointer_buf) );
 		fprintf(public_header, ");\n");
 	}
 
-	void getterInSource(const char* type, const char* asterisk, const char* member)
+	void getterInSource(const char* type, const char* member)
 	{
-		fprintf(source, "%s", type);
-		if (0 != asterisk) fprintf(source, "*");
-		fprintf(source, " %s_get_%s(", SBuf_getStr(class_buf), member);
+		fprintf(source, "%s %s_get_%s(", type, SBuf_getStr(class_buf), member);
 		fprintf(source, "const %s* %s", SBuf_getStr(class_buf), SBuf_getStr(thispointer_buf) );
 		fprintf(source, ") { return ");
 		fprintf(source, "%s->%s", SBuf_getStr(thispointer_buf), member );
 		fprintf(source, "; }\n");
 	}
 
-	void setterInHeader(const char* type, const char* asterisk, const char* member)
+	void setterInHeader(const char* type, const char* member)
 	{
-		fprintf(public_header, "void");
-		fprintf(public_header, " %s_set_%s(", SBuf_getStr(class_buf), member);
+		fprintf(public_header, "void %s_set_%s(", SBuf_getStr(class_buf), member);
 		fprintf(public_header, "%s* %s", SBuf_getStr(class_buf), SBuf_getStr(thispointer_buf) );
-		fprintf(public_header, ", ");
-		fprintf(public_header, "%s", type);
-		if (0 != asterisk) fprintf(public_header, "*");
-		fprintf(public_header, " %s);\n", member);
+		fprintf(public_header, ", %s %s);\n", type, member);
 	}
 
-	void setterInSource(const char* type, const char* asterisk, const char* member)
+	void setterInSource(const char* type, const char* member)
 	{
-		fprintf(source, "void");
-		fprintf(source, " %s_set_%s(", SBuf_getStr(class_buf), member);
+		fprintf(source, "void %s_set_%s(", SBuf_getStr(class_buf), member);
 		fprintf(source, "%s* %s", SBuf_getStr(class_buf), SBuf_getStr(thispointer_buf) );
-		fprintf(source, ", ");
-		fprintf(source, "%s", type);
-		if (0 != asterisk) fprintf(source, "*");
-		fprintf(source, " %s) { ", member);
+		fprintf(source, ", %s %s) { ", type, member);
 		fprintf(source, "%s->%s = %s", SBuf_getStr(thispointer_buf), member, member );
 		fprintf(source, "; }\n");
+	}
+
+	/* a const value (not a pointer to const) cannot be assigned */
+	boolean isAssignableType(const char* type)
+	{
+		return (strstr(type, "const") == 0 || strchr(type, '*') != 0) ? TRUE : FALSE;
 	}
 %}
 
@@ -120,30 +114,31 @@
 		BEGIN(CLASS_SCOPE);
 	}
 	;  {
-        boolean isType;
+        char type[MAX_TEXT];
 	    RBuf_enque(queue, yytext, yyleng, T_SEMICOLON);
 	    RBuf_trimQue(queue);
 		/* Class Member */
 	    countAttribute++;
 	    
 		isMember = RBuf_back_retype(queue, T_WORD, T_PARAMETER);
-		isType = RBuf_back_retype(queue, T_WORD, T_TYPE);
-		const char* clazz = RBuf_back_getStr(queue, T_CLASS);
-		if (isMember && (isType || 0!=clazz) ) {
+		if (isMember && RBuf_typeBeforeParameter(queue, type) != 0 && type[0] != 0) {
 			const char* member = RBuf_back_getStr(queue, T_PARAMETER);
-			const char* asterisk = RBuf_back_getStr(queue, T_ASTERISK);
-			const char* type = RBuf_back_getStr(queue, T_TYPE);
 			
 			/* getter,setter in header */
-			getterInHeader((0!=clazz?clazz:type), asterisk, member);
-			setterInHeader((0!=clazz?clazz:type), asterisk, member);
+			getterInHeader(type, member);
+			if (isAssignableType(type)) setterInHeader(type, member);
 			/* getter,setter in source */
-			getterInSource((0!=clazz?clazz:type), asterisk, member);
-			setterInSource((0!=clazz?clazz:type), asterisk, member);
+			getterInSource(type, member);
+			if (isAssignableType(type)) setterInSource(type, member);
 		}
         if (!isNonDefineHeader) {
     		fprintf(struct_header, "%s", RBuf_allDeque(queue, allque) );
         }
+	}
+	=  {
+		/* a struct member cannot have an initializer : skip it up to ';' */
+		reportError("member initializer is not supported (initialize it in a method)");
+		BEGIN(ATTRIBUTE_DEFINE_INIT);
 	}
 	\*  { RBuf_enque(queue, yytext, yyleng, T_ASTERISK); }
 	.  { RBuf_enque(queue, yytext, yyleng, T_NON); }
@@ -195,4 +190,13 @@
     	    fprintf(struct_header, "%s", yytext);
         }
 	}
+}
+
+<ATTRIBUTE_DEFINE_INIT>{
+	\"([^"\\\n]|\\.)*\" {;}
+	;  {
+		yyless(0);
+		BEGIN(ATTRIBUTE_DEFINE);
+	}
+	.|\n {;}
 }

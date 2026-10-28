@@ -48,6 +48,23 @@ run_test -Lp  TYPE_STRUCT
 run_test -Ldp TYPE_UTILITY
 run_test -L   INITIAL_01
 run_test -L   COMMENT_01
+run_test -L   ATTRIBUTE_01
+
+# a member initializer is reported (with its line), caos exits non-zero,
+# and the output is still valid C without the initializers
+if ../caos -L test_ERROR_01.caos 2> out_err.txt; then
+    echo "FAIL: member initializer error (caos succeeded)"
+    failed=1
+elif [ "$(grep -c 'test_ERROR_01.caos:[0-9]*: error: member initializer' out_err.txt)" = 3 ] \
+    && grep -q ':3: error' out_err.txt && grep -q ':4: error' out_err.txt && grep -q ':5: error' out_err.txt \
+    && gcc test_ERROR_01.c -o test_ERROR_01 && ./test_ERROR_01; then
+    echo "PASS: member initializer error"
+else
+    echo "FAIL: member initializer error"
+    cat out_err.txt
+    failed=1
+fi
+rm -f out_err.txt
 
 # -o : files go to the given folder with the same content
 rm -rf out && mkdir out

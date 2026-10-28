@@ -184,14 +184,9 @@
 	}
 	
 	=  {
-		/* TODO : bad case : struct member initialize */
-		if (isVerbose) printf("error:struct member initialize\n");
-		/* Class Member */
-	    RBuf_allDeque( queue, allque);
-        if (!isNonDefineHeader) {
-    		fprintf(struct_header, "%s;", allque );
-        }
-		isMember = TRUE;
+		/* a struct member cannot have an initializer : skip it up to ';' */
+		reportError("member initializer is not supported (initialize it in a method)");
+		BEGIN(CLASS_SCOPE_INIT);
 	}
 	.  { RBuf_enque(queue, yytext, yyleng, T_NON); }
 }
@@ -278,4 +273,13 @@
 		BEGIN(CLASS_SCOPE);
 	}
     . {;}
+}
+
+<CLASS_SCOPE_INIT>{
+	\"([^"\\\n]|\\.)*\" {;}
+	;  {
+		yyless(0);
+		BEGIN(CLASS_SCOPE);
+	}
+	.|\n {;}
 }
