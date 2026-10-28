@@ -44,6 +44,36 @@ int main(){
 }
 ```
 
+## Test
+``` make test ```
+
+Each `test/*.caos` is translated, compared with the snapshot in `test/expected/`, compiled with gcc and run.
+After an intended change of the output, regenerate the snapshots with `UPDATE=1 sh test/test.sh` and review `git diff`.
+
+## Directives
+| directive | meaning |
+|---|---|
+| `#class $Name` ... `#endclass` | define a class (`#struct`, `#singleton`, `#utility` are variants) |
+| `#+` / `#public` | public method |
+| `#-` / `#private` | private method |
+| `##` | protected method |
+| `#$` / `#classmethod` | class method (no `this` pointer) |
+| `#@` | public member (getter / setter are generated) |
+| `#import` | include |
+| `@name` | member or method of the current object (`pthis->name` / `Class_name(pthis)`) |
+
+## Options
+| option | meaning |
+|---|---|
+| `-h` | help |
+| `-V` | verbose |
+| `-L` | do not output line numbers |
+| `-C` | replace `//` comments with `/* */` |
+| `-k <str>` | change the this-pointer name (default `pthis`) |
+| `-p` | do not output the private header |
+| `-d` | do not output the define header |
+| `-o <path>` | output folder (not implemented yet, see issue #2) |
+
 ## Generate files
 ```caos -L SampleClass.caos```
 
