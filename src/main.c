@@ -26,8 +26,8 @@ FILE* private_header;
 FILE* define_header;
 FILE* struct_header;
 
-SBuf* class_buf;
-SBuf* thispointer_buf;
+extern SBuf* class_buf;
+extern SBuf* thispointer_buf;
 
 extern RBuf* queue;
 extern Caos* caos;
