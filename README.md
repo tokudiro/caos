@@ -17,6 +17,7 @@ The classes of caos itself (`Caos`, `SBuf`, `RBuf`, `ListBuf`, `Element`, `SLib`
 The generated `.c` / `.h` files are committed, so caos can be built without caos.
 After editing a `.caos`, run `make regen`; `make test` checks that the committed files match what caos generates.
 The lexer (`src/*.l`, `src/prolog.c`) and `main.c` are written in C / flex.
+See the [class diagram](doc/class_diagram.md).
 
 ## Sample Code
 

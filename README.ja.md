@@ -18,6 +18,7 @@ caos 自身のクラス（`Caos`、`SBuf`、`RBuf`、`ListBuf`、`Element`、`SL
 生成された `.c` / `.h` はコミットしてあるので、caos がなくても caos をビルドできます。
 `.caos` を編集したら `make regen` を実行してください。`make test` で、コミット済みのファイルと caos の生成結果が一致するかを確認します。
 字句解析部（`src/*.l`、`src/prolog.c`）と `main.c` は C / flex で書かれています。
+[クラス図](doc/class_diagram.md)もあります。
 
 ## サンプルコード
 
