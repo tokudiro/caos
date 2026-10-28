@@ -1,0 +1,7 @@
+#ifndef TEST_METHOD_DEFINE_01_H__
+#define TEST_METHOD_DEFINE_01_H__
+typedef struct TEST_METHOD_DEFINE_01_struct TEST_METHOD_DEFINE_01;
+void TEST_METHOD_DEFINE_01_publicMethod(TEST_METHOD_DEFINE_01* pthis);
+void TEST_METHOD_DEFINE_01_publicConstMethod(const TEST_METHOD_DEFINE_01* pthis);
+void TEST_METHOD_DEFINE_01_classMethod();
+#endif /* TEST_METHOD_DEFINE_01_H__ */

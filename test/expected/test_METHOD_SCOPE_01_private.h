@@ -1,0 +1,1 @@
+static int TEST_METHOD_SCOPE_01_a(TEST_METHOD_SCOPE_01* pthis);

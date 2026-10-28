@@ -1,0 +1,1 @@
+static void TEST_METHOD_DEFINE_01_privateMethod(TEST_METHOD_DEFINE_01* pthis);

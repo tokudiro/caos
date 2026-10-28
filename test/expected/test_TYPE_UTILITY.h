@@ -1,0 +1,5 @@
+#ifndef TEST_TYPE_UTILITY_H__
+#define TEST_TYPE_UTILITY_H__
+typedef struct TEST_TYPE_UTILITY_struct TEST_TYPE_UTILITY;
+int TEST_TYPE_UTILITY_func();
+#endif /* TEST_TYPE_UTILITY_H__ */

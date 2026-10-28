@@ -1,0 +1,9 @@
+#ifndef TEST_METHOD_SCOPE_01_H__
+#define TEST_METHOD_SCOPE_01_H__
+typedef struct TEST_METHOD_SCOPE_01_struct TEST_METHOD_SCOPE_01;
+int TEST_METHOD_SCOPE_01_func(TEST_METHOD_SCOPE_01* pthis);
+int TEST_METHOD_SCOPE_01_called_func(TEST_METHOD_SCOPE_01* pthis, int z);
+void TEST_METHOD_SCOPE_01_call_func(TEST_METHOD_SCOPE_01* pthis);
+void TEST_METHOD_SCOPE_01_print_func(TEST_METHOD_SCOPE_01* pthis);
+void TEST_METHOD_SCOPE_01_func_check(TEST_METHOD_SCOPE_01* pthis);
+#endif /* TEST_METHOD_SCOPE_01_H__ */
