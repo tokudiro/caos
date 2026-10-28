@@ -129,7 +129,7 @@ boolean RBuf_back_retype(RBuf* pthis, const buftype find, const buftype replace)
     int index = pthis->last;
     while( index != pthis->first) {
         index--;
-        if ( index < 0 ) index=MAX_ARRAYSIZE;
+        if ( index < 0 ) index=MAX_ARRAYSIZE-1;
         if ( pthis->type[index] == T_DOT || pthis->type[index] == T_ASTERISK ) { return FALSE; }
         if ( pthis->type[index] == find ) {
             pthis->type[index] = replace;
@@ -145,7 +145,7 @@ const char* RBuf_back_getStr(const RBuf* pthis, const buftype find) {
     int index = pthis->last;
     while( index != pthis->first) {
         index--;
-        if ( index < 0 ) index=MAX_ARRAYSIZE;
+        if ( index < 0 ) index=MAX_ARRAYSIZE-1;
         if ( pthis->type[index] == find ) {
             return pthis->buf[index];
         }
