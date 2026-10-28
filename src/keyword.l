@@ -41,6 +41,7 @@ SELF_OBJECT  (\@\@)
 DOT      (\.)
 
 %option yylineno
+%option noyywrap
 
 %s IMPORT
 %s CLASS_DEFINE
