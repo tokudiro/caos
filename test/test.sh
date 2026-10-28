@@ -47,6 +47,7 @@ run_test -L   METHOD_DEFINE_02
 run_test -Lp  TYPE_STRUCT
 run_test -Ldp TYPE_UTILITY
 run_test -L   INITIAL_01
+run_test -L   COMMENT_01
 
 # -o : files go to the given folder with the same content
 rm -rf out && mkdir out

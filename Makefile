@@ -9,7 +9,7 @@ test : caos
 clean :
 	$(RM) caos ./obj/caos.l ./obj/caos.yy.c
 
-./obj/caos.l : ./src/*.l
+./obj/caos.l : ./src/*.l ./src/Caos.c
 	@if [ ! -d obj ]; then \
 		mkdir obj; \
 	fi

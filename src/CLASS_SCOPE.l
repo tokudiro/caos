@@ -98,55 +98,63 @@
 	}
 	{WSPACE}   { RBuf_enque(queue, yytext, yyleng, T_WSPACE); }
 	{COMMENTS} {
-        if (RBuf_isWSPACE)
-        {
-            RBuf_allDeque( queue, allque);
+        isCommentQueued = isDeclarationQueued(queue);
+        if (isCommentQueued) {
+            queued_comment_put("/*");
+        } else {
+            if (RBuf_isWSPACE(queue)) {
+                RBuf_allDeque( queue, allque);
+                if (isMember) {
+                    if (!isNonDefineHeader) {
+                        fprintf( struct_header, "%s", allque);
+                    }
+                }else{
+                    fprintf( source, "%s", allque);
+                }
+            }
             if (isMember) {
                 if (!isNonDefineHeader) {
-                    fprintf( struct_header, "%s", allque);
+                    fprintf( struct_header, "/*");
                 }
-            }else{
-                fprintf( source, "%s", allque);
+            } else {
+                fprintf( source, "/*");
             }
-        }
-        if (isMember) {
-            if (!isNonDefineHeader) {
-                fprintf( struct_header, "/*");
-            }
-        } else {
-            fprintf( source, "/*");
         }
         BEGIN(CLASS_SCOPE_CSA);
 	}
 	{COMMENT}  {
-        if (RBuf_isWSPACE)
-        {
-            RBuf_allDeque( queue, allque);
-            if (isMember) {
-                if (!isNonDefineHeader) {
-                    fprintf( struct_header, "%s", allque);
+        isCommentQueued = isDeclarationQueued(queue);
+        if (isCommentQueued) {
+            queued_comment_put(isOldComment ? "/*" : "//");
+        } else {
+            if (RBuf_isWSPACE(queue)) {
+                RBuf_allDeque( queue, allque);
+                if (isMember) {
+                    if (!isNonDefineHeader) {
+                        fprintf( struct_header, "%s", allque);
+                    }
+                }else{
+                    fprintf( source, "%s", allque);
                 }
-            }else{
-                fprintf( source, "%s", allque);
+            }
+            if (isOldComment) {
+                if (isMember) {
+                    if (!isNonDefineHeader) {
+                        fprintf( struct_header, "/*");
+                    }
+                }else{
+                    fprintf( source, "/*");
+                }
+            } else {
+                if (isMember) {
+                    if (!isNonDefineHeader) {
+                        fprintf( struct_header, "//");
+                    }
+                }else{
+                    fprintf( source, "//");
+                }
             }
         }
-		if (isOldComment) {
-            if (isMember) {
-                if (!isNonDefineHeader) {
-        			fprintf( struct_header, "/*");
-                }
-            }else{
-        		fprintf( source, "/*");
-            }
-		} else {
-            if (isMember) {
-                if (!isNonDefineHeader) {
-        			fprintf( struct_header, "//");
-                }
-            }else{
-    			fprintf( source, "//");
-            }
-		}
 		BEGIN(CLASS_SCOPE_CSS);
 	}
     {DIRECTIVE_COMMENT} {
@@ -190,7 +198,11 @@
 
 <CLASS_SCOPE_CSA>{
 	{COMMENTE} {
-        if (isMember) {
+        if (isCommentQueued) {
+            queued_comment_put("*/");
+            queued_comment_flush();
+            isCommentQueued = FALSE;
+        } else if (isMember) {
             if (!isNonDefineHeader) {
         	    fprintf( struct_header, "*/");
             }
@@ -200,7 +212,9 @@
         BEGIN(CLASS_SCOPE);
     }
 	\n {
-        if (isMember) {
+        if (isCommentQueued) {
+            queued_comment_put("\n");
+        } else if (isMember) {
             if (!isNonDefineHeader) {
                 fprintf( struct_header, "\n");
             }
@@ -209,7 +223,9 @@
         }
 	}
 	.  {
-        if (isMember) {
+        if (isCommentQueued) {
+            queued_comment_put(yytext);
+        } else if (isMember) {
             if (!isNonDefineHeader) {
                 fprintf( struct_header, "%s", yytext);
             }
@@ -221,7 +237,11 @@
 
 <CLASS_SCOPE_CSS>{
 	\n {
-		if (isOldComment) {
+        if (isCommentQueued) {
+            queued_comment_put(isOldComment ? "*/\n" : "\n");
+            queued_comment_flush();
+            isCommentQueued = FALSE;
+        } else if (isOldComment) {
             if (isMember) {
                 if (!isNonDefineHeader) {
                     fprintf(struct_header, "*/\n");
@@ -241,7 +261,9 @@
 		BEGIN(CLASS_SCOPE);
 	}
 	.  {
-        if (isMember) {
+        if (isCommentQueued) {
+            queued_comment_put(yytext);
+        } else if (isMember) {
             if (!isNonDefineHeader) {
                 fprintf(struct_header, "%s", yytext);
             }

@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <assert.h>
+
+#class $TEST_COMMENT_01
+
+/* standalone block comment */
+int a /* c1 */ ;
+int b; // c2
+int /* c3 */ c; /* c4 */
+char* d // c5
+;
+#@ int e /* c6 */ ;
+#@ int f; // c7
+
+#+int sum(){
+    return @a + @b + @c;
+}
+
+#endclass
+
+int main(){
+    TEST_COMMENT_01 obj;
+    TEST_COMMENT_01_set_e(&obj, 3);
+    assert(TEST_COMMENT_01_get_e(&obj) == 3);
+    return 0;
+}

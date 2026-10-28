@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "common.h"
 
@@ -42,6 +43,35 @@ boolean isOldComment = FALSE;
 boolean isNonPrivateHeader = FALSE;
 boolean isNonDefineHeader = FALSE;
 boolean isOutputHeader = FALSE;
+
+/*
+ * A comment inside a declaration that is still queued is queued with it,
+ * so that it is output together with the declaration.
+ */
+static boolean isCommentQueued = FALSE;
+static char queued_comment[MAX_TEXT];
+
+static boolean isDeclarationQueued(const RBuf* q)
+{
+    return (RBuf_isEmpty(q) == FALSE && RBuf_isWSPACE((RBuf*)q) == FALSE);
+}
+
+static void queued_comment_flush(void)
+{
+    if (queued_comment[0] != 0) {
+        RBuf_enque(queue, queued_comment, strlen(queued_comment), T_NON);
+        queued_comment[0] = 0;
+    }
+}
+
+static void queued_comment_put(const char* str)
+{
+    /* one queue element holds MAX_TEXT chars : split a long comment */
+    if (strlen(queued_comment) + strlen(str) >= MAX_TEXT) {
+        queued_comment_flush();
+    }
+    strcat(queued_comment, str);
+}
 
 visibility methodVisibility = VISIBILITY_NONE;
 scope methodScope = SCOPE_OBJECT;
