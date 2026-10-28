@@ -6,7 +6,10 @@
 
 	{NUMBER} { fprintf((isOutputHeader?public_header:source), "%s", yytext); }
 
-	{OBJECT} { fprintf((isOutputHeader?public_header:source), "%s", &(yytext[1])); }
+	{OBJECT} {
+		reportError("'@' member access outside of a class");
+		fprintf((isOutputHeader?public_header:source), "%s", &(yytext[1]));
+	}
 	{WORD}   { fprintf((isOutputHeader?public_header:source), "%s", yytext); }
 	{WSPACE} { fprintf((isOutputHeader?public_header:source), "%s", yytext); }
 	{COMMENTS} { fprintf((isOutputHeader?public_header:source), "/*"); BEGIN(INITIAL_CSA); }
@@ -60,6 +63,17 @@
 		BEGIN(CLASS_DEFINE);
 	}
 	
+	{DIRECTIVE_ENDCLASS} {
+		reportError("#endclass without #class");
+	}
+	{DIRECTIVE_PUBLIC_METHOD} |
+	{DIRECTIVE_PRIVATE_METHOD} |
+	{DIRECTIVE_CLASS_METHOD} |
+	{DIRECTIVE_PUBLIC_CONST_METHOD} |
+	{DIRECTIVE_PUBLIC_ATTRIBUTE} {
+		reportError("method or member directive outside of a class");
+	}
+
 	\n { fprintf((isOutputHeader?public_header:source), "\n"); }
 	.  { fprintf((isOutputHeader?public_header:source), "%s", yytext); }
 }

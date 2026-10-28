@@ -10,6 +10,7 @@
 
 	{DIRECTIVE_PUBLIC_METHOD} {
 		if (isVerbose) printf("#directive public method\n");
+		methodLine = yylineno;
 		if (isLineNo) fprintf(source, "#line %d \"%s\"\n", yylineno, input_filename);
 		if (isLineNo) fprintf(public_header, "#line %d \"%s\"\n", yylineno, input_filename);
 	    countPublicMethod++;
@@ -21,6 +22,7 @@
 	}
 	{DIRECTIVE_PRIVATE_METHOD} {
 		if (isVerbose) printf("#directive private method\n");
+		methodLine = yylineno;
 		if (isLineNo) fprintf(source, "#line %d \"%s\"\n", yylineno, input_filename);
         if (!isNonPrivateHeader) {
     		if (isLineNo) fprintf(private_header, "#line %d \"%s\"\n", yylineno, input_filename);
@@ -35,6 +37,7 @@
 	}
 	{DIRECTIVE_PUBLIC_CONST_METHOD} {
 		if (isVerbose) printf("#directive public const method\n");
+		methodLine = yylineno;
 		if (isLineNo) fprintf(source, "#line %d \"%s\"\n", yylineno, input_filename);
 		if (isLineNo) fprintf(public_header, "#line %d \"%s\"\n", yylineno, input_filename);
 	    countPublicMethod++;
@@ -47,6 +50,7 @@
 	{DIRECTIVE_PROTECTED_METHOD} {}
 	{DIRECTIVE_CLASS_METHOD} {
 		if (isVerbose) printf("#directive class method\n");
+		methodLine = yylineno;
 		if (isLineNo) fprintf(source, "#line %d \"%s\"\n", yylineno, input_filename);
         if (!isNonPrivateHeader) {
             if (isLineNo) fprintf(private_header, "#line %d \"%s\"\n", yylineno, input_filename);
@@ -72,6 +76,13 @@
 		fprintf( source, "%s{", method );
 	    if (isVerbose) printf("BEGIN <METHOD_SCOPE>\n");
 		BEGIN(METHOD_SCOPE);
+	}
+
+	{DIRECTIVE_CLASS} |
+	{DIRECTIVE_SINGLETON} |
+	{DIRECTIVE_STRUCT} |
+	{DIRECTIVE_UTILITY} {
+		reportError("a class cannot be nested (#endclass is missing?)");
 	}
 
 	{DIRECTIVE_ENDCLASS} {

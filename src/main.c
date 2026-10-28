@@ -117,6 +117,10 @@ int main(int argc, char** argv)
 	if(optind < argc) {
 		input_filename = argv[optind];
 		yyin = fopen(input_filename, "r");
+		if (yyin == 0) {
+			fprintf(stderr, "%s: error: cannot open the file\n", input_filename);
+			exit(1);
+		}
 	} else {
 	    outputHELP();
 	    exit(0);

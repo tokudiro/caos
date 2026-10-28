@@ -56,6 +56,7 @@
 
 <CLASS_DEFINE>{
 	{WORD}  {
+		classLine = yylineno;
 		SBuf_setBuf( class_buf, yytext, yyleng);
 	    RBuf_setClass(queue, SBuf_getStr(class_buf));
 		defineClassInSource();
@@ -65,6 +66,7 @@
 	}
 	
 	{CLASS}  {
+		classLine = yylineno;
 	    Element* e = Element_new();
 	    Element_init(e, &(yytext[1]), yyleng-1, 0);
 	    ListBuf_append(Caos_list(caos), e);
@@ -77,5 +79,9 @@
 		BEGIN(CLASS_SCOPE);
 	}
 
-	\n { fprintf( source, "\n" ); }
+	\n {
+		reportErrorAt(yylineno - 1, "class name is missing");
+		fprintf( source, "\n" );
+		BEGIN(INITIAL);
+	}
 }

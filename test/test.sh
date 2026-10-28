@@ -66,6 +66,23 @@ else
 fi
 rm -f out_err.txt
 
+# malformed inputs : each test/error/*.caos must make caos exit non-zero
+# and print exactly the errors listed in the matching .expected file
+rm -rf out && mkdir out
+for f in error/*.caos; do
+    n=${f%.caos}
+    if ../caos -L -o out "$f" 2> out/stderr.txt; then
+        echo "FAIL: $n (caos succeeded)"
+        failed=1
+    elif diff -u "$n.expected" out/stderr.txt; then
+        echo "PASS: $n"
+    else
+        echo "FAIL: $n"
+        failed=1
+    fi
+done
+rm -rf out
+
 # -o : files go to the given folder with the same content
 rm -rf out && mkdir out
 if ../caos -L -o out test_INITIAL_01.caos \

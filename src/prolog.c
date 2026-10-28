@@ -87,8 +87,19 @@ int countAttribute = 0;
 /* errors found while translating : main() exits with non-zero status */
 int errorCount = 0;
 
+/* line where the current class starts (for "#endclass is missing") */
+static int classLine = 0;
+
+/* line where the current method starts (for "} is missing") */
+static int methodLine = 0;
+
+static void reportErrorAt(int line, const char* message)
+{
+    fprintf(stderr, "%s:%d: error: %s\n", input_filename, line, message);
+    errorCount++;
+}
+
 static void reportError(const char* message)
 {
-    fprintf(stderr, "%s:%d: error: %s\n", input_filename, yylineno, message);
-    errorCount++;
+    reportErrorAt(yylineno, message);
 }

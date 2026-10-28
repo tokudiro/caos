@@ -1,0 +1,16 @@
+#class $TEST_ERROR_01
+
+int a = 5;
+char* s = "a;b";
+#@ int b = 1;
+int c;
+
+#+int sum(){
+    return @a + @b + @c;
+}
+
+#endclass
+
+int main(){
+    return 0;
+}

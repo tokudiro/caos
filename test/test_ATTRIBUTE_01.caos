@@ -1,0 +1,39 @@
+#include <assert.h>
+#include <stdint.h>
+#include <string.h>
+
+#class $TEST_ATTRIBUTE_01
+
+#@ int i;
+#@ unsigned int u;
+#@ uint32_t w;
+#@ char* p;
+#@ const char* name;
+#@ struct TEST_ATTRIBUTE_01_struct* self;
+#@ const int fixed;
+
+#+int sum(){
+    return @i + (int)@u + (int)@w;
+}
+
+#endclass
+
+int main(){
+    TEST_ATTRIBUTE_01 obj;
+    memset(&obj, 0, sizeof(obj));
+    TEST_ATTRIBUTE_01_set_i(&obj, 1);
+    TEST_ATTRIBUTE_01_set_u(&obj, 2u);
+    TEST_ATTRIBUTE_01_set_w(&obj, 3);
+    TEST_ATTRIBUTE_01_set_p(&obj, 0);
+    TEST_ATTRIBUTE_01_set_name(&obj, "abc");
+    TEST_ATTRIBUTE_01_set_self(&obj, &obj);
+    assert(TEST_ATTRIBUTE_01_get_i(&obj) == 1);
+    assert(TEST_ATTRIBUTE_01_get_u(&obj) == 2u);
+    assert(TEST_ATTRIBUTE_01_get_w(&obj) == 3);
+    assert(TEST_ATTRIBUTE_01_get_p(&obj) == 0);
+    assert(strcmp(TEST_ATTRIBUTE_01_get_name(&obj), "abc") == 0);
+    assert(TEST_ATTRIBUTE_01_get_self(&obj) == &obj);
+    assert(TEST_ATTRIBUTE_01_get_fixed(&obj) == 0);
+    assert(TEST_ATTRIBUTE_01_sum(&obj) == 6);
+    return 0;
+}
