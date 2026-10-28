@@ -9,7 +9,7 @@ test : caos
 clean :
 	$(RM) caos ./obj/caos.l ./obj/caos.yy.c
 
-./obj/caos.l : ./src/*.l ./src/Caos.c
+./obj/caos.l : ./src/*.l ./src/Caos.c ./src/*.h
 	@if [ ! -d obj ]; then \
 		mkdir obj; \
 	fi
@@ -33,5 +33,5 @@ clean :
 
 SRCS = ./src/RBuf.c ./src/main.c ./src/SBuf.c ./src/SLib.c ./src/Element.c ./src/ListBuf.c
 
-caos : ./obj/caos.yy.c $(SRCS)
+caos : ./obj/caos.yy.c $(SRCS) ./src/*.h
 	$(CC) $(CFLAGS) -I./src -o caos ./obj/caos.yy.c $(SRCS) $(LDFLAGS)

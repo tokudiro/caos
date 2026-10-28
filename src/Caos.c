@@ -10,14 +10,10 @@
 #include "SLib.h"
 
 #include "Caos.h"
+#include "global.h"
 #include "ListBuf.h"
 #include "Element.h"
 
-extern FILE* source;
-extern FILE* public_header;
-extern FILE* private_header;
-extern FILE* define_header;
-extern FILE* struct_header;
 
 int bracket = 0;
 boolean arg_analysis = FALSE;

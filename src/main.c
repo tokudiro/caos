@@ -15,6 +15,7 @@
 #include "SBuf_define.h"
 #include "SLib.h"
 #include "Caos.h"
+#include "global.h"
 
 /* flex extern */
 extern FILE *yyin;
@@ -25,32 +26,6 @@ FILE* public_header;
 FILE* private_header;
 FILE* define_header;
 FILE* struct_header;
-
-extern SBuf* class_buf;
-extern SBuf* thispointer_buf;
-
-extern RBuf* queue;
-extern Caos* caos;
-
-extern char filename[];
-extern char source_name[];
-extern char public_header_name[];
-extern char private_header_name[];
-extern char define_header_name[];
-
-extern boolean isLineNo;
-extern boolean isVerbose;
-extern char* input_filename;
-extern boolean isOldComment;
-extern classtype classType;
-extern boolean isNonPrivateHeader;
-extern boolean isNonDefineHeader;
-extern boolean isOutputHeader;
-
-extern int countPublicMethod;
-extern int countPrivateMethod;
-extern int countClassMethod;
-extern int countAttribute;
 
 static void outputHELP(){
 	printf("------------------------------------------------------\n");
