@@ -26,6 +26,7 @@ int type;
 #+void init(const char* string, int length, int type)
 {
     @length = length;
+    @type = type;
     @string = malloc(@length+1);
     strcpy(@string, string);
 }

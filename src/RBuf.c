@@ -69,6 +69,7 @@ void RBuf_setClass(RBuf* pthis, const char* thisclass_str){
 * @memberof RBuf
 */
 void RBuf_enque(RBuf* pthis, const char* str, const int len, const buftype type){
+    (void)len;  /* kept for the interface : the whole string is copied */
     memset(&(pthis->buf[pthis->last][0]), 0, MAX_TEXT);
     strcpy( &(pthis->buf[pthis->last][0]), str);
     pthis->type[pthis->last] = type;
@@ -118,6 +119,8 @@ char* RBuf_allDeque(RBuf* pthis, char* buf){
         case T_METHOD:
             strcat(buf, pthis->thisclass_str);
             strcat(buf, "_");
+            break;
+        default:
             break;
         }
         strcat(buf,  str);

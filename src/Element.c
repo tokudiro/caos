@@ -21,6 +21,7 @@ void Element_delete(Element* pthis)
 void Element_init(Element* pthis, const char* string, int length, int type)
 {
     pthis->length = length;
+    pthis->type = type;
     pthis->string = malloc(pthis->length+1);
     strcpy(pthis->string, string);
 }

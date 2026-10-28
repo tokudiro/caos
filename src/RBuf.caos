@@ -74,6 +74,7 @@ int last;
 * @memberof RBuf
 */
 #+void enque(const char* str, const int len, const buftype type){
+    (void)len;  /* kept for the interface : the whole string is copied */
     memset(&(@buf[@last][0]), 0, MAX_TEXT);
     strcpy( &(@buf[@last][0]), str);
     @type[@last] = type;
@@ -123,6 +124,8 @@ int last;
         case T_METHOD:
             strcat(buf, @thisclass_str);
             strcat(buf, "_");
+            break;
+        default:
             break;
         }
         strcat(buf,  str);

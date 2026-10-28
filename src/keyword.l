@@ -42,6 +42,8 @@ DOT      (\.)
 
 %option yylineno
 %option noyywrap
+%option nounput
+%option noinput
 
 %s IMPORT
 %s CLASS_DEFINE
