@@ -18,6 +18,7 @@ caos は C にいくつかのディレクティブを足します。ディレク
 
 | 記法 | 意味 |
 |---|---|
+| `#interface $Name` ... `#endinterface` | インタフェース（「インタフェース」の節） |
 | `#import <x.h>` | `#include` を public ヘッダと define ヘッダに書く（`-d` のときは define ヘッダには書かない） |
 | `#header` ... `#endheader` | 間の行を `.c` ではなく **public ヘッダ**に出す（ディレクティブは行に単独で書く）。public のプロトタイプが使う型に使う。 |
 | `#' text`（`#comment`） | caos だけのコメント。その行は出力されない |
@@ -53,6 +54,44 @@ caos は C にいくつかのディレクティブを足します。ディレク
 
 `#endclass` などの `#end...` は互換で、クラスを閉じる働きしかありません。
 1 つのファイルには 1 種類のクラスだけを書いてください。最後に見つけた種類で、ファイルの組み立て方が決まります。
+
+## インタフェース
+
+インタフェースを使うと、呼び出し側は、オブジェクトのクラスを知らずに使えます（ドライバの差し替えや、テストでのモックの差し込み）。
+実体は関数ポインタの表で、クラスには何も足しません。インタフェースを実装しないクラスは今までどおりです。
+
+```
+#interface $Reader              // Reader.caos
+int read(char* buf, int len);
+void reset();
+#endinterface
+
+#class $File implements $Reader // File.caos
+int pos;
+#+int read(char* buf, int len){ @pos += len; return len; }
+#+void reset(){ @pos = 0; }
+#endclass
+```
+
+| 書くもの | 生成されるもの |
+|---|---|
+| `#interface $Reader` ... `#endinterface` | `Reader.h`: `struct Reader_vtable`（メソッドごとの関数ポインタ）、`Reader`（表とオブジェクトのポインタの組）、メソッドごとの `Reader_read(Reader r, ...)`。`Reader.c`: その本体（`r.vt->read(r.self, ...)`）。 |
+| `#class $File implements $Reader` | `File.c`: メソッドごとのアダプタ（唯一のキャスト）、`static const` の表、`Reader File_as_Reader(File* p)`（宣言は `File.h`）。 |
+
+呼び出し側は `Reader` だけを知っています。
+
+```c
+int total(Reader r) { return Reader_read(r, buf, 4); }
+...
+total(File_as_Reader(&file));   /* テストでは total(Mock_as_Reader(&mock)); */
+```
+
+* インタフェースにはメソッドの宣言だけ（`type name(args);`）を書きます。型には `$Name` が使えます。引数名 `r` と `self` は予約されています。関数ポインタや配列の引数は未対応です。
+* インタフェースは、同じファイル（クラスより前）か、入力ファイルと同じフォルダの `Name.caos` から読みます。ファイル名はインタフェース名にしてください。`Name.c` もリンクします。
+* 複数のインタフェース: `implements $A, $B` で `File_as_A` と `File_as_B` ができます。
+* メソッドは public（`#+` または `#()+`）で、名前、戻り値の型、引数の型が同じである必要があります（引数名は無視して、文字列で比較）。足りないメソッドや型の違いはエラーです: `File.caos:1: error: class File does not implement Reader::reset`。
+* `-M` は、`Name.caos` と `Name.h` をクラスの依存として載せます。
+* コストは、`Reader` 越しの呼び出しごとに間接呼び出し 1 回です。`File_read` を直接呼ぶ場合は、今までどおり普通の関数呼び出しです。
 
 ## 生成されるファイル
 

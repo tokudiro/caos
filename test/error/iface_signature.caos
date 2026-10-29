@@ -1,0 +1,6 @@
+#interface $R
+int read(char* buf, int len);
+#endinterface
+#class $C implements $R
+#+int read(char* buf, long len){ return 0; }
+#endclass

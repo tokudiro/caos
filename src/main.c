@@ -56,16 +56,28 @@ static const char* depfile_path = 0;
 static char** import_names = 0;
 static int import_count = 0;
 
-void addImport(const char* name) {
+/* files read besides the input (the .caos of an interface), as they are */
+static char** source_deps = 0;
+static int source_dep_count = 0;
+
+static void addUnique(char*** list, int* count, const char* name) {
     int i;
-    for (i = 0; i < import_count; i++) {
-        if (strcmp(import_names[i], name) == 0) return;
+    for (i = 0; i < *count; i++) {
+        if (strcmp((*list)[i], name) == 0) return;
     }
-    import_names = (char**)realloc(import_names, sizeof(char*) * (import_count + 1));
-    if (import_names == 0) {fprintf(stderr, "error: out of memory\n");exit(1);}
-    import_names[import_count] = strdup(name);
-    if (import_names[import_count] == 0) {fprintf(stderr, "error: out of memory\n");exit(1);}
-    import_count++;
+    *list = (char**)realloc(*list, sizeof(char*) * (*count + 1));
+    if (*list == 0) {fprintf(stderr, "error: out of memory\n");exit(1);}
+    (*list)[*count] = strdup(name);
+    if ((*list)[*count] == 0) {fprintf(stderr, "error: out of memory\n");exit(1);}
+    (*count)++;
+}
+
+void addImport(const char* name) {
+    addUnique(&import_names, &import_count, name);
+}
+
+void addSourceDep(const char* path) {
+    addUnique(&source_deps, &source_dep_count, path);
 }
 
 /* write "<outputs>: <input> <imported headers>" in make syntax */
@@ -77,6 +89,9 @@ static void writeDepfile(const char* dir, const char** outputs, int n_outputs) {
         fprintf(fp, "%s%s", i ? " " : "", outputs[i]);
     }
     fprintf(fp, " : %s", input_filename);
+    for (i = 0; i < source_dep_count; i++) {
+        fprintf(fp, " %s", source_deps[i]);
+    }
     for (i = 0; i < import_count; i++) {
         const char* sep = (dir[0] != 0 && dir[strlen(dir)-1] != '/') ? "/" : "";
         fprintf(fp, " %s%s%s", dir, sep, import_names[i]);

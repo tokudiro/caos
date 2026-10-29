@@ -13,6 +13,8 @@ DIRECTIVE_CLASS     ^#class
 DIRECTIVE_ENDCLASS  ^(#endclass|#endsingleton|#endstruct|#endutility)
 DIRECTIVE_SINGLETON ^#singleton
 DIRECTIVE_STRUCT    ^#struct
+DIRECTIVE_INTERFACE    ^#interface
+DIRECTIVE_ENDINTERFACE ^#endinterface
 DIRECTIVE_UTILITY   ^#utility
 
 DIRECTIVE_PUBLIC_METHOD    ^(#\+|#public)
@@ -47,6 +49,10 @@ DOT      (\.)
 
 %s IMPORT
 %s CLASS_DEFINE
+%s CLASS_DEFINE_TAIL
+%s CLASS_IMPLEMENTS
+%s INTERFACE_DEFINE
+%s INTERFACE_SCOPE
 %s INITIAL_CSA
 %s INITIAL_CSS
 %s INITIAL_ST

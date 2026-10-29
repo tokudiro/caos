@@ -63,6 +63,13 @@
 		BEGIN(CLASS_DEFINE);
 	}
 	
+	{DIRECTIVE_INTERFACE} {
+	    interfaceLine = yylineno;
+	    BEGIN(INTERFACE_DEFINE);
+	}
+	{DIRECTIVE_ENDINTERFACE} {
+		reportError("#endinterface without #interface");
+	}
 	{DIRECTIVE_ENDCLASS} {
 		reportError("#endclass without #class");
 	}

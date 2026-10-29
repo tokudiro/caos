@@ -1,0 +1,1 @@
+error/iface_not_defined.caos:1: error: interface Nothing is not defined (define it before the class, or in error/Nothing.caos)

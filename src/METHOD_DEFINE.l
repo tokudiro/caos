@@ -19,6 +19,9 @@
         fprintf( source, "%s{", allque );
         /* header */
             SLib_chopRet(allque);
+        if (methodVisibility == VISIBILITY_PUBLIC && methodScope == SCOPE_OBJECT) {
+            Iface_classMethod(allque);
+        }
         switch(methodVisibility){
         case VISIBILITY_PUBLIC:
             fprintf( public_header, "%s;\n", allque );

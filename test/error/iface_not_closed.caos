@@ -1,0 +1,2 @@
+#interface $R
+int read();
