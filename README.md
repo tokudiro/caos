@@ -28,6 +28,7 @@ The generated `.c` / `.h` files are committed, so caos can be built without caos
 After editing a `.caos`, run `make regen`; `make test` checks that the committed files match what caos generates.
 The lexer (`src/*.l`, `src/prolog.c`) and `main.c` are written in C / flex.
 See the [class diagram](doc/class_diagram.md).
+The syntax, the memory conventions and the error handling are described in the [language reference](doc/language.md).
 
 ## Sample Code
 
