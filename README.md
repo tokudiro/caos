@@ -6,6 +6,16 @@ English | [日本語](README.ja.md)
 object-oriented source transpiler for C-language.
 It implements only my minimum necessary functions .
 
+## Design policy
+caos is for small systems that have only a C compiler.
+The rules below apply to the **generated C code**. The translator itself runs on a PC and is not bound by them.
+
+* Readable output: the generated C reads like hand-written C. Names are plain (`Class_method`), `#line` points back to the `.caos` source, and no helper code is added behind the scenes.
+* No hidden runtime: the generated code does not need a runtime library, and does not depend on libc.
+* No dynamic allocation: the generated code does not call `malloc`. Objects can be allocated statically.
+* Nothing implicit: nothing is generated unless the source asks for it (no implicit instantiation, no automatic constructor / destructor).
+* Minimum features: a feature is added only when it is needed, and only if it satisfies the rules above.
+
 ---
 ## Build
 build environment : gcc + flex
