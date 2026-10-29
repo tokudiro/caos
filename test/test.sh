@@ -49,6 +49,7 @@ run_test -Ldp TYPE_UTILITY
 run_test -L   INITIAL_01
 run_test -L   COMMENT_01
 run_test -L   ATTRIBUTE_01
+run_test -L   LONG_01
 
 # a member initializer is reported (with its line), caos exits non-zero,
 # and the output is still valid C without the initializers

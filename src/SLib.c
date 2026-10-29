@@ -7,7 +7,7 @@
 
 char* SLib_chopRet(char* buf){
     unsigned int len;
-    for (len=0; len<MAX_TEXT*MAX_ARRAYSIZE; len++) {
+    for (len=0; len<MAX_ALLQUE; len++) {
         if (0==buf[len]) {
             break;
         }

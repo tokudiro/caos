@@ -4,6 +4,7 @@ typedef struct RBuf_struct RBuf;
 void RBuf_init(RBuf* pthis, const char* thispointer_str, boolean isVerbose);
 void RBuf_setClass(RBuf* pthis, const char* thisclass_str);
 void RBuf_enque(RBuf* pthis, const char* str, const int len, const buftype type);
+boolean RBuf_popOverflow(RBuf* pthis);
 char* RBuf_deque(RBuf* pthis, buftype* p_type);
 boolean RBuf_isEmpty(const RBuf* pthis);
 char* RBuf_allDeque(RBuf* pthis, char* buf);

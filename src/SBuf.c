@@ -26,8 +26,11 @@ void SBuf_init(SBuf* pthis) {
 * @memeberof SBuf
 */
 void SBuf_setBuf(SBuf* pthis, const char* top, const int len) {
-	strncpy(pthis->str, top, len);
-	pthis->len = len;
+	/* keep room for the terminating 0 : longer strings are cut */
+	int n = (len < MAX_TEXT - 1) ? len : MAX_TEXT - 1;
+	memcpy(pthis->str, top, n);
+	pthis->str[n] = 0;
+	pthis->len = n;
 	pthis->exist = TRUE;
 }
 

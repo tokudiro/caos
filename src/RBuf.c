@@ -50,8 +50,9 @@ char* RBufElement_toString(char* tostring, const char* str, const buftype type) 
 void RBuf_init(RBuf* pthis, const char* thispointer_str, boolean isVerbose){
     pthis->first = 0;
     pthis->last = 0;
+    pthis->overflow = FALSE;
     pthis->thispointer_str[0] = 0;
-    strcat( pthis->thispointer_str, thispointer_str);
+    strncat( pthis->thispointer_str, thispointer_str, MAX_TEXT - 1);
     pthis->isVerbose = isVerbose;
 }
 
@@ -61,7 +62,7 @@ void RBuf_init(RBuf* pthis, const char* thispointer_str, boolean isVerbose){
 */
 void RBuf_setClass(RBuf* pthis, const char* thisclass_str){
     pthis->thisclass_str[0] = 0;
-    strcat( pthis->thisclass_str, thisclass_str);
+    strncat( pthis->thisclass_str, thisclass_str, MAX_TEXT - 1);
 }
 
 /**
@@ -70,15 +71,26 @@ void RBuf_setClass(RBuf* pthis, const char* thisclass_str){
 */
 void RBuf_enque(RBuf* pthis, const char* str, const int len, const buftype type){
     (void)len;  /* kept for the interface : the whole string is copied */
-    memset(&(pthis->buf[pthis->last][0]), 0, MAX_TEXT);
-    strcpy( &(pthis->buf[pthis->last][0]), str);
-    pthis->type[pthis->last] = type;
-    pthis->last++;
-    if (pthis->first == pthis->last) {
-        /* buffer over */
-        if (pthis->isVerbose) { printf("error:buffer over.\n"); }
+    int next = (pthis->last + 1 == MAX_ARRAYSIZE) ? 0 : pthis->last + 1;
+    if (next == pthis->first) {
+        /* the buffer is full : keep what is queued and report it */
+        pthis->overflow = TRUE;
+        return;
     }
-    if (pthis->last==MAX_ARRAYSIZE) {pthis->last=0;}
+    memset(&(pthis->buf[pthis->last][0]), 0, MAX_TEXT);
+    strncpy( &(pthis->buf[pthis->last][0]), str, MAX_TEXT - 1);
+    pthis->type[pthis->last] = type;
+    pthis->last = next;
+}
+
+/**
+* @brief true (once) if enque had to drop an element because the buffer was full
+* @memberof RBuf
+*/
+boolean RBuf_popOverflow(RBuf* pthis){
+    boolean ret = pthis->overflow;
+    pthis->overflow = FALSE;
+    return ret;
 }
 
 /**
@@ -108,7 +120,7 @@ char* RBuf_allDeque(RBuf* pthis, char* buf){
     while(RBuf_isEmpty(pthis) == FALSE) {
         str = RBuf_deque(pthis, &type);
         
-        char tostring[MAX_TEXT] = {0};
+        char tostring[MAX_TEXT*2] = {0};
         if (pthis->isVerbose) printf("element :%s\n", RBufElement_toString(tostring, str, type) );
         
         switch(type) {
@@ -156,6 +168,7 @@ boolean RBuf_back_retype_stop(RBuf* pthis, const buftype find, const buftype rep
 
 /**
 * @brief copy the text before the T_PARAMETER element (the declared type)
+*        out holds MAX_TEXT chars : a longer type is cut
 * @return out, or 0 if there is no T_PARAMETER element
 * @memberof RBuf
 */
@@ -171,7 +184,7 @@ char* RBuf_typeBeforeParameter(const RBuf* pthis, char* out){
             }
             return out;
         }
-        strcat(out, pthis->buf[i]);
+        strncat(out, pthis->buf[i], MAX_TEXT - 1 - strlen(out));
         i++;
         if (i == MAX_ARRAYSIZE) i = 0;
     }
@@ -264,20 +277,20 @@ char* RBuf_toString(const RBuf* pthis, char* tostring){
     if (pthis->first < pthis->last) {
         for (i = pthis->first; i<pthis->last; i++)
         {
-            char element_tostring[MAX_ARRAYSIZE] = {0};
+            char element_tostring[MAX_TEXT*2] = {0};
             strcat(tostring, RBufElement_toString(element_tostring, pthis->buf[i], pthis->type[i]) );
             strcat(tostring, "\n");
         }
     } else {
         for (i = pthis->first; i<MAX_ARRAYSIZE; i++)
         {
-            char element_tostring[MAX_ARRAYSIZE] = {0};
+            char element_tostring[MAX_TEXT*2] = {0};
             strcat(tostring, RBufElement_toString(element_tostring, pthis->buf[i], pthis->type[i]) );
             strcat(tostring, "\n");
         }
         for (i = 0; i<pthis->last; i++)
         {
-            char element_tostring[MAX_ARRAYSIZE] = {0};
+            char element_tostring[MAX_TEXT*2] = {0};
             strcat(tostring, RBufElement_toString(element_tostring, pthis->buf[i], pthis->type[i]) );
             strcat(tostring, "\n");
         }

@@ -44,6 +44,7 @@ buftype type[MAX_ARRAYSIZE];
 char thispointer_str[MAX_TEXT];
 char thisclass_str[MAX_TEXT];
 boolean isVerbose;
+boolean overflow;
 int first;
 int last;
 
@@ -55,8 +56,9 @@ int last;
 #+void init(const char* thispointer_str, boolean isVerbose){
     @first = 0;
     @last = 0;
+    @overflow = FALSE;
     @thispointer_str[0] = 0;
-    strcat( @thispointer_str, thispointer_str);
+    strncat( @thispointer_str, thispointer_str, MAX_TEXT - 1);
     @isVerbose = isVerbose;
 }
 
@@ -66,7 +68,7 @@ int last;
 */
 #+void setClass(const char* thisclass_str){
     @thisclass_str[0] = 0;
-    strcat( @thisclass_str, thisclass_str);
+    strncat( @thisclass_str, thisclass_str, MAX_TEXT - 1);
 }
 
 /**
@@ -75,15 +77,26 @@ int last;
 */
 #+void enque(const char* str, const int len, const buftype type){
     (void)len;  /* kept for the interface : the whole string is copied */
-    memset(&(@buf[@last][0]), 0, MAX_TEXT);
-    strcpy( &(@buf[@last][0]), str);
-    @type[@last] = type;
-    @last++;
-    if (@first == @last) {
-        /* buffer over */
-        if (@isVerbose) { printf("error:buffer over.\n"); }
+    int next = (@last + 1 == MAX_ARRAYSIZE) ? 0 : @last + 1;
+    if (next == @first) {
+        /* the buffer is full : keep what is queued and report it */
+        @overflow = TRUE;
+        return;
     }
-    if (@last==MAX_ARRAYSIZE) {@last=0;}
+    memset(&(@buf[@last][0]), 0, MAX_TEXT);
+    strncpy( &(@buf[@last][0]), str, MAX_TEXT - 1);
+    @type[@last] = type;
+    @last = next;
+}
+
+/**
+* @brief true (once) if enque had to drop an element because the buffer was full
+* @memberof RBuf
+*/
+#+boolean popOverflow(){
+    boolean ret = @overflow;
+    @overflow = FALSE;
+    return ret;
 }
 
 /**
@@ -113,7 +126,7 @@ int last;
     while(@isEmpty() == FALSE) {
         str = @deque(&type);
         
-        char tostring[MAX_TEXT] = {0};
+        char tostring[MAX_TEXT*2] = {0};
         if (@isVerbose) printf("element :%s\n", RBufElement_toString(tostring, str, type) );
         
         switch(type) {
@@ -161,6 +174,7 @@ int last;
 
 /**
 * @brief copy the text before the T_PARAMETER element (the declared type)
+*        out holds MAX_TEXT chars : a longer type is cut
 * @return out, or 0 if there is no T_PARAMETER element
 * @memberof RBuf
 */
@@ -176,7 +190,7 @@ int last;
             }
             return out;
         }
-        strcat(out, @buf[i]);
+        strncat(out, @buf[i], MAX_TEXT - 1 - strlen(out));
         i++;
         if (i == MAX_ARRAYSIZE) i = 0;
     }
@@ -269,20 +283,20 @@ int last;
     if (@first < @last) {
         for (i = @first; i<@last; i++)
         {
-            char element_tostring[MAX_ARRAYSIZE] = {0};
+            char element_tostring[MAX_TEXT*2] = {0};
             strcat(tostring, RBufElement_toString(element_tostring, @buf[i], @type[i]) );
             strcat(tostring, "\n");
         }
     } else {
         for (i = @first; i<MAX_ARRAYSIZE; i++)
         {
-            char element_tostring[MAX_ARRAYSIZE] = {0};
+            char element_tostring[MAX_TEXT*2] = {0};
             strcat(tostring, RBufElement_toString(element_tostring, @buf[i], @type[i]) );
             strcat(tostring, "\n");
         }
         for (i = 0; i<@last; i++)
         {
-            char element_tostring[MAX_ARRAYSIZE] = {0};
+            char element_tostring[MAX_TEXT*2] = {0};
             strcat(tostring, RBufElement_toString(element_tostring, @buf[i], @type[i]) );
             strcat(tostring, "\n");
         }
