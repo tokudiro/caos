@@ -1,0 +1,4 @@
+#include <stdlib.h>
+
+#instance $IntList = $List<int>
+#instance $StrList = $List<const char*>

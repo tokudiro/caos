@@ -1,0 +1,1 @@
+error/generic_not_defined.caos:1: error: template C is not defined (define it before #instance, or in a file named after it)

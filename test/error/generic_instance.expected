@@ -1,0 +1,4 @@
+error/generic_instance.caos:4: error: template C takes 1 type argument(s)
+error/generic_instance.caos:5: error: template Nothing is not defined (define it before #instance, or in a file named after it)
+error/generic_instance.caos:6: error: #instance: a type argument is empty
+error/generic_instance.caos:7: error: #instance: expected '$Name = $Template<types>'

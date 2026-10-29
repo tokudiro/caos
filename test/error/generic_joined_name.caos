@@ -1,0 +1,4 @@
+#class $Box<T>
+#+void f(T* x){ T_inc(x); }
+#endclass
+#instance $B = $Box<const char*>

@@ -1,0 +1,9 @@
+#class $C<T>
+T x;
+#endclass
+#instance $A = $C<int, int>
+#instance $B = $Nothing<int>
+#instance $D = $C<>
+#instance oops
+#instance $E = $C<int>
+int k;

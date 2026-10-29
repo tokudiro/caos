@@ -19,6 +19,7 @@ Three places exist: **outside a class**, **inside a class** (between `#class` an
 | syntax | meaning |
 |---|---|
 | `#interface $Name` ... `#endinterface` | an interface (see "Interfaces") |
+| `#class $Name<T>` ... / `#instance $X = $Name<int>` | a template, and its expansion (see "Templates") |
 | `#import <x.h>` | `#include` written to the public header and to the define header (not to the define header under `-d`) |
 | `#header` ... `#endheader` | the lines between them (each directive alone on its line) go to the **public header** instead of the `.c`. Use it for types that a public prototype needs. |
 | `#' text` (`#comment`) | a caos-only comment; the line is not output |
@@ -93,6 +94,34 @@ total(File_as_Reader(&file));   /* in a test: total(Mock_as_Reader(&mock)); */
 * The methods must be public (`#+` or `#()+`) with the same name, return type and parameter types (compared as text, without the parameter names). A missing method or a different signature is an error: `File.caos:1: error: class File does not implement Reader::reset`.
 * `-M` lists `Name.caos` and `Name.h` as dependencies of the class.
 * The cost is one indirect call per call through `Reader`. A call of `File_read` itself is a plain function call, as before.
+
+## Templates
+
+A class can take type parameters. Nothing is generated for the template itself; it is expanded only where you write `#instance`, with the name you give.
+
+```
+#class $List<T>                       // List.caos
+int length;
+T* items;
+#+int append(T item){ ... }
+#()+T at(int index){ return @items[index]; }
+#endclass
+
+#instance $IntList = $List<int>       // Lists.caos
+#instance $StrList = $List<const char*>
+```
+
+`IntList_append(IntList*, int)`, `StrList_at(...)` and so on are generated, as if you had written two classes by hand.
+The users see only the ordinary class names `IntList` and `StrList`.
+
+* **How it works.** The text of the template is scanned again with every type parameter (a whole word) replaced by the argument, and `$List` replaced by `$IntList`. All the other rules (members, `#line`, `implements`, the options) are the same as for a hand-written class. There is no type inference or specialization.
+* **Where it is expanded.** The classes are generated into the file that has `#instance` (`Lists.c`, `Lists.h`, ...). To use the same instance from several files, write `#instance` once and include its header.
+* **Where the template is found.** Before the `#instance` in the same file, or in `Name.caos` in the folder of the input file (named after the template). The class kind of the template (`#class`, `#struct`, ...) is kept. `-M` lists `Name.caos`.
+* **`T_name`.** A word that starts with a type parameter and `_` (`T_finish`) becomes the method of the type argument (`Element_finish`). Use it to call what depends on the type. The type argument must be a plain name (`Element`, not `const char*`); a type without that function is an error of the C compiler. `src/ListBuf.caos` is `List<T>` expanded for `Element`, and it frees the elements with `T_finish` and `T_delete`.
+* **Type arguments.** `int`, `char*`, `Name` or `$Name` (= `Name*`); several are separated by `,`. A nested `<...>` is not supported. Write the pointer yourself in the template (`T*`); `$T` is not replaced.
+* **What is not carried.** Only the lines between `#class` and `#endclass` belong to the template. Put the `#include`s and `#header` that it needs in the file with `#instance`.
+* **Errors.** A wrong number of arguments, an unknown template and so on are reported as `file:line: error: ...`. An error inside the expanded text points to the line of the template, in the template's file. The words are replaced everywhere, also in comments and strings.
+* A constraint such as `<T implements $Comparable>` is not supported yet.
 
 ## Generated files
 

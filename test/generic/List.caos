@@ -1,0 +1,38 @@
+#include <stdlib.h>
+
+#class $List<T>
+int length;
+T* items;
+
+#+void init()
+{
+    @length = 0;
+    @items = 0;
+}
+
+#+int append(T item)
+{
+    T* p = (T*)realloc(@items, sizeof(T) * (@length + 1));
+    if (p == 0) {
+        return -1;
+    }
+    @items = p;
+    @items[@length++] = item;
+    return 0;
+}
+
+#()+T at(int index)
+{
+    return @items[index];
+}
+
+#+int length()
+{
+    return @length;
+}
+
+#+void finish()
+{
+    free(@items);
+}
+#endclass

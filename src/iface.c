@@ -8,7 +8,7 @@
 
 /* ---- small helpers ---- */
 
-static char* dupn(const char* s, size_t n)
+char* Str_dupn(const char* s, size_t n)
 {
     char* p = (char*)malloc(n + 1);
     if (p == 0) { fprintf(stderr, "error: out of memory\n"); exit(1); }
@@ -17,7 +17,7 @@ static char* dupn(const char* s, size_t n)
     return p;
 }
 
-static char* allocStr(size_t n)
+char* Str_alloc(size_t n)
 {
     char* p = (char*)calloc(n + 1, 1);
     if (p == 0) { fprintf(stderr, "error: out of memory\n"); exit(1); }
@@ -27,7 +27,7 @@ static char* allocStr(size_t n)
 /* trim the blanks at both ends, collapse the others, drop the blanks around '*' */
 static char* normalize(const char* s, size_t n)
 {
-    char* out = allocStr(n * 2 + 1);
+    char* out = Str_alloc(n * 2 + 1);
     size_t o = 0, i;
     int pendingSpace = 0;
     for (i = 0; i < n; i++) {
@@ -61,7 +61,7 @@ static int isKeyword(const char* w, size_t n)
 static char* clean(const char* s)
 {
     size_t n = strlen(s), i = 0, o = 0;
-    char* out = allocStr(n * 2 + 1);
+    char* out = Str_alloc(n * 2 + 1);
     while (i < n) {
         if (s[i] == '/' && s[i+1] == '*') {
             i += 2;
@@ -120,7 +120,7 @@ static int parseProto(const char* decl, IMethod* m, char* msg)
         free(text);
         return 1;
     }
-    m->name = dupn(nameBeg, nameEnd - nameBeg);
+    m->name = Str_dupn(nameBeg, nameEnd - nameBeg);
     m->ret = normalize(text, nameBeg - text);
 
     /* the parameters */
@@ -167,12 +167,12 @@ static int parseProto(const char* decl, IMethod* m, char* msg)
         np = &m->params[m->nparams++];
         if (nameBeg < nameEnd && nameBeg > q && !isKeyword(nameBeg, nameEnd - nameBeg)
             && !isdigit((unsigned char)*nameBeg)) {
-            np->name = dupn(nameBeg, nameEnd - nameBeg);
+            np->name = Str_dupn(nameBeg, nameEnd - nameBeg);
             np->type = normalize(q, nameBeg - q);
         } else {
             char gen[16];
             snprintf(gen, sizeof(gen), "a%d", index);
-            np->name = dupn(gen, strlen(gen));
+            np->name = Str_dupn(gen, strlen(gen));
             np->type = normalize(q, e - q);
         }
         index++;
@@ -200,7 +200,7 @@ static size_t textLen = 0;
 void Iface_textBegin(void)
 {
     free(text);
-    text = allocStr(0);
+    text = Str_alloc(0);
     textLen = 0;
 }
 
@@ -242,7 +242,7 @@ Iface* Iface_define(const char* name, const char* file, int line, IfaceErr err)
     }
     iface = (Iface*)calloc(1, sizeof(Iface));
     if (iface == 0) { fprintf(stderr, "error: out of memory\n"); exit(1); }
-    iface->name = dupn(name, strlen(name));
+    iface->name = Str_dupn(name, strlen(name));
     while (*s) {
         char* semi = strchr(s, ';');
         IMethod m;
@@ -332,7 +332,7 @@ Iface* Iface_find(const char* name, const char* input, int line, IfaceErr err)
         } else if (startsWith(buf, "#endinterface")) {
             fclose(fp);
             iface = Iface_define(name, path, startLine, err);
-            if (iface) iface->path = dupn(path, strlen(path));
+            if (iface) iface->path = Str_dupn(path, strlen(path));
             return iface;
         } else {
             Iface_textPut(buf, (int)strlen(buf));
@@ -422,7 +422,7 @@ void Iface_classMethod(const char* proto)
 {
     protos = (char**)realloc(protos, sizeof(char*) * (protoCount + 1));
     if (protos == 0) { fprintf(stderr, "error: out of memory\n"); exit(1); }
-    protos[protoCount++] = dupn(proto, strlen(proto));
+    protos[protoCount++] = Str_dupn(proto, strlen(proto));
 }
 
 void Iface_classImplements(Iface* iface)

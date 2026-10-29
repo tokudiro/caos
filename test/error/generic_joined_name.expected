@@ -1,0 +1,1 @@
+error/generic_joined_name.caos:4: error: #instance: the type argument 'const char*' cannot be used in 'T_inc' (it must be a plain name)

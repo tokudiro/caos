@@ -19,6 +19,7 @@
 #include "ListBuf.h"
 #include "Element.h"
 #include "iface.h"
+#include "template.h"
 
 
 int bracket = 0;
@@ -45,8 +46,9 @@ boolean isOldComment = FALSE;
 boolean isNonPrivateHeader = FALSE;
 boolean isNonDefineHeader = FALSE;
 boolean isOutputHeader = FALSE;
-/* the source already includes the public header */
+/* the source already includes the headers of a class / the public header */
 boolean isSourceIncluded = FALSE;
+boolean isPublicIncluded = FALSE;
 
 /*
  * A comment inside a declaration that is still queued is queued with it,
@@ -121,9 +123,9 @@ static void finishInterface(void)
 {
     Iface* iface = Iface_define(interfaceName, input_filename, interfaceLine, ifaceError);
     if (iface == 0) return;
-    if (!isSourceIncluded) {
+    if (!isPublicIncluded) {
         fprintf(source, "#include \"%s\"\n", public_header_name);
-        isSourceIncluded = TRUE;
+        isPublicIncluded = TRUE;
     }
     if (isLineNo) fprintf(public_header, "#line %d \"%s\"\n", interfaceLine, input_filename);
     Iface_emitHeader(iface, public_header);
@@ -145,6 +147,38 @@ static void implementsInterface(const char* name)
         addImport(header);
         addSourceDep(iface->path);
     }
+}
+
+/* class templates : "#class $List<T>" is kept, "#instance" scans the expanded text */
+static char classDirective[32];
+static int templateLine = 0;
+static char templateName[MAX_TEXT];
+static char templateHead[MAX_TEXTLINE];
+static size_t templateHeadLen = 0;
+static char instanceText[MAX_TEXTLINE];
+static size_t instanceLen = 0;
+static boolean isExpanding = FALSE;
+static int savedLine = 0;
+static char* savedFile = 0;
+static struct yy_buffer_state* savedBuffer = 0;
+
+static void appendLimited(char* buf, size_t* len, const char* str)
+{
+    size_t n = strlen(str);
+    if (*len + n >= MAX_TEXTLINE) {
+        reportError("the line is too long");
+        return;
+    }
+    memcpy(buf + *len, str, n);
+    *len += n;
+    buf[*len] = 0;
+}
+
+static void finishTemplate(const char* endDirective)
+{
+    templateHead[templateHeadLen] = 0;
+    Template_define(templateName, templateHead, classDirective, endDirective,
+                    templateLine, input_filename, ifaceError);
 }
 
 /* #endclass : check "implements" and write the function pointer tables */
