@@ -1,0 +1,1 @@
+error/iface_missing_method.caos:5: error: class C does not implement R::reset

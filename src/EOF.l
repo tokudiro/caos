@@ -5,6 +5,14 @@
 	case CLASS_DEFINE:
 		reportError("class name is missing");
 		break;
+	case INTERFACE_DEFINE:
+		reportError("interface name is missing");
+		break;
+	case INTERFACE_SCOPE:
+		reportErrorAt(interfaceLine, "interface is not closed (#endinterface is missing)");
+		break;
+	case CLASS_DEFINE_TAIL:
+	case CLASS_IMPLEMENTS:
 	case CLASS_SCOPE:
 	case CLASS_SCOPE_CS:
 	case ATTRIBUTE_DEFINE:

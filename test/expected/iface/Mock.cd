@@ -1,0 +1,1 @@
+out/Mock.c out/Mock.h out/Mock_private.h out/Mock_define.h : iface/Mock.caos iface/Reader.caos out/Reader.h

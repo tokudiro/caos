@@ -1,0 +1,5 @@
+#class $File implements $Reader
+int pos;
+#+int read(char* buf, int len){ (void)buf; @pos += len; return len; }
+#+void reset(){ @pos = 0; }
+#endclass

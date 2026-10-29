@@ -1,0 +1,6 @@
+#include <string.h>
+#class $Mock implements $Reader
+const char* data;
+#+int read(char* buf, int len){ strncpy(buf, @data, len); return (int)strlen(@data); }
+#()+void reset(){ (void)@data; }
+#endclass

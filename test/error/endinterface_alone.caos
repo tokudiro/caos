@@ -1,0 +1,4 @@
+#class $C
+#+int f(){ return 0; }
+#endclass
+#endinterface

@@ -1,0 +1,4 @@
+#interface $Reader
+int read(char* buf, int len);
+void reset();
+#endinterface

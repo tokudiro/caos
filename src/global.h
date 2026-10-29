@@ -47,5 +47,7 @@ extern int errorCount;
 
 /* defined in main.c : record a header named by #import (for -M) */
 extern void addImport(const char* name);
+/* defined in main.c : record a file the output depends on, as it is (for -M) */
+extern void addSourceDep(const char* path);
 
 #endif /* GLOBAL_H__ */

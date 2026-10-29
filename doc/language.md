@@ -18,6 +18,7 @@ Three places exist: **outside a class**, **inside a class** (between `#class` an
 
 | syntax | meaning |
 |---|---|
+| `#interface $Name` ... `#endinterface` | an interface (see "Interfaces") |
 | `#import <x.h>` | `#include` written to the public header and to the define header (not to the define header under `-d`) |
 | `#header` ... `#endheader` | the lines between them (each directive alone on its line) go to the **public header** instead of the `.c`. Use it for types that a public prototype needs. |
 | `#' text` (`#comment`) | a caos-only comment; the line is not output |
@@ -53,6 +54,44 @@ A method body starts at `{` and ends at the matching `}`.
 
 `#endclass` and the other `#end...` directives are interchangeable; they only close the class.
 Use one class kind per file: the kind that was seen last decides how the files are assembled.
+
+## Interfaces
+
+An interface lets a caller use an object without knowing its class (swap a driver, or a mock in a test).
+It is a table of function pointers; nothing is added to the classes, and a class that implements no interface is not changed.
+
+```
+#interface $Reader              // Reader.caos
+int read(char* buf, int len);
+void reset();
+#endinterface
+
+#class $File implements $Reader // File.caos
+int pos;
+#+int read(char* buf, int len){ @pos += len; return len; }
+#+void reset(){ @pos = 0; }
+#endclass
+```
+
+| written | generated |
+|---|---|
+| `#interface $Reader` ... `#endinterface` | `Reader.h`: `struct Reader_vtable` (one function pointer per method), `Reader` (a pair of the table and the object pointer), and `Reader_read(Reader r, ...)` for each method. `Reader.c`: the bodies of these (`r.vt->read(r.self, ...)`). |
+| `#class $File implements $Reader` | `File.c`: an adapter per method (the only cast), a `static const` table, and `Reader File_as_Reader(File* p)`, which is declared in `File.h`. |
+
+The caller knows only `Reader`:
+
+```c
+int total(Reader r) { return Reader_read(r, buf, 4); }
+...
+total(File_as_Reader(&file));   /* in a test: total(Mock_as_Reader(&mock)); */
+```
+
+* An interface declares methods only (`type name(args);`), and `$Name` is allowed in the types. The parameter names `r` and `self` are reserved. Function pointer and array parameters are not supported.
+* The interface is read from the same file (written before the class), or from `Name.caos` in the folder of the input file. The file must be named after the interface. Link `Name.c`, too.
+* Several interfaces: `implements $A, $B` gives `File_as_A` and `File_as_B`.
+* The methods must be public (`#+` or `#()+`) with the same name, return type and parameter types (compared as text, without the parameter names). A missing method or a different signature is an error: `File.caos:1: error: class File does not implement Reader::reset`.
+* `-M` lists `Name.caos` and `Name.h` as dependencies of the class.
+* The cost is one indirect call per call through `Reader`. A call of `File_read` itself is a plain function call, as before.
 
 ## Generated files
 

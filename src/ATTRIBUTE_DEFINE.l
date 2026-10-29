@@ -52,6 +52,7 @@
         if (!isNonDefineHeader) {
     		fprintf( struct_header, "};\n" );
 	    }
+		finishClass();
 		SBuf_init(class_buf);
         if (isVerbose) printf("BEGIN <INITIAL>\n");
 		BEGIN(INITIAL);

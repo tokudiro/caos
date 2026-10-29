@@ -141,6 +141,27 @@ depend_test Lo     test_DEPEND_01.caos -L -o out
 depend_test struct test_DEPEND_02.caos -L
 rm -rf out
 
+# interfaces (iface/) : Reader is implemented by File and Mock, and main.c uses
+# only Reader; output and dependency files match expected/iface/, then it is
+# compiled and run
+rm -rf out && mkdir out
+for c in Reader File Mock; do
+    ../caos -L -o out -M out/$c.cd iface/$c.caos || ifaceFail=1
+done
+if [ -n "$UPDATE" ]; then
+    rm -rf expected/iface && mkdir expected/iface && cp out/* expected/iface/
+elif [ -z "$ifaceFail" ] \
+    && [ "$(ls out | wc -l)" = "$(ls expected/iface | wc -l)" ] \
+    && (cd out && for f in *; do diff -u "../expected/iface/$f" "$f" || exit 1; done) \
+    && gcc -Wall -Iout iface/main.c out/Reader.c out/File.c out/Mock.c -o out/app \
+    && ./out/app; then
+    echo "PASS: interface"
+else
+    echo "FAIL: interface"
+    failed=1
+fi
+rm -rf out
+
 # option combinations on test_OPTION_01.caos (expected/option_<name>/) :
 # the generated files match the snapshots, no other file is created,
 # -L leaves out the #line directives, -C leaves out the // comments

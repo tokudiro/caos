@@ -1,6 +1,7 @@
 %{
 	void defineClassInSource() {
 		if (isVerbose) printf("class %s\n", SBuf_getStr(class_buf) );
+	    isSourceIncluded = TRUE;
 	    if (classType == TYPE_STRUCT) {
     	    fprintf( source, "#include \"%s\"\n", public_header_name );
 	    } else {
@@ -61,8 +62,9 @@
 	    RBuf_setClass(queue, SBuf_getStr(class_buf));
 		defineClassInSource();
 		defineClassInHeader();
-	    if (isVerbose) printf("BEGIN <CLASS_SCOPE>\n");
-		BEGIN(CLASS_SCOPE);
+		Iface_classBegin();
+	    if (isVerbose) printf("BEGIN <CLASS_DEFINE_TAIL>\n");
+		BEGIN(CLASS_DEFINE_TAIL);
 	}
 	
 	{CLASS}  {
@@ -75,13 +77,35 @@
 	    RBuf_setClass(queue, SBuf_getStr(class_buf));
 		defineClassInSource();
 		defineClassInHeader();
-	    if (isVerbose) printf("BEGIN <CLASS_SCOPE>\n");
-		BEGIN(CLASS_SCOPE);
+		Iface_classBegin();
+	    if (isVerbose) printf("BEGIN <CLASS_DEFINE_TAIL>\n");
+		BEGIN(CLASS_DEFINE_TAIL);
 	}
 
 	\n {
 		reportErrorAt(yylineno - 1, "class name is missing");
 		fprintf( source, "\n" );
 		BEGIN(INITIAL);
+	}
+}
+
+<CLASS_DEFINE_TAIL>{
+	[[:blank:]]+implements/[[:blank:]]+ {
+		BEGIN(CLASS_IMPLEMENTS);
+	}
+	.|\n {
+		yyless(0);
+		BEGIN(CLASS_SCOPE);
+	}
+}
+
+<CLASS_IMPLEMENTS>{
+	{WSPACE} {;}
+	, {;}
+	{CLASS} { implementsInterface(&(yytext[1])); }
+	{WORD}  { implementsInterface(yytext); }
+	.|\n {
+		yyless(0);
+		BEGIN(CLASS_SCOPE);
 	}
 }

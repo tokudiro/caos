@@ -18,6 +18,7 @@
 #include "global.h"
 #include "ListBuf.h"
 #include "Element.h"
+#include "iface.h"
 
 
 int bracket = 0;
@@ -44,6 +45,8 @@ boolean isOldComment = FALSE;
 boolean isNonPrivateHeader = FALSE;
 boolean isNonDefineHeader = FALSE;
 boolean isOutputHeader = FALSE;
+/* the source already includes the public header */
+boolean isSourceIncluded = FALSE;
 
 /*
  * A comment inside a declaration that is still queued is queued with it,
@@ -102,6 +105,56 @@ static void reportErrorAt(int line, const char* message)
 static void reportError(const char* message)
 {
     reportErrorAt(yylineno, message);
+}
+
+static void ifaceError(const char* file, int line, const char* message)
+{
+    fprintf(stderr, "%s:%d: error: %s\n", file, line, message);
+    errorCount++;
+}
+
+/* line where the current #interface starts, and its name */
+static int interfaceLine = 0;
+static char interfaceName[MAX_TEXT];
+
+static void finishInterface(void)
+{
+    Iface* iface = Iface_define(interfaceName, input_filename, interfaceLine, ifaceError);
+    if (iface == 0) return;
+    if (!isSourceIncluded) {
+        fprintf(source, "#include \"%s\"\n", public_header_name);
+        isSourceIncluded = TRUE;
+    }
+    if (isLineNo) fprintf(public_header, "#line %d \"%s\"\n", interfaceLine, input_filename);
+    Iface_emitHeader(iface, public_header);
+    if (isLineNo) fprintf(source, "#line %d \"%s\"\n", interfaceLine, input_filename);
+    Iface_emitSource(iface, source);
+    if (isLineNo) fprintf(source, "#line %d \"%s\"\n", yylineno + 1, input_filename);
+}
+
+/* "implements $Name" : the interface comes from this file or from Name.caos */
+static void implementsInterface(const char* name)
+{
+    Iface* iface = Iface_find(name, input_filename, yylineno, ifaceError);
+    if (iface == 0) return;
+    Iface_classImplements(iface);
+    if (iface->path) {
+        char header[MAX_TEXT + 4];
+        snprintf(header, sizeof(header), "%s.h", name);
+        fprintf(public_header, "#include \"%s\"\n", header);
+        addImport(header);
+        addSourceDep(iface->path);
+    }
+}
+
+/* #endclass : check "implements" and write the function pointer tables */
+static void finishClass(void)
+{
+    if (Iface_classImplementsCount() > 0) {
+        if (isLineNo) fprintf(source, "#line %d \"%s\"\n", classLine, input_filename);
+        Iface_classFinish(SBuf_getStr(class_buf), input_filename, classLine, source, public_header, ifaceError);
+    }
+    Iface_classBegin();
 }
 
 /*
