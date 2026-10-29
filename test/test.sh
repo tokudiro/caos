@@ -97,6 +97,21 @@ else
 fi
 rm -rf out
 
+# #import under -p / -d combinations : the #include goes to the define header
+# only when it exists (-d : none), whatever -p says (expected/import_<opt>/)
+for opt in L Lp Ld Lpd; do
+    rm -rf out && mkdir out
+    if ../caos -$opt -o out test_IMPORT_01.caos \
+        && [ "$(ls out | wc -l)" = "$(ls expected/import_$opt | wc -l)" ] \
+        && (cd out && for f in *; do diff -u "../expected/import_$opt/$f" "$f" || exit 1; done); then
+        echo "PASS: #import with -$opt"
+    else
+        echo "FAIL: #import with -$opt"
+        failed=1
+    fi
+done
+rm -rf out
+
 # self-hosting : caos regenerates its own classes (src/*.caos) with identical output
 rm -rf out && mkdir out
 selfhost() {

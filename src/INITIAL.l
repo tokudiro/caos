@@ -27,7 +27,7 @@
   
 	{DIRECTIVE_IMPORT} {
 		fprintf((isOutputHeader?public_header:source), "#include ");
-        if (!isNonPrivateHeader) {
+        if (!isNonDefineHeader) {
     		fprintf(define_header, "#include ");
         }
 		BEGIN(IMPORT);
