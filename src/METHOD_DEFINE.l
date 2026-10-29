@@ -19,6 +19,8 @@
         fprintf( source, "%s{", allque );
         /* header */
             SLib_chopRet(allque);
+        Vars_clear();
+        Vars_declareProto(allque, methodScope == SCOPE_OBJECT);
         if (methodVisibility == VISIBILITY_PUBLIC && methodScope == SCOPE_OBJECT) {
             Iface_classMethod(allque);
         }

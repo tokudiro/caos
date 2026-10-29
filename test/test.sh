@@ -53,6 +53,7 @@ run_test -L   LONG_01
 run_test -L   LONG_02
 run_test -L   GENERIC_01
 run_test -L   GENERIC_02
+run_test -L   CALL_01
 
 # a member initializer is reported (with its line), caos exits non-zero,
 # and the output is still valid C without the initializers
@@ -179,6 +180,26 @@ elif [ -z "$genericFail" ] \
     echo "PASS: templates"
 else
     echo "FAIL: templates"
+    failed=1
+fi
+rm -rf out
+
+# calling a method of a variable of a class from another file (call/) :
+# User.caos has "#import $Counter" and c->add(d) ; output matches expected/call/
+rm -rf out && mkdir out
+for c in Counter User; do
+    ../caos -L -o out call/$c.caos || callFail=1
+done
+if [ -n "$UPDATE" ]; then
+    rm -rf expected/call && mkdir expected/call && cp out/* expected/call/
+elif [ -z "$callFail" ] \
+    && [ "$(ls out | wc -l)" = "$(ls expected/call | wc -l)" ] \
+    && (cd out && for f in *; do diff -u "../expected/call/$f" "$f" || exit 1; done) \
+    && gcc -Wall -Iout call/main.c out/Counter.c out/User.c -o out/app \
+    && ./out/app; then
+    echo "PASS: method call of a variable"
+else
+    echo "FAIL: method call of a variable"
     failed=1
 fi
 rm -rf out

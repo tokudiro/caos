@@ -1,0 +1,12 @@
+#import $Counter
+#include "Counter_define.h"   // the struct is needed for a Counter value
+#class $User
+#+int use($Counter c, int d)
+{
+    Counter v;
+    v.n = 100;
+    c->add(d);
+    v.add(d);
+    return c->get() + v.get();
+}
+#endclass

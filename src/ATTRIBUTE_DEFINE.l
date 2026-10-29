@@ -132,8 +132,10 @@
 			getterInSource(type, member);
 			if (isAssignableType(type)) setterInSource(type, member);
 		}
+        RBuf_allDeque(queue, allque);
+        Vars_declareMember(allque);
         if (!isNonDefineHeader) {
-    		fprintf(struct_header, "%s", RBuf_allDeque(queue, allque) );
+    		fprintf(struct_header, "%s", allque );
         }
 	}
 	=  {

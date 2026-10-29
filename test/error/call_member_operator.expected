@@ -1,0 +1,1 @@
+error/call_member_operator.caos:9: error: a pointer calls a method with '->'

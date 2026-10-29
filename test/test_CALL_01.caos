@@ -1,0 +1,66 @@
+#include <assert.h>
+#include <string.h>
+
+#class $Counter
+int n;
+#+void add(int d){ @n += d; }
+#+int get(){ return @n; }
+#+int label(const char* s, char c){ return (int)strlen(s) + (c == 'x'); }
+#endclass
+
+#class $Holder
+$Counter inner;       // a pointer member
+Counter own;          // a value member
+#+void setup($Counter c){ @inner = c; @own.n = 0; }
+#+int run($Counter other, int times)
+{
+    Counter local;            // a value
+    $Counter p = other;       // a pointer
+    int i;
+    local.n = 0;
+    for (i = 0; i < times; i++) {
+        p->add(1);
+        local.add(2);
+        @inner->add(3);
+        @own.add(4);
+    }
+    return local.get() + p->get() + @inner->get() + @own.get() + p->label("abc", 'x') - 4;
+}
+#endclass
+
+// a variable that is not of a class is left alone
+typedef struct { int (*fp)(int); } Ops;
+static int twice(int x) { return x * 2; }
+
+#interface $Source
+int next(int step);
+#endinterface
+
+#class $Seq implements $Source
+int cur;
+#+int next(int step){ @cur += step; return @cur; }
+#endclass
+
+#class $Puller
+#+int pull(Source s){ return s.next(1) + s.next(2); }
+#+int pullPtr(Source* s){ return s->next(5); }
+#endclass
+
+int main(void)
+{
+    Counter a = {0};
+    Counter b = {0};
+    Holder h;
+    Ops ops;
+    Seq q = {0};
+    ops.fp = twice;
+    Holder_setup(&h, &a);
+    // two rounds: local 4, b 2, a 6, own 8
+    assert(Holder_run(&h, &b, 2) == 20);
+    assert(ops.fp(3) == 6);
+    Puller pl;
+    Source src = Seq_as_Source(&q);
+    assert(Puller_pull(&pl, src) == 1 + 3);
+    assert(Puller_pullPtr(&pl, &src) == 8);
+    return 0;
+}

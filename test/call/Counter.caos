@@ -1,0 +1,5 @@
+#class $Counter
+int n;
+#+void add(int d){ @n += d; }
+#+int get(){ return @n; }
+#endclass
