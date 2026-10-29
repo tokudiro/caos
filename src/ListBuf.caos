@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "Element.h"
+#import $Element
 
 #header
 typedef struct Element Element;
@@ -37,8 +37,9 @@ T** elements;
 #+void finish()
 {
     while ( @length>0 ) {
-        T_finish(@elements[@length-1]);
-        T_delete(@elements[@length-1]);
+        T* e = @elements[@length-1];
+        e->finish();
+        e->delete();
         @length--;
     }
     free(@elements);

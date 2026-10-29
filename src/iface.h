@@ -48,4 +48,30 @@ int Iface_classImplementsCount(void);
 /* check the methods against every interface, and write the tables */
 void Iface_classFinish(const char* cls, const char* file, int line, FILE* source, FILE* header, IfaceErr err);
 
+/*
+ * Variables : the declared type of the variables of the method being
+ * translated and of the members of the class, for "x->method()" and
+ * "v.method()".  Only a type that is a caos class (or an interface) is kept.
+ */
+typedef struct {
+    char cls[256];
+    int stars;          /* 0 : a value, 1 : a pointer */
+    int isInterface;
+} VarInfo;
+
+void Iface_addClass(const char* name);
+int Iface_isClass(const char* name);
+/* "#import $Name" : the interface in Name.caos, or a class named Name */
+void Iface_importClass(const char* name, const char* input);
+
+void Vars_clear(void);
+/* the parameters of a prototype "R Class_m(Class* pthis, T a)" ; skipThis drops the first one */
+void Vars_declareProto(const char* proto, int skipThis);
+/* a declaration at the end of the text : "int a; Foo* p" */
+void Vars_declareText(const char* text);
+void Vars_declareMember(const char* text);
+void Vars_clearMembers(void);
+int Vars_find(const char* name, VarInfo* out);
+int Vars_findMember(const char* name, VarInfo* out);
+
 #endif /* IFACE_H__ */

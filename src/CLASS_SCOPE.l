@@ -192,6 +192,7 @@
 		/* Class Member */
 		RBuf_enque(queue, yytext, yyleng, T_SEMICOLON);
 	    RBuf_allDeque(queue, allque);
+	    Vars_declareMember(allque);
         if (!isNonDefineHeader) {
     		fprintf(struct_header, "%s", allque );
         }

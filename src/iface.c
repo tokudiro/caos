@@ -508,3 +508,152 @@ void Iface_classFinish(const char* cls, const char* file, int line, FILE* source
     for (i = 0; i < nms; i++) freeMethod(&ms[i]);
     free(ms);
 }
+
+/* ---- variables ---- */
+
+typedef struct { char* name; VarInfo info; } Var;
+typedef struct { Var* v; int n; } VarTable;
+
+static char** classes = 0;
+static int classCount = 0;
+static VarTable locals = { 0, 0 };
+static VarTable members = { 0, 0 };
+
+static void silent(const char* file, int line, const char* msg)
+{
+    (void)file; (void)line; (void)msg;
+}
+
+void Iface_addClass(const char* name)
+{
+    int i;
+    for (i = 0; i < classCount; i++) if (strcmp(classes[i], name) == 0) return;
+    classes = (char**)realloc(classes, sizeof(char*) * (classCount + 1));
+    if (classes == 0) { fprintf(stderr, "error: out of memory\n"); exit(1); }
+    classes[classCount++] = Str_dupn(name, strlen(name));
+}
+
+int Iface_isClass(const char* name)
+{
+    int i;
+    for (i = 0; i < classCount; i++) if (strcmp(classes[i], name) == 0) return 1;
+    return lookup(name) != 0;
+}
+
+void Iface_importClass(const char* name, const char* input)
+{
+    if (Iface_find(name, input, 0, silent) == 0) Iface_addClass(name);
+}
+
+static void clearTable(VarTable* t)
+{
+    int i;
+    for (i = 0; i < t->n; i++) free(t->v[i].name);
+    free(t->v);
+    t->v = 0;
+    t->n = 0;
+}
+
+void Vars_clear(void) { clearTable(&locals); }
+void Vars_clearMembers(void) { clearTable(&members); }
+
+static void addVar(VarTable* t, const char* name, const char* cls, int stars)
+{
+    int i;
+    Var* v = 0;
+    for (i = 0; i < t->n; i++) if (strcmp(t->v[i].name, name) == 0) v = &t->v[i];
+    if (v == 0) {
+        t->v = (Var*)realloc(t->v, sizeof(Var) * (t->n + 1));
+        if (t->v == 0) { fprintf(stderr, "error: out of memory\n"); exit(1); }
+        v = &t->v[t->n++];
+        v->name = Str_dupn(name, strlen(name));
+    }
+    snprintf(v->info.cls, sizeof(v->info.cls), "%s", cls);
+    v->info.stars = stars;
+    v->info.isInterface = lookup(cls) != 0;
+}
+
+static void removeVar(VarTable* t, const char* name)
+{
+    int i;
+    for (i = 0; i < t->n; i++) {
+        if (strcmp(t->v[i].name, name) == 0) {
+            free(t->v[i].name);
+            t->v[i] = t->v[--t->n];
+            return;
+        }
+    }
+}
+
+/* a variable is only known if its type is a class with at most one '*' */
+static void declare(VarTable* t, const char* name, const char* cls, int stars)
+{
+    if (Iface_isClass(cls) && stars <= 1) addVar(t, name, cls, stars);
+    else removeVar(t, name);    /* a new declaration hides the old one */
+}
+
+void Vars_declareProto(const char* proto, int skipThis)
+{
+    IMethod m;
+    char msg[MSG_SIZE];
+    int i;
+    if (parseProto(proto, &m, msg)) return;
+    for (i = skipThis ? 1 : 0; i < m.nparams; i++) {
+        const char* t = m.params[i].type;
+        char cls[256];
+        int stars = 0;
+        size_t l = 0;
+        while (strncmp(t, "const ", 6) == 0 || strncmp(t, "struct ", 7) == 0) t = strchr(t, ' ') + 1;
+        while (isalnum((unsigned char)t[l]) || t[l] == '_') l++;
+        if (l == 0 || l >= sizeof(cls)) continue;
+        memcpy(cls, t, l);
+        cls[l] = 0;
+        for (t += l; *t == '*'; t++) stars++;
+        if (*t) continue;
+        declare(&locals, m.params[i].name, cls, stars);
+    }
+    freeMethod(&m);
+}
+
+/* "... Class [*] name" at the end of the text, followed by ';' '=' ',' ')' or nothing */
+static void declareTail(VarTable* t, const char* text)
+{
+    size_t e = strlen(text), b;
+    char name[256], cls[256];
+    int stars = 0;
+    while (e > 0 && (isspace((unsigned char)text[e-1]))) e--;
+    if (e > 0 && strchr(";=,)", text[e-1])) e--;
+    while (e > 0 && (isspace((unsigned char)text[e-1]))) e--;
+    b = e;
+    while (b > 0 && (isalnum((unsigned char)text[b-1]) || text[b-1] == '_')) b--;
+    if (b == e || e - b >= sizeof(name) || isdigit((unsigned char)text[b])) return;
+    memcpy(name, text + b, e - b);
+    name[e - b] = 0;
+    e = b;
+    while (e > 0 && (isspace((unsigned char)text[e-1]) || text[e-1] == '*')) {
+        if (text[e-1] == '*') stars++;
+        e--;
+    }
+    b = e;
+    while (b > 0 && (isalnum((unsigned char)text[b-1]) || text[b-1] == '_')) b--;
+    if (b == e || e - b >= sizeof(cls)) return;
+    if (b > 0 && (text[b-1] == '.' || text[b-1] == '>' || text[b-1] == '$')) return;
+    memcpy(cls, text + b, e - b);
+    cls[e - b] = 0;
+    declare(t, name, cls, stars);
+}
+
+void Vars_declareText(const char* text) { declareTail(&locals, text); }
+void Vars_declareMember(const char* text) { declareTail(&members, text); }
+
+static int findIn(const VarTable* t, const char* name, VarInfo* out)
+{
+    int i;
+    for (i = 0; i < t->n; i++) {
+        if (strcmp(t->v[i].name, name) == 0) { *out = t->v[i].info; return 1; }
+    }
+    return 0;
+}
+
+int Vars_find(const char* name, VarInfo* out) { return findIn(&locals, name, out); }
+int Vars_findMember(const char* name, VarInfo* out) { return findIn(&members, name, out); }

@@ -1,0 +1,9 @@
+#class $A
+int n;
+#+void f(){ }
+#+void g($A p, A v)
+{
+    p.f();
+    v->f();
+}
+#endclass

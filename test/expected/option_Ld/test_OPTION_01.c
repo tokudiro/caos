@@ -8,7 +8,6 @@
 // line comment before a declaration
 int TEST_OPTION_01_get_c(const TEST_OPTION_01* pthis) { return pthis->c; }
 void TEST_OPTION_01_set_c(TEST_OPTION_01* pthis, int c) { pthis->c = c; }
-int c; // accessor with a line comment
 int TEST_OPTION_01_sum(TEST_OPTION_01* pthis){
     // @a in a line comment
     return pthis->a + pthis->b + pthis->c; /* block */

@@ -1,0 +1,2 @@
+error/call_operator.caos:6: error: a pointer calls a method with '->'
+error/call_operator.caos:7: error: a value calls a method with '.'

@@ -1,0 +1,11 @@
+#class $A
+int n;
+#+void f(){ }
+#endclass
+#class $B
+$A a;
+#+void g()
+{
+    @a.f();
+}
+#endclass

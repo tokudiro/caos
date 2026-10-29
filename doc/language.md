@@ -24,6 +24,7 @@ Three places exist: **outside a class**, **inside a class** (between `#class` an
 | `#header` ... `#endheader` | the lines between them (each directive alone on its line) go to the **public header** instead of the `.c`. Use it for types that a public prototype needs. |
 | `#' text` (`#comment`) | a caos-only comment; the line is not output |
 | `$Name` | the type `Name*` |
+| `x->m()` / `v.m()` | in a method: a call of the method of the class of a variable (see "Calling a method of a variable") |
 | `@name` | in a method: a member of the current object (`pthis->name`), or a method of it (`Class_name(pthis, ...)`) |
 | `@@` | in a method: the this pointer itself (`pthis`, or the `-k` string) |
 | `#@ type name;` | public member: declared like a member, and `Class_get_name` / `Class_set_name` are generated |
@@ -56,6 +57,33 @@ A method body starts at `{` and ends at the matching `}`.
 
 `#endclass` and the other `#end...` directives are interchangeable; they only close the class.
 Use one class kind per file: the kind that was seen last decides how the files are assembled.
+
+## Calling a method of a variable
+
+Inside a method, a variable of a class can call its methods like in C: `->` for a pointer, `.` for a value.
+
+| declared | written | generated |
+|---|---|---|
+| `$Foo p` or `Foo* p` | `p->bar(a)` | `Foo_bar(p, a)` |
+| `Foo v` | `v.bar(a)` | `Foo_bar(&v, a)` |
+| `Reader r` (an interface) | `r.read(a)` | `Reader_read(r, a)` |
+| member `$Foo m` | `@m->bar(a)` | `Foo_bar(pthis->m, a)` |
+| member `Foo m` | `@m.bar(a)` | `Foo_bar(&pthis->m, a)` |
+
+```c
+#+int run($Counter other)
+{
+    Counter local;
+    local.add(1);          /* Counter_add(&local, 1) */
+    other->add(2);         /* Counter_add(other, 2)  */
+    return local.get() + other->get();
+}
+```
+
+* **Which variables.** The ones declared in the method: the parameters and the locals (a declaration of the form `Class name`, `Class* name` or `$Class name`, at the end of a statement), and the members of the class. Nothing else is tracked: not `a->b->c()`, not the result of a call, not an array element. Take it in a local variable first (`T* e = @items[i]; e->finish();`).
+* **Which types.** A class of the same file, or the class of `#import $Foo` (`Foo.caos`), or an interface. For any other type, such as a struct with a function pointer member, `s.fp(x)` is left as it is.
+* **Not checked.** Whether the method exists (the C compiler reports it) and the scope of a block: a name declared again with another type takes the later one.
+* A wrong operator (`.` for a pointer, `->` for a value) is an error. It works only inside the methods of a class, not in plain C functions of the file. A value of a class from another file needs its struct: `#include "Foo_define.h"`.
 
 ## Interfaces
 
@@ -117,7 +145,7 @@ The users see only the ordinary class names `IntList` and `StrList`.
 * **How it works.** The text of the template is scanned again with every type parameter (a whole word) replaced by the argument, and `$List` replaced by `$IntList`. All the other rules (members, `#line`, `implements`, the options) are the same as for a hand-written class. There is no type inference or specialization.
 * **Where it is expanded.** The classes are generated into the file that has `#instance` (`Lists.c`, `Lists.h`, ...). To use the same instance from several files, write `#instance` once and include its header.
 * **Where the template is found.** Before the `#instance` in the same file, or in `Name.caos` in the folder of the input file (named after the template). The class kind of the template (`#class`, `#struct`, ...) is kept. `-M` lists `Name.caos`.
-* **`T_name`.** A word that starts with a type parameter and `_` (`T_finish`) becomes the method of the type argument (`Element_finish`). Use it to call what depends on the type. The type argument must be a plain name (`Element`, not `const char*`); a type without that function is an error of the C compiler. `src/ListBuf.caos` is `List<T>` expanded for `Element`, and it frees the elements with `T_finish` and `T_delete`.
+* **`T_name`.** A word that starts with a type parameter and `_` (`T_finish`) becomes the method of the type argument (`Element_finish`). Use it to call what depends on the type (or, simpler, take the value in a local variable of type `T*` and call `e->finish()`). The type argument must be a plain name (`Element`, not `const char*`); a type without that function is an error of the C compiler. `src/ListBuf.caos` is `List<T>` expanded for `Element`, and it frees the elements with `T_finish` and `T_delete`.
 * **Type arguments.** `int`, `char*`, `Name` or `$Name` (= `Name*`); several are separated by `,`. A nested `<...>` is not supported. Write the pointer yourself in the template (`T*`); `$T` is not replaced.
 * **What is not carried.** Only the lines between `#class` and `#endclass` belong to the template. Put the `#include`s and `#header` that it needs in the file with `#instance`.
 * **Errors.** A wrong number of arguments, an unknown template and so on are reported as `file:line: error: ...`. An error inside the expanded text points to the line of the template, in the template's file. The words are replaced everywhere, also in comments and strings.

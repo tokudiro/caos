@@ -3,6 +3,7 @@
  * Not compiled on its own; the Makefile pastes it into obj/caos.l.
  * The Caos class itself is written in Caos.caos.
  */
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -179,6 +180,50 @@ static void finishTemplate(const char* endDirective)
     templateHead[templateHeadLen] = 0;
     Template_define(templateName, templateHead, classDirective, endDirective,
                     templateLine, input_filename, ifaceError);
+}
+
+/*
+ * "var->method(" / "v.method(" / "@member->method(" : the call "Class_method(arg"
+ * for the class of the variable. 0 if the variable is not of a class (nothing is
+ * changed then) ; *keep is the length of the variable at the start of the text.
+ */
+static int resolveCall(const char* text, boolean isMember, char* call, size_t size, size_t* keep)
+{
+    const char* p = text + (isMember ? 1 : 0);
+    char name[MAX_TEXT], method[MAX_TEXT];
+    size_t n = 0;
+    VarInfo v;
+    boolean arrow;
+    const char* thisName = SBuf_getStr(thispointer_buf);
+    char arg[2 * MAX_TEXT + 8];
+
+    while ((isalnum((unsigned char)*p) || *p == '_') && n < sizeof(name) - 1) name[n++] = *p++;
+    name[n] = 0;
+    *keep = (size_t)(p - text);
+    while (*p == ' ' || *p == '\t') p++;
+    arrow = (*p == '-');
+    p += arrow ? 2 : 1;
+    while (*p == ' ' || *p == '\t') p++;
+    n = 0;
+    while ((isalnum((unsigned char)*p) || *p == '_') && n < sizeof(method) - 1) method[n++] = *p++;
+    method[n] = 0;
+
+    if (!(isMember ? Vars_findMember(name, &v) : Vars_find(name, &v))) return 0;
+    if (isMember) snprintf(arg, sizeof(arg), "%s->%s", thisName, name);
+    else snprintf(arg, sizeof(arg), "%s", name);
+
+    if (v.isInterface) {
+        /* an interface is a pair of pointers, passed by value */
+        if (arrow) snprintf(call, size, "%s_%s(*%s", v.cls, method, arg);
+        else snprintf(call, size, "%s_%s(%s", v.cls, method, arg);
+    } else if (v.stars == 1) {
+        if (!arrow) reportError("a pointer calls a method with '->'");
+        snprintf(call, size, "%s_%s(%s", v.cls, method, arg);
+    } else {
+        if (arrow) reportError("a value calls a method with '.'");
+        snprintf(call, size, "%s_%s(&%s", v.cls, method, arg);
+    }
+    return 1;
 }
 
 /* #endclass : check "implements" and write the function pointer tables */
