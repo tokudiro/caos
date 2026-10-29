@@ -55,6 +55,7 @@ run_test -L   GENERIC_01
 run_test -L   GENERIC_02
 run_test -L   CALL_01
 run_test -L   CONTRACT_01
+run_test -L   INVARIANT_01
 
 # a member initializer is reported (with its line), caos exits non-zero,
 # and the output is still valid C without the initializers

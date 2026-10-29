@@ -1,0 +1,1 @@
+error/invariant_outside.caos:1: error: #invariant belongs in a class, before its methods

@@ -9,6 +9,10 @@
 %}
 
 <METHOD_SCOPE>{
+    {DIRECTIVE_INVARIANT}.* |
+    {DIRECTIVE_NOINVARIANT}.* {
+        reportError("#invariant belongs in a class, before its methods; #noinvariant belongs before the '{'");
+    }
     {DIRECTIVE_REQUIRE}.* |
     {DIRECTIVE_ENSURE}.*  {
         reportError("#require and #ensure belong between the header of a method and its '{'");

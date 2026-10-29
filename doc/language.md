@@ -193,7 +193,18 @@ int Stack_pop(Stack* pthis)
 * They work on every kind of method (`#+`, `#-`, `#()+`, `#$`). A `void` method has no `result`.
 * **The macros.** The generated `.c` includes `caos_contract.h` (in `include/` of caos; copy it, or write your own). It defines `CAOS_REQUIRE(cond)` and `CAOS_ENSURE(cond)` as `assert(cond)` unless you have defined them before, so `NDEBUG` removes the checks. To avoid `assert.h`, define both macros (for example to stop, or to log) before the header, or in your own `caos_contract.h`.
 * A failing expression is an error of the C compiler, reported at the line of the `{`.
-* `#invariant` is not supported. `#require` and `#ensure` anywhere else are errors.
+* `#invariant expr` states a condition that every object of the class keeps. Write it in the class, after the members and before the methods it applies to (several lines are all checked):
+
+  ```
+  #class $Range
+  int low;
+  int high;
+  #invariant @low <= @high
+  ```
+
+  It is checked on entry (`CAOS_REQUIRE`) of every public method (`#+`, `#()+`), and on exit (`CAOS_ENSURE`) of every public method that can change the object (`#+`), after its `#ensure`. Private methods (`#-`), class methods (`#$`) and the accessors of `#@` are not checked, so a private method may break the invariant for a while.
+* **The first method.** An object is not valid before its initializing method has run, so the entry check of that method would fail. Write `#noinvariant` under its header (next to `#require`) to leave out the entry check of that method; its exit is still checked. No method is exempt by its name.
+* `#require`, `#ensure`, `#invariant` and `#noinvariant` anywhere else are errors.
 
 ## Memory
 

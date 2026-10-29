@@ -80,6 +80,7 @@ After an intended change of the output, regenerate the snapshots with `UPDATE=1 
 | `#interface $Name` ... `#endinterface` | interface (a table of function pointers); a class says `#class $X implements $Name` |
 | `#class $Name<T>` ... / `#instance $X = $Name<int>` | template and its explicit expansion |
 | `#require expr` / `#ensure expr` | precondition / postcondition of a method, checked with `CAOS_REQUIRE` / `CAOS_ENSURE` (`include/caos_contract.h`) |
+| `#invariant expr` | condition of the class, checked on entry and exit of the public methods (`#noinvariant` leaves out the entry check) |
 | `#import` | include |
 | `@name` | member or method of the current object (`pthis->name` / `Class_name(pthis)`) |
 

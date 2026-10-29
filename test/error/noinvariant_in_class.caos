@@ -1,0 +1,4 @@
+#class $A
+#noinvariant
+int f;
+#endclass

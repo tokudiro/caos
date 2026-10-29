@@ -275,31 +275,79 @@ static char contractEnsure[MAX_TEXTLINE];
 static size_t contractEnsureLen = 0;
 static boolean isContractIncluded = FALSE;
 
+/* #invariant of the class : checked at the entry and at the exit of the public methods */
+static char invariantEntry[MAX_TEXTLINE];
+static size_t invariantEntryLen = 0;
+static char invariantExit[MAX_TEXTLINE];
+static size_t invariantExitLen = 0;
+static boolean isNoInvariant = FALSE;   /* #noinvariant of the next method */
+
 /* of the method being translated */
-static char methodEnsureReturn[2 * MAX_TEXTLINE + 64];   /* after "return x;" */
-static char methodEnsureEnd[MAX_TEXTLINE + 8];      /* before the last '}' of a void method */
+static char methodEnsureReturn[3 * MAX_TEXTLINE + 64];   /* after "return x;" */
+static char methodEnsureEnd[3 * MAX_TEXTLINE + 64];      /* before the last '}' of a void method */
 static boolean methodHasEnsure = FALSE;
 static boolean methodIsVoid = FALSE;
 static boolean methodEndDone = FALSE;
 static boolean methodInReturn = FALSE;
 
-static void addContract(boolean isRequire, const char* expr)
+/* the include goes before the header of the method, which is still queued */
+static void includeContract(void)
 {
-    char one[MAX_TEXTLINE];
-    size_t n;
-    while (*expr == ' ' || *expr == '\t') expr++;
-    n = strlen(expr);
-    while (n > 0 && (expr[n-1] == ' ' || expr[n-1] == '\t' || expr[n-1] == '\r')) n--;
-    if (n == 0) {
-        reportError(isRequire ? "#require needs an expression" : "#ensure needs an expression");
-        return;
-    }
     if (!isContractIncluded) {
-        /* before the header of the method, which is still queued */
         fprintf(source, "#include \"caos_contract.h\"\n");
         if (isLineNo) fprintf(source, "#line %d \"%s\"\n", methodLine, input_filename);
         isContractIncluded = TRUE;
     }
+}
+
+/* does the invariant of the class apply to the method being translated ? */
+static boolean hasInvariant(void)
+{
+    return invariantEntryLen > 0 && methodVisibility == VISIBILITY_PUBLIC && methodScope == SCOPE_OBJECT;
+}
+
+/* "expr" of a directive: trimmed, or 0 if it is empty (reported) */
+static boolean contractExpression(const char* directive, const char** expr, size_t* length)
+{
+    char message[64];
+    size_t n;
+    while (**expr == ' ' || **expr == '\t') (*expr)++;
+    n = strlen(*expr);
+    while (n > 0 && ((*expr)[n-1] == ' ' || (*expr)[n-1] == '\t' || (*expr)[n-1] == '\r')) n--;
+    if (n == 0) {
+        snprintf(message, sizeof(message), "%s needs an expression", directive);
+        reportError(message);
+        return FALSE;
+    }
+    *length = n;
+    return TRUE;
+}
+
+static void addInvariant(const char* expr)
+{
+    char one[MAX_TEXTLINE];
+    size_t n;
+    if (!contractExpression("#invariant", &expr, &n)) return;
+    if (n + 32 >= sizeof(one)) {
+        reportError("the line is too long");
+        return;
+    }
+    if (invariantEntryLen > 0) {
+        appendLimited(invariantEntry, &invariantEntryLen, " ");
+        appendLimited(invariantExit, &invariantExitLen, " ");
+    }
+    snprintf(one, sizeof(one), "CAOS_REQUIRE(%.*s);", (int)n, expr);
+    appendLimited(invariantEntry, &invariantEntryLen, one);
+    snprintf(one, sizeof(one), "CAOS_ENSURE(%.*s);", (int)n, expr);
+    appendLimited(invariantExit, &invariantExitLen, one);
+}
+
+static void addContract(boolean isRequire, const char* expr)
+{
+    char one[MAX_TEXTLINE];
+    size_t n;
+    if (!contractExpression(isRequire ? "#require" : "#ensure", &expr, &n)) return;
+    includeContract();
     if (n + 32 >= sizeof(one)) {
         reportError("the line is too long");
         return;
@@ -322,8 +370,10 @@ static void addContract(boolean isRequire, const char* expr)
 static void startContracts(const char* proto, char* head, size_t size)
 {
     char ret[MAX_TEXT];
+    boolean entry = hasInvariant();
+    boolean exitCheck = entry && methodMutability == MUTABILITY_MUTABLE;
     head[0] = 0;
-    methodHasEnsure = (contractEnsureLen > 0);
+    methodHasEnsure = (contractEnsureLen > 0 || exitCheck);
     methodEndDone = FALSE;
     methodInReturn = FALSE;
     Iface_returnType(proto, ret, sizeof(ret));
@@ -331,19 +381,32 @@ static void startContracts(const char* proto, char* head, size_t size)
     if (methodHasEnsure && !methodIsVoid && ret[0] != 0) {
         snprintf(head, size, " %s result;", ret);
     }
+    if (entry && !isNoInvariant) {
+        if (strlen(head) + invariantEntryLen + 1 < size) {
+            strcat(head, " ");
+            strcat(head, invariantEntry);
+        }
+    }
     if (contractRequireLen > 0) {
         if (strlen(head) + contractRequireLen + 1 < size) {
             strcat(head, " ");
             strcat(head, contractRequire);
         }
     }
-    snprintf(methodEnsureEnd, sizeof(methodEnsureEnd), " %s ", contractEnsure);
-    snprintf(methodEnsureReturn, sizeof(methodEnsureReturn), " %s %s", contractEnsure,
-             methodIsVoid ? "return; }" : "return result; }");
+    /* the postconditions, then the invariant */
+    {
+        char combined[2 * MAX_TEXTLINE + 8];
+        snprintf(combined, sizeof(combined), "%s%s%s", contractEnsure,
+                 (contractEnsureLen > 0 && exitCheck) ? " " : "", exitCheck ? invariantExit : "");
+        snprintf(methodEnsureEnd, sizeof(methodEnsureEnd), " %s ", combined);
+        snprintf(methodEnsureReturn, sizeof(methodEnsureReturn), " %s %s", combined,
+                 methodIsVoid ? "return; }" : "return result; }");
+    }
     contractRequire[0] = 0;
     contractRequireLen = 0;
     contractEnsure[0] = 0;
     contractEnsureLen = 0;
+    isNoInvariant = FALSE;
 }
 
 /* #endclass : check "implements" and write the function pointer tables */

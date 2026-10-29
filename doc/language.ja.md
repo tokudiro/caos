@@ -193,7 +193,18 @@ int Stack_pop(Stack* pthis)
 * すべての種類のメソッド（`#+`、`#-`、`#()+`、`#$`）で使えます。`void` のメソッドに `result` はありません。
 * **マクロ**: 生成される `.c` は `caos_contract.h`（caos の `include/` にあります。コピーするか、自分で書いてください）を include します。`CAOS_REQUIRE(cond)` と `CAOS_ENSURE(cond)` が先に定義されていなければ `assert(cond)` になるので、`NDEBUG` で検査が消えます。`assert.h` を使いたくないときは、ヘッダより前か自分の `caos_contract.h` で、2 つのマクロ（停止やログ出力など）を定義します。
 * 式の誤りは C コンパイラのエラーになり、`{` の行で報告されます。
-* `#invariant` は未対応です。ほかの場所の `#require` と `#ensure` はエラーです。
+* `#invariant expr` は、そのクラスのすべてのオブジェクトが保つ条件です。クラスの中の、メンバの後で、適用したいメソッドの前に書きます（複数行はすべて検査します）。
+
+  ```
+  #class $Range
+  int low;
+  int high;
+  #invariant @low <= @high
+  ```
+
+  public メソッド（`#+`、`#()+`）の入るときに `CAOS_REQUIRE` で、オブジェクトを変更しうる public メソッド（`#+`）の出るときに `CAOS_ENSURE` で、その `#ensure` の後に検査します。private メソッド（`#-`）、クラスメソッド（`#$`）、`#@` のアクセサは検査しません。private メソッドは、しばらく不変条件を壊してかまいません。
+* **最初のメソッド**: 初期化するメソッドが動く前のオブジェクトは正しくないので、そのメソッドの入口の検査は必ず失敗します。見出しの下（`#require` と同じ場所）に `#noinvariant` と書くと、そのメソッドの入口の検査を省きます。出口は検査します。名前による例外はありません。
+* ほかの場所の `#require`、`#ensure`、`#invariant`、`#noinvariant` はエラーです。
 
 ## メモリ
 

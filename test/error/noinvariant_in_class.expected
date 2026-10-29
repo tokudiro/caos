@@ -1,0 +1,1 @@
+error/noinvariant_in_class.caos:2: error: #noinvariant belongs between the header of a method and its '{'

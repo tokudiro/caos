@@ -17,6 +17,8 @@ DIRECTIVE_INTERFACE    ^#interface
 DIRECTIVE_INSTANCE     ^#instance
 DIRECTIVE_REQUIRE      ^#require
 DIRECTIVE_ENSURE       ^#ensure
+DIRECTIVE_INVARIANT    ^#invariant
+DIRECTIVE_NOINVARIANT  ^#noinvariant
 DIRECTIVE_ENDINTERFACE ^#endinterface
 DIRECTIVE_UTILITY   ^#utility
 
