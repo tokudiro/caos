@@ -35,7 +35,7 @@ Element* ListBuf_element(ListBuf* pthis, int index)
 
 void ListBuf_finish(ListBuf* pthis)
 {
-    while ( pthis->length<0 ) {
+    while ( pthis->length>0 ) {
         Element_finish(pthis->elements[pthis->length-1]);
         Element_delete(pthis->elements[pthis->length-1]);
         pthis->length--;
