@@ -1,0 +1,6 @@
+#include <stdio.h>
+#import $SBuf
+#class $A
+int x;
+#+int f(){ return @x; }
+#endclass

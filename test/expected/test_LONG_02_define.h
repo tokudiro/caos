@@ -1,0 +1,4 @@
+struct A_struct{
+int /* word1 word2 word3 word4 word5 word6 word7 word8 word9 word10 word11 word12 word13 word14 word15 word16 word17 word18 word19 word20 word21 word22 word23 word24 word25 word26 word27 word28 word29 word30 word31 word32 word33 word34 word35 word36 word37 word38 word39 word40 word41 word42 word43 word44 word45 word46 word47 word48 word49 word50 word51 word52 word53 word54 word55 word56 word57 word58 word59 word60 */ x;
+int y; // tail1 tail2 tail3 tail4 tail5 tail6 tail7 tail8 tail9 tail10 tail11 tail12 tail13 tail14 tail15 tail16 tail17 tail18 tail19 tail20 tail21 tail22 tail23 tail24 tail25 tail26 tail27 tail28 tail29 tail30 tail31 tail32 tail33 tail34 tail35 tail36 tail37 tail38 tail39 tail40 tail41 tail42 tail43 tail44 tail45 tail46 tail47 tail48 tail49 tail50 tail51 tail52 tail53 tail54 tail55 tail56 tail57 tail58 tail59 tail60 
+};

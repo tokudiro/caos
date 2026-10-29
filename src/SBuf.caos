@@ -27,8 +27,11 @@ int len;
 * @memeberof SBuf
 */
 #+void setBuf(const char* top, const int len) {
-	strncpy(@str, top, len);
-	@len = len;
+	/* keep room for the terminating 0 : longer strings are cut */
+	int n = (len < MAX_TEXT - 1) ? len : MAX_TEXT - 1;
+	memcpy(@str, top, n);
+	@str[n] = 0;
+	@len = n;
 	@exist = TRUE;
 }
 

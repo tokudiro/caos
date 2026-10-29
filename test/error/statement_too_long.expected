@@ -1,0 +1,2 @@
+error/statement_too_long.caos:2: error: too many tokens in one statement (up to 254)
+error/statement_too_long.caos:3: error: too many tokens in one statement (up to 254)

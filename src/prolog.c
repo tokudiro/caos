@@ -27,7 +27,7 @@ boolean isMember = FALSE;
 
 SBuf* class_buf;
 SBuf* thispointer_buf;
-char allque[MAX_TEXT*MAX_ARRAYSIZE];
+char allque[MAX_ALLQUE];
 char* input_filename;
 char filename[MAX_TEXT];
 char source_name[MAX_TEXT];
@@ -103,3 +103,22 @@ static void reportError(const char* message)
 {
     reportErrorAt(yylineno, message);
 }
+
+/*
+ * Run before every rule : a token that does not fit a queue element, or a
+ * statement with more tokens than the queue holds, is reported (the queue
+ * keeps its content and cuts the rest, so nothing is overwritten).
+ */
+static void checkLimits(void)
+{
+    static int overflowLine = -1;
+    if (yyleng >= MAX_TEXT) {
+        reportError("token is too long (up to 255 characters)");
+    }
+    if (RBuf_popOverflow(queue) && overflowLine != yylineno) {
+        /* once per line : every further token of the statement overflows too */
+        overflowLine = yylineno;
+        reportError("too many tokens in one statement (up to 254)");
+    }
+}
+#define YY_USER_ACTION checkLimits();

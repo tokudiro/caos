@@ -49,14 +49,13 @@ static const char default_thispointer_str[] = "pthis";
 static const char* output_dir = 0;
 
 /* path of "<dir>/<filename><suffix>" ; dir may be empty */
-static void makePath(char* path, const char* dir, const char* suffix) {
-    path[0] = 0;
-    if (dir[0] != 0) {
-        strcat(path, dir);
-        if (dir[strlen(dir)-1] != '/') strcat(path, "/");
+static void makePath(char* path, size_t size, const char* dir, const char* suffix) {
+    const char* sep = (dir[0] != 0 && dir[strlen(dir)-1] != '/') ? "/" : "";
+    int n = snprintf(path, size, "%s%s%s%s", dir, sep, filename, suffix);
+    if (n < 0 || (size_t)n >= size) {
+        fprintf(stderr, "error: the path is too long: %s%s%s%s\n", dir, sep, filename, suffix);
+        exit(1);
     }
-    strcat(path, filename);
-    strcat(path, suffix);
 }
 
 int main(int argc, char** argv)
@@ -94,6 +93,10 @@ int main(int argc, char** argv)
 		    isNonDefineHeader = TRUE;
 		    break;
 		case 'k':
+		    if (strlen(optarg) >= MAX_TEXT) {
+		        fprintf(stderr, "error: the -k string is too long (up to %d characters)\n", MAX_TEXT - 1);
+		        exit(1);
+		    }
 		    SBuf_setBuf(thispointer_buf, optarg, strlen(optarg));
 		    break;
 		default:
@@ -127,11 +130,20 @@ int main(int argc, char** argv)
 	}
 
 	/* filename : the input file name without folder and extension */
-	char input_dir[MAX_TEXT] = {0};
+	char input_dir[MAX_PATH] = {0};
 	const char* slash = strrchr(input_filename, '/');
 	const char* base = slash ? slash + 1 : input_filename;
 	if (slash) {
+		if ((size_t)(slash - input_filename + 1) >= sizeof(input_dir)) {
+			fprintf(stderr, "error: the path is too long: %s\n", input_filename);
+			exit(1);
+		}
 		strncpy(input_dir, input_filename, slash - input_filename + 1);
+	}
+	/* the names built from filename ("_private.h" etc.) must fit MAX_TEXT */
+	if (strlen(base) >= MAX_TEXT - 16) {
+		fprintf(stderr, "error: the file name is too long: %s\n", base);
+		exit(1);
 	}
 	strncpy(filename, base, MAX_TEXT - 1);
 	char* dot = strrchr(filename, '.');
@@ -148,20 +160,20 @@ int main(int argc, char** argv)
 	}
 
 	/* names used in #include (same folder as the including file) */
-	makePath(source_name, "", ".c");
-	makePath(public_header_name, "", ".h");
-	makePath(private_header_name, "", "_private.h");
-	makePath(define_header_name, "", "_define.h");
+	makePath(source_name, MAX_TEXT, "", ".c");
+	makePath(public_header_name, MAX_TEXT, "", ".h");
+	makePath(private_header_name, MAX_TEXT, "", "_private.h");
+	makePath(define_header_name, MAX_TEXT, "", "_define.h");
 
 	/* paths to open */
-	char source_path[MAX_TEXT*2];
-	char public_header_path[MAX_TEXT*2];
-	char private_header_path[MAX_TEXT*2];
-	char define_header_path[MAX_TEXT*2];
-	makePath(source_path, dir, ".c");
-	makePath(public_header_path, dir, ".h");
-	makePath(private_header_path, dir, "_private.h");
-	makePath(define_header_path, dir, "_define.h");
+	char source_path[MAX_PATH];
+	char public_header_path[MAX_PATH];
+	char private_header_path[MAX_PATH];
+	char define_header_path[MAX_PATH];
+	makePath(source_path, MAX_PATH, dir, ".c");
+	makePath(public_header_path, MAX_PATH, dir, ".h");
+	makePath(private_header_path, MAX_PATH, dir, "_private.h");
+	makePath(define_header_path, MAX_PATH, dir, "_define.h");
 
 	source = fopen(source_path, "w");
 	if (source == 0) {printf("source file error: %s\n", source_path);exit(-1);}

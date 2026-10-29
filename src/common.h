@@ -4,6 +4,10 @@
 #define MAX_TEXT (256)
 #define MAX_ARRAYSIZE (256)
 #define MAX_TEXTLINE (1024)
+#define MAX_PATH (4096)
+/* buffer for RBuf_allDeque : each of MAX_ARRAYSIZE elements (MAX_TEXT-1 chars)
+   may get a prefix of up to MAX_TEXT+1 chars ("pthis->", "Class_") */
+#define MAX_ALLQUE ((MAX_TEXT*2+8)*MAX_ARRAYSIZE)
 
 #include "boolean.h"
 #include "buftype.h"

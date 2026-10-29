@@ -4,6 +4,7 @@ buftype type[MAX_ARRAYSIZE];
 char thispointer_str[MAX_TEXT];
 char thisclass_str[MAX_TEXT];
 boolean isVerbose;
+boolean overflow;
 int first;
 int last;
 };
