@@ -75,7 +75,6 @@ After an intended change of the output, regenerate the snapshots with `UPDATE=1 
 | `#class $Name` ... `#endclass` | define a class (`#struct`, `#singleton`, `#utility` are variants) |
 | `#+` / `#public` | public method |
 | `#-` / `#private` | private method |
-| `##` | protected method |
 | `#$` / `#classmethod` | class method (no `this` pointer) |
 | `#@` | public member (getter / setter are generated) |
 | `#interface $Name` ... `#endinterface` | interface (a table of function pointers); a class says `#class $X implements $Name` |

@@ -76,7 +76,6 @@ int main(){
 | `#class $Name` ... `#endclass` | クラスの定義（`#struct`、`#singleton`、`#utility` は派生形） |
 | `#+` / `#public` | public メソッド |
 | `#-` / `#private` | private メソッド |
-| `##` | protected メソッド |
 | `#$` / `#classmethod` | クラスメソッド（this ポインタなし） |
 | `#@` | public メンバー（getter / setter を生成） |
 | `#interface $Name` ... `#endinterface` | インタフェース（関数ポインタの表）。クラスは `#class $X implements $Name` と書く |

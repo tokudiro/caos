@@ -47,7 +47,9 @@
 	    if (isVerbose) printf("BEGIN <METHOD_DEFINE>\n");
 		BEGIN(METHOD_DEFINE);
 	}
-	{DIRECTIVE_PROTECTED_METHOD} {}
+	{DIRECTIVE_PROTECTED_METHOD} {
+		reportError("protected methods (##) are not supported (there is no inheritance)");
+	}
 	{DIRECTIVE_CLASS_METHOD} {
 		if (isVerbose) printf("#directive class method\n");
 		methodLine = yylineno;
