@@ -67,6 +67,10 @@
 		BEGIN(CLASS_DEFINE);
 	}
 	
+	{DIRECTIVE_REQUIRE}.* |
+	{DIRECTIVE_ENSURE}.*  {
+		reportError("#require and #ensure belong between the header of a method and its '{'");
+	}
 	{DIRECTIVE_INSTANCE} {
 	    instanceLen = 0;
 	    BEGIN(INSTANCE_DEFINE);

@@ -158,10 +158,48 @@ static char templateHead[MAX_TEXTLINE];
 static size_t templateHeadLen = 0;
 static char instanceText[MAX_TEXTLINE];
 static size_t instanceLen = 0;
-static boolean isExpanding = FALSE;
-static int savedLine = 0;
-static char* savedFile = 0;
-static struct yy_buffer_state* savedBuffer = 0;
+
+/*
+ * Pushed input : the text of an expanded template, or of a contract, is scanned
+ * in place of the file and then the scanner goes on where it was.
+ */
+typedef struct {
+    struct yy_buffer_state* buffer;
+    int line;
+    char* file;
+    int state;
+    boolean isInjection;
+} PushedInput;
+static PushedInput pushedInput[4];
+static int pushedCount = 0;
+static int injectDepth = 0;     /* > 0 while the text of a contract is scanned */
+
+#define PUSH_INPUT(text, newLine, newFile, resumeState, injection) do { \
+    if (pushedCount >= 4) { \
+        reportError("too many nested expansions"); \
+    } else { \
+        pushedInput[pushedCount].buffer = YY_CURRENT_BUFFER; \
+        pushedInput[pushedCount].line = yylineno; \
+        pushedInput[pushedCount].file = input_filename; \
+        pushedInput[pushedCount].state = (resumeState); \
+        pushedInput[pushedCount].isInjection = (injection); \
+        pushedCount++; \
+        if (injection) injectDepth++; \
+        yy_scan_string(text); \
+        yylineno = (newLine); \
+        input_filename = (char*)(newFile); \
+    } \
+} while (0)
+
+#define POP_INPUT() do { \
+    PushedInput* top_ = &pushedInput[--pushedCount]; \
+    yy_delete_buffer(YY_CURRENT_BUFFER); \
+    yy_switch_to_buffer(top_->buffer); \
+    yylineno = top_->line; \
+    input_filename = top_->file; \
+    if (top_->isInjection) injectDepth--; \
+    BEGIN(top_->state); \
+} while (0)
 
 static void appendLimited(char* buf, size_t* len, const char* str)
 {
@@ -224,6 +262,88 @@ static int resolveCall(const char* text, boolean isMember, char* call, size_t si
         snprintf(call, size, "%s_%s(&%s", v.cls, method, arg);
     }
     return 1;
+}
+
+/*
+ * Contracts : "#require expr" and "#ensure expr" between the header of a method
+ * and its '{'. They are collected as C text, and scanned as if they were written
+ * in the body (so that @member and x->method() work).
+ */
+static char contractRequire[MAX_TEXTLINE];
+static size_t contractRequireLen = 0;
+static char contractEnsure[MAX_TEXTLINE];
+static size_t contractEnsureLen = 0;
+static boolean isContractIncluded = FALSE;
+
+/* of the method being translated */
+static char methodEnsureReturn[2 * MAX_TEXTLINE + 64];   /* after "return x;" */
+static char methodEnsureEnd[MAX_TEXTLINE + 8];      /* before the last '}' of a void method */
+static boolean methodHasEnsure = FALSE;
+static boolean methodIsVoid = FALSE;
+static boolean methodEndDone = FALSE;
+static boolean methodInReturn = FALSE;
+
+static void addContract(boolean isRequire, const char* expr)
+{
+    char one[MAX_TEXTLINE];
+    size_t n;
+    while (*expr == ' ' || *expr == '\t') expr++;
+    n = strlen(expr);
+    while (n > 0 && (expr[n-1] == ' ' || expr[n-1] == '\t' || expr[n-1] == '\r')) n--;
+    if (n == 0) {
+        reportError(isRequire ? "#require needs an expression" : "#ensure needs an expression");
+        return;
+    }
+    if (!isContractIncluded) {
+        /* before the header of the method, which is still queued */
+        fprintf(source, "#include \"caos_contract.h\"\n");
+        if (isLineNo) fprintf(source, "#line %d \"%s\"\n", methodLine, input_filename);
+        isContractIncluded = TRUE;
+    }
+    if (n + 32 >= sizeof(one)) {
+        reportError("the line is too long");
+        return;
+    }
+    snprintf(one, sizeof(one), "%s(%.*s);", isRequire ? "CAOS_REQUIRE" : "CAOS_ENSURE", (int)n, expr);
+    /* the texts are joined with a blank */
+    if (isRequire) {
+        if (contractRequireLen > 0) appendLimited(contractRequire, &contractRequireLen, " ");
+        appendLimited(contractRequire, &contractRequireLen, one);
+    } else {
+        if (contractEnsureLen > 0) appendLimited(contractEnsure, &contractEnsureLen, " ");
+        appendLimited(contractEnsure, &contractEnsureLen, one);
+    }
+}
+
+/*
+ * At the '{' of a method : the text to scan first (the declaration of result
+ * and the preconditions), and the texts kept for the postconditions.
+ */
+static void startContracts(const char* proto, char* head, size_t size)
+{
+    char ret[MAX_TEXT];
+    head[0] = 0;
+    methodHasEnsure = (contractEnsureLen > 0);
+    methodEndDone = FALSE;
+    methodInReturn = FALSE;
+    Iface_returnType(proto, ret, sizeof(ret));
+    methodIsVoid = (strcmp(ret, "void") == 0);
+    if (methodHasEnsure && !methodIsVoid && ret[0] != 0) {
+        snprintf(head, size, " %s result;", ret);
+    }
+    if (contractRequireLen > 0) {
+        if (strlen(head) + contractRequireLen + 1 < size) {
+            strcat(head, " ");
+            strcat(head, contractRequire);
+        }
+    }
+    snprintf(methodEnsureEnd, sizeof(methodEnsureEnd), " %s ", contractEnsure);
+    snprintf(methodEnsureReturn, sizeof(methodEnsureReturn), " %s %s", contractEnsure,
+             methodIsVoid ? "return; }" : "return result; }");
+    contractRequire[0] = 0;
+    contractRequireLen = 0;
+    contractEnsure[0] = 0;
+    contractEnsureLen = 0;
 }
 
 /* #endclass : check "implements" and write the function pointer tables */

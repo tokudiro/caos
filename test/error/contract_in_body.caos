@@ -1,0 +1,7 @@
+#class $A
+#+int f()
+{
+#ensure 1
+    return 0;
+}
+#endclass

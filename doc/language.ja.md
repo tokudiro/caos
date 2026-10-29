@@ -18,6 +18,7 @@ caos は C にいくつかのディレクティブを足します。ディレク
 
 | 記法 | 意味 |
 |---|---|
+| `#require expr` / `#ensure expr` | メソッドの見出しと `{` の間に書く事前条件と事後条件（「契約」の節） |
 | `#interface $Name` ... `#endinterface` | インタフェース（「インタフェース」の節） |
 | `#class $Name<T>` ... / `#instance $X = $Name<int>` | テンプレートとその展開（「テンプレート」の節） |
 | `#import <x.h>` | `#include` を public ヘッダと define ヘッダに書く（`-d` のときは define ヘッダには書かない） |
@@ -163,6 +164,36 @@ T* items;
 | `Name_private.h` | private メソッドのプロトタイプ（`-p`: 出力しない） |
 
 メンバを隠したいときは、define ヘッダを利用者の include パスに置かないようにします。
+
+## 契約
+
+`#require` と `#ensure` は、メソッドに入るときと出るときの検査です。メソッドの見出しと `{` の間に、1 行に 1 つの式を C で書きます（`@member`、`x->method()`、引数が使えます）。
+
+```
+#+int pop()
+#require @length > 0
+#ensure result >= 0
+{
+    if (@length == 1) return @items[--@length];
+    return @items[--@length] + 0;
+}
+```
+
+は、次のようになります。
+
+```c
+int Stack_pop(Stack* pthis)
+{ int result; CAOS_REQUIRE(pthis->length > 0);
+    if (pthis->length == 1) { result = pthis->items[--pthis->length]; CAOS_ENSURE(result >= 0); return result; }
+    { result = pthis->items[--pthis->length] + 0; CAOS_ENSURE(result >= 0); return result; }
+}
+```
+
+* `#require expr` は最初に検査します。`#ensure expr` は、`return` の前ごとに検査します（値は `result` に取ります）。`void` のメソッドでは、終わりの前にも検査します。複数行は、順にすべて検査します。
+* すべての種類のメソッド（`#+`、`#-`、`#()+`、`#$`）で使えます。`void` のメソッドに `result` はありません。
+* **マクロ**: 生成される `.c` は `caos_contract.h`（caos の `include/` にあります。コピーするか、自分で書いてください）を include します。`CAOS_REQUIRE(cond)` と `CAOS_ENSURE(cond)` が先に定義されていなければ `assert(cond)` になるので、`NDEBUG` で検査が消えます。`assert.h` を使いたくないときは、ヘッダより前か自分の `caos_contract.h` で、2 つのマクロ（停止やログ出力など）を定義します。
+* 式の誤りは C コンパイラのエラーになり、`{` の行で報告されます。
+* `#invariant` は未対応です。ほかの場所の `#require` と `#ensure` はエラーです。
 
 ## メモリ
 

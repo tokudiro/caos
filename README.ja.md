@@ -80,6 +80,7 @@ int main(){
 | `#@` | public メンバー（getter / setter を生成） |
 | `#interface $Name` ... `#endinterface` | インタフェース（関数ポインタの表）。クラスは `#class $X implements $Name` と書く |
 | `#class $Name<T>` ... / `#instance $X = $Name<int>` | テンプレートと、その明示的な展開 |
+| `#require expr` / `#ensure expr` | メソッドの事前条件と事後条件。`CAOS_REQUIRE` / `CAOS_ENSURE`（`include/caos_contract.h`）で検査 |
 | `#import` | インクルード |
 | `@name` | 現在のオブジェクトのメンバーまたはメソッド（`pthis->name` / `Class_name(pthis)`） |
 

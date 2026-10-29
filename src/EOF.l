@@ -1,4 +1,8 @@
 <<EOF>> {
+	if (pushedCount > 0 && pushedInput[pushedCount-1].isInjection) {
+		/* the end of the text of a contract : go on with the method */
+		POP_INPUT();
+	} else {
 	switch (YY_START) {
 	case INITIAL:
 		break;
@@ -44,17 +48,13 @@
 	default:
 		break;
 	}
-	if (isExpanding) {
+	if (pushedCount > 0) {
 		/* the end of an expanded template : go on with the file that has #instance */
-		yy_delete_buffer(YY_CURRENT_BUFFER);
-		yy_switch_to_buffer((YY_BUFFER_STATE)savedBuffer);
-		yylineno = savedLine;
-		input_filename = savedFile;
-		isExpanding = FALSE;
+		POP_INPUT();
 		if (isLineNo) fprintf(source, "#line %d \"%s\"\n", yylineno, input_filename);
-		BEGIN(INITIAL);
 	} else {
 		if (isVerbose) printf("\nEND\n");
 		return 0;
+	}
 	}
 }

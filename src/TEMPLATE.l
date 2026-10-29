@@ -32,15 +32,9 @@
 		instanceText[instanceLen] = 0;
 		text = Template_instance(instanceText, input_filename, yylineno - 1, ifaceError, &line, &path);
 		if (text) {
-			savedBuffer = YY_CURRENT_BUFFER;
-			savedLine = yylineno;
-			savedFile = input_filename;
-			isExpanding = TRUE;
-			yy_scan_string(text);
+			PUSH_INPUT(text, line, path ? path : input_filename, INITIAL, FALSE);
 			free(text);
-			yylineno = line;
 			if (path) {
-				input_filename = (char*)path;
 				addSourceDep(path);
 			}
 		}

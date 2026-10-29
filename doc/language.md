@@ -18,6 +18,7 @@ Three places exist: **outside a class**, **inside a class** (between `#class` an
 
 | syntax | meaning |
 |---|---|
+| `#require expr` / `#ensure expr` | between the header of a method and its `{`: a precondition and a postcondition (see "Contracts") |
 | `#interface $Name` ... `#endinterface` | an interface (see "Interfaces") |
 | `#class $Name<T>` ... / `#instance $X = $Name<int>` | a template, and its expansion (see "Templates") |
 | `#import <x.h>` | `#include` written to the public header and to the define header (not to the define header under `-d`) |
@@ -163,6 +164,36 @@ The users see only the ordinary class names `IntList` and `StrList`.
 | `Name_private.h` | prototypes of private methods (`-p`: not written) |
 
 Keep the define header out of the users' include path if the members should stay hidden.
+
+## Contracts
+
+`#require` and `#ensure` check a method on entry and on exit. They are written between the header and the `{`, one expression per line, in C (with `@member`, `x->method()` and the parameters):
+
+```
+#+int pop()
+#require @length > 0
+#ensure result >= 0
+{
+    if (@length == 1) return @items[--@length];
+    return @items[--@length] + 0;
+}
+```
+
+becomes
+
+```c
+int Stack_pop(Stack* pthis)
+{ int result; CAOS_REQUIRE(pthis->length > 0);
+    if (pthis->length == 1) { result = pthis->items[--pthis->length]; CAOS_ENSURE(result >= 0); return result; }
+    { result = pthis->items[--pthis->length] + 0; CAOS_ENSURE(result >= 0); return result; }
+}
+```
+
+* `#require expr` is checked first. `#ensure expr` is checked before every `return` (the value is kept in `result`), and, in a `void` method, also before the end. Several lines are all checked, in order.
+* They work on every kind of method (`#+`, `#-`, `#()+`, `#$`). A `void` method has no `result`.
+* **The macros.** The generated `.c` includes `caos_contract.h` (in `include/` of caos; copy it, or write your own). It defines `CAOS_REQUIRE(cond)` and `CAOS_ENSURE(cond)` as `assert(cond)` unless you have defined them before, so `NDEBUG` removes the checks. To avoid `assert.h`, define both macros (for example to stop, or to log) before the header, or in your own `caos_contract.h`.
+* A failing expression is an error of the C compiler, reported at the line of the `{`.
+* `#invariant` is not supported. `#require` and `#ensure` anywhere else are errors.
 
 ## Memory
 

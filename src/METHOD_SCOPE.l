@@ -9,6 +9,11 @@
 %}
 
 <METHOD_SCOPE>{
+    {DIRECTIVE_REQUIRE}.* |
+    {DIRECTIVE_ENSURE}.*  {
+        reportError("#require and #ensure belong between the header of a method and its '{'");
+    }
+
     {NUMBER} {
         check_arg_comma();
         RBuf_enque(queue, yytext, yyleng, T_NUMBER);
@@ -29,6 +34,12 @@
     }
 
     \} {
+        if (bracket == 0 && methodHasEnsure && methodIsVoid && !methodEndDone && injectDepth == 0) {
+            /* the postconditions of a void method that ends without return */
+            methodEndDone = TRUE;
+            yyless(0);
+            PUSH_INPUT(methodEnsureEnd, yylineno, input_filename, YY_START, TRUE);
+        } else {
         RBuf_enque(queue, yytext, yyleng, T_NON);
         fprintf( source, "%s", RBuf_allDeque(queue, allque) );
         if (bracket == 0) {
@@ -37,6 +48,7 @@
             BEGIN(CLASS_SCOPE);
         } else {
             bracket--;
+        }
         }
     }
 
@@ -102,7 +114,14 @@
     }
     {KEYWORD} {
         check_arg_comma();
-        RBuf_enque(queue, yytext, yyleng, T_KEYWORD);
+        if (methodHasEnsure && injectDepth == 0) {
+            /* return x;  ->  { result = x; <postconditions> return result; } */
+            bracket++;
+            methodInReturn = TRUE;
+            RBuf_enque(queue, methodIsVoid ? "{" : "{ result =", methodIsVoid ? 1 : 10, T_NON);
+        } else {
+            RBuf_enque(queue, yytext, yyleng, T_KEYWORD);
+        }
     }
     \* {
         check_arg_comma();
@@ -148,10 +167,17 @@
     }
     \n { RBuf_enque(queue, yytext, yyleng, T_NON); }
     ;  {
-        RBuf_enque(queue, yytext, yyleng, T_SEMICOLON);
-        RBuf_allDeque(queue, allque);
-        Vars_declareText(allque);
-        fprintf( source, "%s", allque );
+        if (methodInReturn) {
+            methodInReturn = FALSE;
+            if (!methodIsVoid) RBuf_enque(queue, yytext, yyleng, T_SEMICOLON);
+            fprintf( source, "%s", RBuf_allDeque(queue, allque) );
+            PUSH_INPUT(methodEnsureReturn, yylineno, input_filename, YY_START, TRUE);
+        } else {
+            RBuf_enque(queue, yytext, yyleng, T_SEMICOLON);
+            RBuf_allDeque(queue, allque);
+            Vars_declareText(allque);
+            fprintf( source, "%s", allque );
+        }
     }
     [\+\-\=\*\/:,<>~&?|!%]  {
         check_arg_comma();

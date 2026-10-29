@@ -37,6 +37,9 @@ Iface* Iface_define(const char* name, const char* file, int line, IfaceErr err);
 /* find a registered interface, or read it from <folder of input>/<name>.caos */
 Iface* Iface_find(const char* name, const char* input, int line, IfaceErr err);
 
+/* the return type of a prototype ("" if it cannot be read) */
+void Iface_returnType(const char* proto, char* out, size_t size);
+
 void Iface_emitHeader(const Iface* iface, FILE* header);
 void Iface_emitSource(const Iface* iface, FILE* source);
 

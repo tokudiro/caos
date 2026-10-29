@@ -1,0 +1,89 @@
+#include <assert.h>
+
+/* count the violations instead of stopping : caos_contract.h keeps these macros */
+static int requireFailed = 0;
+static int ensureFailed = 0;
+#define CAOS_REQUIRE(cond) do { if (!(cond)) requireFailed++; } while (0)
+#define CAOS_ENSURE(cond) do { if (!(cond)) ensureFailed++; } while (0)
+
+#class $Stack
+int items[4];
+int length;
+
+#+void init()
+{
+    @length = 0;
+}
+
+#+void push(int v)
+#require @length < 4
+#require v >= 0
+#ensure @length > 0
+{
+    @items[@length++] = v;
+}
+
+#+int pop()
+#require @length > 0
+#ensure result >= 0
+{
+    int v;
+    if (@length == 0) return 0;
+    @length--;
+    v = @items[@length];
+    return v > 50 ? v - 100 : v;
+}
+
+#+int size()
+{
+    return @length;
+}
+
+#-int doubled(int v)
+#ensure result == v * 2
+{
+    return v * 2 + (v > 100);
+}
+
+#+int dbl(int v)
+{
+    return @doubled(v);
+}
+
+#$int twice(int v)
+#require v < 1000
+#ensure result == v * 2
+{
+    return v * 2;
+}
+
+#+void check()
+#ensure @length >= 0
+{
+    @length += 0;
+}
+#endclass
+
+int main(void)
+{
+    Stack s;
+    Stack_init(&s);
+    Stack_push(&s, 3);
+    Stack_push(&s, 60);
+    assert(requireFailed == 0 && ensureFailed == 0);
+    assert(Stack_pop(&s) == 60 - 100);          /* result >= 0 is violated */
+    assert(ensureFailed == 1);
+    assert(Stack_pop(&s) == 3);
+    assert(ensureFailed == 1);
+    assert(Stack_pop(&s) == 0);                 /* @length > 0 is violated (empty) */
+    assert(requireFailed == 1);
+    Stack_push(&s, -1);                         /* v >= 0 is violated */
+    assert(requireFailed == 2);
+    assert(Stack_twice(4) == 8);
+    assert(Stack_twice(5000) == 10000 && requireFailed == 3);
+    assert(Stack_dbl(&s, 5) == 10 && ensureFailed == 1);
+    assert(Stack_dbl(&s, 200) == 401 && ensureFailed == 2);   /* a private method */
+    Stack_check(&s);
+    assert(ensureFailed == 2);
+    return 0;
+}

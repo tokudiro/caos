@@ -1,0 +1,4 @@
+#class $A
+#require 1
+int f;
+#endclass

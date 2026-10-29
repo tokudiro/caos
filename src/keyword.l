@@ -15,6 +15,8 @@ DIRECTIVE_SINGLETON ^#singleton
 DIRECTIVE_STRUCT    ^#struct
 DIRECTIVE_INTERFACE    ^#interface
 DIRECTIVE_INSTANCE     ^#instance
+DIRECTIVE_REQUIRE      ^#require
+DIRECTIVE_ENSURE       ^#ensure
 DIRECTIVE_ENDINTERFACE ^#endinterface
 DIRECTIVE_UTILITY   ^#utility
 

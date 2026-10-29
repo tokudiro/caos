@@ -1,0 +1,1 @@
+error/contract_in_body.caos:4: error: #require and #ensure belong between the header of a method and its '{'
