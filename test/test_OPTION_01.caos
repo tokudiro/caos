@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <assert.h>
+
+#class $TEST_OPTION_01
+
+// line comment before a declaration
+int a; // trailing line comment
+int /* inner */ b;
+#@ int c; // accessor with a line comment
+
+#+int sum(){
+    // @a in a line comment
+    return @a + @b + @c; /* block */
+}
+
+#-int twice(int x){
+    return x * 2; // private body
+}
+
+#+int calc(){
+    return @twice(@sum());
+}
+
+#endclass
+
+int main(){
+    TEST_OPTION_01 obj;
+    obj.a = 1; obj.b = 2;
+    TEST_OPTION_01_set_c(&obj, 3);
+    assert(TEST_OPTION_01_sum(&obj) == 6);
+    assert(TEST_OPTION_01_calc(&obj) == 12);
+    return 0;
+}

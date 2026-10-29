@@ -112,6 +112,59 @@ for opt in L Lp Ld Lpd; do
 done
 rm -rf out
 
+# option combinations on test_OPTION_01.caos (expected/option_<name>/) :
+# the generated files match the snapshots, no other file is created,
+# -L leaves out the #line directives, -C leaves out the // comments
+# and -k renames the this pointer; the result is compiled and run
+# unless -p / -d hide the header the struct lives in
+option_test() {
+    name=$1
+    shift
+    rm -rf out && mkdir out
+    if [ -n "$UPDATE" ]; then
+        ../caos "$@" -o out test_OPTION_01.caos && rm -rf expected/option_$name \
+            && mkdir expected/option_$name && cp out/* expected/option_$name/
+        return 0
+    fi
+    ok=0
+    ../caos "$@" -o out test_OPTION_01.caos || ok=1
+    [ "$(ls out | wc -l)" = "$(ls expected/option_$name | wc -l)" ] || ok=1
+    for f in out/*; do
+        diff -u "expected/option_$name/$(basename "$f")" "$f" >&2 || ok=1
+    done
+    case " $* " in
+    *" -L"*) grep -q '^#line' out/test_OPTION_01.c && ok=1 ;;
+    *) grep -q '^#line' out/test_OPTION_01.c || ok=1 ;;
+    esac
+    case " $* " in
+    *" -C "*|*" -L -C "*) grep -q '//' out/test_OPTION_01.c && ok=1 ;;
+    esac
+    case " $* " in
+    *" -k self "*) grep -q pthis out/test_OPTION_01.c && ok=1 ;;
+    *) grep -q 'self' out/test_OPTION_01.c && ok=1 ;;
+    esac
+    case " $* " in
+    *" -Lp "*|*" -Ld "*|*" -Lpd "*) ;;
+    *) gcc out/test_OPTION_01.c -o out/run && ./out/run || ok=1 ;;
+    esac
+    if [ $ok = 0 ]; then
+        echo "PASS: options $name"
+    else
+        echo "FAIL: options $name"
+        failed=1
+    fi
+}
+option_test L      -L
+option_test lineno
+option_test C      -L -C
+option_test k      -L -k self
+option_test Ck     -L -C -k self
+option_test lineno_Ck -C -k self
+option_test Lp     -Lp
+option_test Ld     -Ld
+option_test Lpd    -Lpd
+rm -rf out
+
 # self-hosting : caos regenerates its own classes (src/*.caos) with identical output
 rm -rf out && mkdir out
 selfhost() {
