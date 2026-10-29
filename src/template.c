@@ -2,14 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "str.h"
 #include "template.h"
 
 #define MSG_SIZE 5120
-
-static int isWordChar(int c)
-{
-    return isalnum((unsigned char)c) || c == '_';
-}
 
 static void say(IfaceErr err, const char* file, int line, const char* fmt, const char* a, const char* b)
 {
@@ -69,7 +65,7 @@ static int parseHead(const char* head, Template* t, const char** reason)
         if (p >= gt) break;
         if (!(isalpha((unsigned char)*p) || *p == '_')) { *reason = "a type parameter name is expected"; return 0; }
         b = p;
-        while (p < gt && isWordChar(*p)) p++;
+        while (p < gt && Str_isWordChar(*p)) p++;
         for (i = 0; i < t->nparams; i++) {
             if (strlen(t->params[i]) == (size_t)(p - b) && strncmp(t->params[i], b, p - b) == 0) {
                 *reason = "a type parameter is declared twice";
@@ -113,11 +109,6 @@ Template* Template_define(const char* name, const char* head, const char* direct
 
 /* ---- reading another file ---- */
 
-static int startsWith(const char* s, const char* prefix)
-{
-    return strncmp(s, prefix, strlen(prefix)) == 0;
-}
-
 static Template* find(const char* name, const char* input, int line, IfaceErr err)
 {
     static const char* opening[] = { "#class", "#singleton", "#struct", "#utility", 0 };
@@ -145,7 +136,7 @@ static Template* find(const char* name, const char* input, int line, IfaceErr er
             for (i = 0; opening[i]; i++) {
                 const char* p;
                 size_t l = strlen(name);
-                if (!startsWith(buf, opening[i])) continue;
+                if (!Str_startsWith(buf, opening[i])) continue;
                 p = buf + strlen(opening[i]);
                 while (*p == ' ' || *p == '\t') p++;
                 if (*p == '$') p++;
@@ -157,7 +148,7 @@ static Template* find(const char* name, const char* input, int line, IfaceErr er
                     head[strcspn(head, "\r\n")] = 0;
                 }
             }
-        } else if (startsWith(buf, closing[kind])) {
+        } else if (Str_startsWith(buf, closing[kind])) {
             fclose(fp);
             t = Template_define(name, head, opening[kind], closing[kind], startLine, path, err);
             if (t) t->path = Str_dupn(path, strlen(path));
@@ -184,7 +175,7 @@ static char* typeArgument(const char* s, size_t n)
     while (i < n) {
         if (s[i] == '$' && i + 1 < n && (isalpha((unsigned char)s[i+1]) || s[i+1] == '_')) {
             i++;
-            while (i < n && isWordChar(s[i])) out[o++] = s[i++];
+            while (i < n && Str_isWordChar(s[i])) out[o++] = s[i++];
             out[o++] = '*';
         } else {
             out[o++] = s[i++];
@@ -198,7 +189,7 @@ static char* typeArgument(const char* s, size_t n)
 static int isPlainName(const char* s)
 {
     if (!(isalpha((unsigned char)*s) || *s == '_')) return 0;
-    for (; *s; s++) if (!isWordChar(*s)) return 0;
+    for (; *s; s++) if (!Str_isWordChar(*s)) return 0;
     return 1;
 }
 
@@ -216,14 +207,14 @@ static char* substitute(const Template* t, const char* inst, char** args, const 
         const char* rep = 0;
         size_t replen = 0;
         char joined[512];
-        if (!(isalpha((unsigned char)t->body[i]) || t->body[i] == '_') || (i > 0 && isWordChar(t->body[i-1]))) {
+        if (!(isalpha((unsigned char)t->body[i]) || t->body[i] == '_') || (i > 0 && Str_isWordChar(t->body[i-1]))) {
             if (o + 2 > cap) { cap = cap * 2 + 2; out = (char*)realloc(out, cap); }
             if (out == 0) { fprintf(stderr, "error: out of memory\n"); exit(1); }
             out[o++] = t->body[i++];
             continue;
         }
         j = i;
-        while (j < n && isWordChar(t->body[j])) j++;
+        while (j < n && Str_isWordChar(t->body[j])) j++;
         len = j - i;
         if (i > 0 && t->body[i-1] == '$') {
             if (strlen(t->name) == len && strncmp(t->name, t->body + i, len) == 0) {
@@ -272,7 +263,7 @@ static const char* readWord(const char* p, char* dst, size_t size)
 {
     size_t l = 0;
     if (*p == '$') p++;
-    while (isWordChar(*p) && l < size - 1) dst[l++] = *p++;
+    while (Str_isWordChar(*p) && l < size - 1) dst[l++] = *p++;
     dst[l] = 0;
     return p;
 }

@@ -1,7 +1,7 @@
 %{
 	void defineClassInSource() {
 		if (isVerbose) printf("class %s\n", SBuf_getStr(class_buf) );
-	    Iface_addClass(SBuf_getStr(class_buf));
+	    Vars_addClass(SBuf_getStr(class_buf));
 	    /* the second class of a file shares the includes of the first */
 	    if (!isSourceIncluded) {
     	    isSourceIncluded = TRUE;
@@ -69,10 +69,7 @@
 		defineClassInHeader();
 		Iface_classBegin();
 		Vars_clearMembers();
-		invariantEntryLen = 0;
-		invariantExitLen = 0;
-		invariantEntry[0] = 0;
-		invariantExit[0] = 0;
+		Contract_resetClass();
 	    if (isVerbose) printf("BEGIN <CLASS_DEFINE_TAIL>\n");
 		BEGIN(CLASS_DEFINE_TAIL);
 	}
@@ -89,10 +86,7 @@
 		defineClassInHeader();
 		Iface_classBegin();
 		Vars_clearMembers();
-		invariantEntryLen = 0;
-		invariantExitLen = 0;
-		invariantEntry[0] = 0;
-		invariantExit[0] = 0;
+		Contract_resetClass();
 	    if (isVerbose) printf("BEGIN <CLASS_DEFINE_TAIL>\n");
 		BEGIN(CLASS_DEFINE_TAIL);
 	}
