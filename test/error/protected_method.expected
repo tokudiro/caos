@@ -1,0 +1,1 @@
+error/protected_method.caos:3: error: protected methods (##) are not supported (there is no inheritance)

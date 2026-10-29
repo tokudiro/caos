@@ -1,0 +1,4 @@
+#class $C
+int a;
+##int prot(){ return @a; }
+#endclass

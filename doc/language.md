@@ -28,6 +28,7 @@ Three places exist: **outside a class**, **inside a class** (between `#class` an
 | `#@ type name;` | public member: declared like a member, and `Class_get_name` / `Class_set_name` are generated |
 
 A member is a C declaration written directly in the class. It is placed in the struct, not in the `.c`.
+A read-only member is not supported: `#@` always makes a getter and a setter. A `const` member does not help, because it cannot be set after the object is made; write a method that returns the value, and keep the member private.
 A member initializer (`int a = 1;`) is reported as an error, because the struct cannot hold one.
 Comments (`/* */`, `//`) may be written anywhere; `-C` rewrites `//` into `/* */`.
 
@@ -39,7 +40,7 @@ Comments (`/* */`, `//`) may be written anywhere; `-C` rewrites `//` into `/* */
 | `#()+` / `#()public` | same, but `const Class* pthis` (does not change the object) | `.c`, public header |
 | `#-` / `#private` | `static R Class_name(Class* pthis, ...)` | `.c`, private header (`-p`: not written) |
 | `#$` / `#classmethod` | `R Class_name(...)`, no this pointer | `.c`, public header |
-| `##` | reserved for protected methods (#8). Not implemented: the text is passed through as a plain C function, without `pthis`. | |
+| `##` | not supported: there is no inheritance, so protected has no meaning. It is reported as an error. Use `#-` (private) or `#+` (public). | |
 
 A method body starts at `{` and ends at the matching `}`.
 
