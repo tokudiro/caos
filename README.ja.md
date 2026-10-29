@@ -27,7 +27,7 @@ Cコンパイラしかない小さなシステムで使うことを目指して�
 caos 自身のクラス（`Caos`、`SBuf`、`RBuf`、`ListBuf`、`Element`、`SLib`）は `src/*.caos` に書かれ、caos が生成します。
 生成された `.c` / `.h` はコミットしてあるので、caos がなくても caos をビルドできます。
 `.caos` を編集したら `make regen` を実行してください。`make test` で、コミット済みのファイルと caos の生成結果が一致するかを確認します。
-字句解析部（`src/*.l`、`src/prolog.c`）と `main.c` は C / flex で書かれています。
+字句解析部（`src/*.l`、`src/prolog.c`）と `main.c` は C / flex で書かれています。変換器の補助も C です: `iface.c`（インタフェース）、`template.c`（テンプレート）、`contract.c`（契約）、`vars.c`（変数とクラス）、`proto.c`（プロトタイプ）、`str.c`（文字列）。
 [クラス図](doc/class_diagram.md)もあります。
 文法、メモリ管理の約束事、エラーの扱いは[言語リファレンス](doc/language.ja.md)にあります。
 

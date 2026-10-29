@@ -5,7 +5,7 @@
 			snprintf(header, sizeof(header), "%s.h", &(yytext[1]));
 			addImport(header);
 		}
-		Iface_importClass(&(yytext[1]), input_filename);
+		Vars_importClass(&(yytext[1]), input_filename);
 		fprintf(source, "\"%s.h\"", &(yytext[1]));
 	    if (!isNonDefineHeader) {
     		fprintf(struct_header, "\"%s.h\"\n", &(yytext[1]));

@@ -1,7 +1,7 @@
 <METHOD_DEFINE>{
-    {DIRECTIVE_REQUIRE}.* { addContract(TRUE, yytext + 8); }
-    {DIRECTIVE_ENSURE}.*  { addContract(FALSE, yytext + 7); }
-    {DIRECTIVE_NOINVARIANT}.* { isNoInvariant = TRUE; }
+    {DIRECTIVE_REQUIRE}.* { addContract(CONTRACT_REQUIRE, yytext + 8); }
+    {DIRECTIVE_ENSURE}.*  { addContract(CONTRACT_ENSURE, yytext + 7); }
+    {DIRECTIVE_NOINVARIANT}.* { Contract_noInvariant(); }
 
     {NUMBER} {
         RBuf_enque(queue, yytext, yyleng, T_NUMBER);
@@ -18,7 +18,7 @@
     }
 
     \{ {
-        if (hasInvariant()) includeContract();
+        if (Contract_hasInvariant(methodVisibility, methodScope)) includeContract();
         RBuf_allDeque(queue, allque);
         /* source */
         fprintf( source, "%s{", allque );
@@ -47,7 +47,7 @@
         {
             /* the declaration of result and the preconditions : scanned first */
             char head[MAX_TEXTLINE];
-            startContracts(allque, head, sizeof(head));
+            Contract_start(allque, methodVisibility, methodScope, methodMutability, head, sizeof(head));
             if (head[0] != 0) {
                 PUSH_INPUT(head, yylineno, input_filename, YY_START, TRUE);
             }

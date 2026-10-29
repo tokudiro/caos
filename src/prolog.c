@@ -19,8 +19,11 @@
 #include "global.h"
 #include "ListBuf.h"
 #include "Element.h"
+#include "contract.h"
 #include "iface.h"
+#include "str.h"
 #include "template.h"
+#include "vars.h"
 
 
 int bracket = 0;
@@ -203,14 +206,9 @@ static int injectDepth = 0;     /* > 0 while the text of a contract is scanned *
 
 static void appendLimited(char* buf, size_t* len, const char* str)
 {
-    size_t n = strlen(str);
-    if (*len + n >= MAX_TEXTLINE) {
+    if (!Str_append(buf, len, MAX_TEXTLINE, str)) {
         reportError("the line is too long");
-        return;
     }
-    memcpy(buf + *len, str, n);
-    *len += n;
-    buf[*len] = 0;
 }
 
 static void finishTemplate(const char* endDirective)
@@ -220,77 +218,22 @@ static void finishTemplate(const char* endDirective)
                     templateLine, input_filename, ifaceError);
 }
 
-/*
- * "var->method(" / "v.method(" / "@member->method(" : the call "Class_method(arg"
- * for the class of the variable. 0 if the variable is not of a class (nothing is
- * changed then) ; *keep is the length of the variable at the start of the text.
- */
+/* "var->method(" and the like : see Vars_resolveCall */
 static int resolveCall(const char* text, boolean isMember, char* call, size_t size, size_t* keep)
 {
-    const char* p = text + (isMember ? 1 : 0);
-    char name[MAX_TEXT], method[MAX_TEXT];
-    size_t n = 0;
-    VarInfo v;
-    boolean arrow;
-    const char* thisName = SBuf_getStr(thispointer_buf);
-    char arg[2 * MAX_TEXT + 8];
-
-    while ((isalnum((unsigned char)*p) || *p == '_') && n < sizeof(name) - 1) name[n++] = *p++;
-    name[n] = 0;
-    *keep = (size_t)(p - text);
-    while (*p == ' ' || *p == '\t') p++;
-    arrow = (*p == '-');
-    p += arrow ? 2 : 1;
-    while (*p == ' ' || *p == '\t') p++;
-    n = 0;
-    while ((isalnum((unsigned char)*p) || *p == '_') && n < sizeof(method) - 1) method[n++] = *p++;
-    method[n] = 0;
-
-    if (!(isMember ? Vars_findMember(name, &v) : Vars_find(name, &v))) return 0;
-    if (isMember) snprintf(arg, sizeof(arg), "%s->%s", thisName, name);
-    else snprintf(arg, sizeof(arg), "%s", name);
-
-    if (v.isInterface) {
-        /* an interface is a pair of pointers, passed by value */
-        if (arrow) snprintf(call, size, "%s_%s(*%s", v.cls, method, arg);
-        else snprintf(call, size, "%s_%s(%s", v.cls, method, arg);
-    } else if (v.stars == 1) {
-        if (!arrow) reportError("a pointer calls a method with '->'");
-        snprintf(call, size, "%s_%s(%s", v.cls, method, arg);
-    } else {
-        if (arrow) reportError("a value calls a method with '.'");
-        snprintf(call, size, "%s_%s(&%s", v.cls, method, arg);
-    }
-    return 1;
+    const char* error;
+    int found = Vars_resolveCall(text, isMember, SBuf_getStr(thispointer_buf), call, size, keep, &error);
+    if (error) reportError(error);
+    return found;
 }
 
 /*
- * Contracts : "#require expr" and "#ensure expr" between the header of a method
- * and its '{'. They are collected as C text, and scanned as if they were written
- * in the body (so that @member and x->method() work).
+ * Contracts : "#require expr", "#ensure expr" and "#invariant expr". The text
+ * is built by contract.c ; the include of the macros goes before the header of
+ * the method, which is still queued.
  */
-static char contractRequire[MAX_TEXTLINE];
-static size_t contractRequireLen = 0;
-static char contractEnsure[MAX_TEXTLINE];
-static size_t contractEnsureLen = 0;
 static boolean isContractIncluded = FALSE;
 
-/* #invariant of the class : checked at the entry and at the exit of the public methods */
-static char invariantEntry[MAX_TEXTLINE];
-static size_t invariantEntryLen = 0;
-static char invariantExit[MAX_TEXTLINE];
-static size_t invariantExitLen = 0;
-static boolean isNoInvariant = FALSE;   /* #noinvariant of the next method */
-
-/* of the method being translated */
-static char methodEnsureReturn[3 * MAX_TEXTLINE + 64];   /* after "return x;" */
-static char methodEnsureEnd[3 * MAX_TEXTLINE + 64];      /* before the last '}' of a void method */
-static boolean methodHasEnsure = FALSE;
-static boolean methodIsVoid = FALSE;
-static boolean methodEndDone = FALSE;
-static boolean methodInReturn = FALSE;
-
-/* the include goes before the header of the method, which is still queued */
 static void includeContract(void)
 {
     if (!isContractIncluded) {
@@ -300,113 +243,14 @@ static void includeContract(void)
     }
 }
 
-/* does the invariant of the class apply to the method being translated ? */
-static boolean hasInvariant(void)
+static void addContract(ContractKind kind, const char* expr)
 {
-    return invariantEntryLen > 0 && methodVisibility == VISIBILITY_PUBLIC && methodScope == SCOPE_OBJECT;
-}
-
-/* "expr" of a directive: trimmed, or 0 if it is empty (reported) */
-static boolean contractExpression(const char* directive, const char** expr, size_t* length)
-{
-    char message[64];
-    size_t n;
-    while (**expr == ' ' || **expr == '\t') (*expr)++;
-    n = strlen(*expr);
-    while (n > 0 && ((*expr)[n-1] == ' ' || (*expr)[n-1] == '\t' || (*expr)[n-1] == '\r')) n--;
-    if (n == 0) {
-        snprintf(message, sizeof(message), "%s needs an expression", directive);
-        reportError(message);
-        return FALSE;
+    const char* error = Contract_add(kind, expr);
+    if (error) {
+        reportError(error);
+    } else if (kind != CONTRACT_INVARIANT) {
+        includeContract();
     }
-    *length = n;
-    return TRUE;
-}
-
-static void addInvariant(const char* expr)
-{
-    char one[MAX_TEXTLINE];
-    size_t n;
-    if (!contractExpression("#invariant", &expr, &n)) return;
-    if (n + 32 >= sizeof(one)) {
-        reportError("the line is too long");
-        return;
-    }
-    if (invariantEntryLen > 0) {
-        appendLimited(invariantEntry, &invariantEntryLen, " ");
-        appendLimited(invariantExit, &invariantExitLen, " ");
-    }
-    snprintf(one, sizeof(one), "CAOS_REQUIRE(%.*s);", (int)n, expr);
-    appendLimited(invariantEntry, &invariantEntryLen, one);
-    snprintf(one, sizeof(one), "CAOS_ENSURE(%.*s);", (int)n, expr);
-    appendLimited(invariantExit, &invariantExitLen, one);
-}
-
-static void addContract(boolean isRequire, const char* expr)
-{
-    char one[MAX_TEXTLINE];
-    size_t n;
-    if (!contractExpression(isRequire ? "#require" : "#ensure", &expr, &n)) return;
-    includeContract();
-    if (n + 32 >= sizeof(one)) {
-        reportError("the line is too long");
-        return;
-    }
-    snprintf(one, sizeof(one), "%s(%.*s);", isRequire ? "CAOS_REQUIRE" : "CAOS_ENSURE", (int)n, expr);
-    /* the texts are joined with a blank */
-    if (isRequire) {
-        if (contractRequireLen > 0) appendLimited(contractRequire, &contractRequireLen, " ");
-        appendLimited(contractRequire, &contractRequireLen, one);
-    } else {
-        if (contractEnsureLen > 0) appendLimited(contractEnsure, &contractEnsureLen, " ");
-        appendLimited(contractEnsure, &contractEnsureLen, one);
-    }
-}
-
-/*
- * At the '{' of a method : the text to scan first (the declaration of result
- * and the preconditions), and the texts kept for the postconditions.
- */
-static void startContracts(const char* proto, char* head, size_t size)
-{
-    char ret[MAX_TEXT];
-    boolean entry = hasInvariant();
-    boolean exitCheck = entry && methodMutability == MUTABILITY_MUTABLE;
-    head[0] = 0;
-    methodHasEnsure = (contractEnsureLen > 0 || exitCheck);
-    methodEndDone = FALSE;
-    methodInReturn = FALSE;
-    Iface_returnType(proto, ret, sizeof(ret));
-    methodIsVoid = (strcmp(ret, "void") == 0);
-    if (methodHasEnsure && !methodIsVoid && ret[0] != 0) {
-        snprintf(head, size, " %s result;", ret);
-    }
-    if (entry && !isNoInvariant) {
-        if (strlen(head) + invariantEntryLen + 1 < size) {
-            strcat(head, " ");
-            strcat(head, invariantEntry);
-        }
-    }
-    if (contractRequireLen > 0) {
-        if (strlen(head) + contractRequireLen + 1 < size) {
-            strcat(head, " ");
-            strcat(head, contractRequire);
-        }
-    }
-    /* the postconditions, then the invariant */
-    {
-        char combined[2 * MAX_TEXTLINE + 8];
-        snprintf(combined, sizeof(combined), "%s%s%s", contractEnsure,
-                 (contractEnsureLen > 0 && exitCheck) ? " " : "", exitCheck ? invariantExit : "");
-        snprintf(methodEnsureEnd, sizeof(methodEnsureEnd), " %s ", combined);
-        snprintf(methodEnsureReturn, sizeof(methodEnsureReturn), " %s %s", combined,
-                 methodIsVoid ? "return; }" : "return result; }");
-    }
-    contractRequire[0] = 0;
-    contractRequireLen = 0;
-    contractEnsure[0] = 0;
-    contractEnsureLen = 0;
-    isNoInvariant = FALSE;
 }
 
 /* #endclass : check "implements" and write the function pointer tables */

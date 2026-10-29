@@ -38,11 +38,11 @@
     }
 
     \} {
-        if (bracket == 0 && methodHasEnsure && methodIsVoid && !methodEndDone && injectDepth == 0) {
+        if (bracket == 0 && contractMethod.hasEnsure && contractMethod.isVoid && !contractMethod.endDone && injectDepth == 0) {
             /* the postconditions of a void method that ends without return */
-            methodEndDone = TRUE;
+            contractMethod.endDone = TRUE;
             yyless(0);
-            PUSH_INPUT(methodEnsureEnd, yylineno, input_filename, YY_START, TRUE);
+            PUSH_INPUT(contractMethod.endText, yylineno, input_filename, YY_START, TRUE);
         } else {
         RBuf_enque(queue, yytext, yyleng, T_NON);
         fprintf( source, "%s", RBuf_allDeque(queue, allque) );
@@ -118,11 +118,11 @@
     }
     {KEYWORD} {
         check_arg_comma();
-        if (methodHasEnsure && injectDepth == 0) {
+        if (contractMethod.hasEnsure && injectDepth == 0) {
             /* return x;  ->  { result = x; <postconditions> return result; } */
             bracket++;
-            methodInReturn = TRUE;
-            RBuf_enque(queue, methodIsVoid ? "{" : "{ result =", methodIsVoid ? 1 : 10, T_NON);
+            contractMethod.inReturn = TRUE;
+            RBuf_enque(queue, contractMethod.isVoid ? "{" : "{ result =", contractMethod.isVoid ? 1 : 10, T_NON);
         } else {
             RBuf_enque(queue, yytext, yyleng, T_KEYWORD);
         }
@@ -171,11 +171,11 @@
     }
     \n { RBuf_enque(queue, yytext, yyleng, T_NON); }
     ;  {
-        if (methodInReturn) {
-            methodInReturn = FALSE;
-            if (!methodIsVoid) RBuf_enque(queue, yytext, yyleng, T_SEMICOLON);
+        if (contractMethod.inReturn) {
+            contractMethod.inReturn = FALSE;
+            if (!contractMethod.isVoid) RBuf_enque(queue, yytext, yyleng, T_SEMICOLON);
             fprintf( source, "%s", RBuf_allDeque(queue, allque) );
-            PUSH_INPUT(methodEnsureReturn, yylineno, input_filename, YY_START, TRUE);
+            PUSH_INPUT(contractMethod.returnText, yylineno, input_filename, YY_START, TRUE);
         } else {
             RBuf_enque(queue, yytext, yyleng, T_SEMICOLON);
             RBuf_allDeque(queue, allque);
