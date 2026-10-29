@@ -34,6 +34,7 @@ clean :
 	cat ./src/INITIAL.l \
 	    ./src/IMPORT.l \
 	    ./src/INTERFACE.l \
+	    ./src/TEMPLATE.l \
 	    ./src/CLASS_DEFINE.l \
 	    ./src/CLASS_SCOPE.l \
 	    ./src/METHOD_DEFINE.l \
@@ -45,7 +46,7 @@ clean :
 ./obj/caos.yy.c : ./obj/caos.l
 	$(LEX) -o./obj/caos.yy.c ./obj/caos.l
 
-SRCS = ./src/Caos.c ./src/RBuf.c ./src/main.c ./src/SBuf.c ./src/SLib.c ./src/Element.c ./src/ListBuf.c ./src/iface.c
+SRCS = ./src/Caos.c ./src/RBuf.c ./src/main.c ./src/SBuf.c ./src/SLib.c ./src/Element.c ./src/ListBuf.c ./src/iface.c ./src/template.c
 
 caos : ./obj/caos.yy.c $(SRCS) ./src/*.h
 	$(CC) $(CFLAGS) -I./src -o caos ./obj/caos.yy.c $(SRCS) $(LDFLAGS)

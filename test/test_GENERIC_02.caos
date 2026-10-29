@@ -1,0 +1,27 @@
+#include <assert.h>
+
+// T_name : the method "name" of the type argument (Counter_inc, Counter_get)
+#class $Counter
+int n;
+#+void inc(){ @n++; }
+#+int get(){ return @n; }
+#endclass
+
+#class $Twice<T>
+#+int run(T* x)
+{
+    T_inc(x);
+    T_inc(x);
+    return T_get(x);
+}
+#endclass
+
+#instance $TwiceCounter = $Twice<Counter>
+
+int main(void)
+{
+    TwiceCounter t;
+    Counter c = {0};
+    assert(TwiceCounter_run(&t, &c) == 2);
+    return 0;
+}

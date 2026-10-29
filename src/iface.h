@@ -22,6 +22,10 @@ typedef struct {
     int nmethods;
 } Iface;
 
+/* helpers shared with template.c : malloc'ed copy / zeroed buffer (exit on failure) */
+char* Str_dupn(const char* s, size_t n);
+char* Str_alloc(size_t n);
+
 /* error report : the translator counts it and prints "file:line: error: msg" */
 typedef void (*IfaceErr)(const char* file, int line, const char* msg);
 

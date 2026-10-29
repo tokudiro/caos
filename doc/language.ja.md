@@ -19,6 +19,7 @@ caos は C にいくつかのディレクティブを足します。ディレク
 | 記法 | 意味 |
 |---|---|
 | `#interface $Name` ... `#endinterface` | インタフェース（「インタフェース」の節） |
+| `#class $Name<T>` ... / `#instance $X = $Name<int>` | テンプレートとその展開（「テンプレート」の節） |
 | `#import <x.h>` | `#include` を public ヘッダと define ヘッダに書く（`-d` のときは define ヘッダには書かない） |
 | `#header` ... `#endheader` | 間の行を `.c` ではなく **public ヘッダ**に出す（ディレクティブは行に単独で書く）。public のプロトタイプが使う型に使う。 |
 | `#' text`（`#comment`） | caos だけのコメント。その行は出力されない |
@@ -93,6 +94,34 @@ total(File_as_Reader(&file));   /* テストでは total(Mock_as_Reader(&mock));
 * メソッドは public（`#+` または `#()+`）で、名前、戻り値の型、引数の型が同じである必要があります（引数名は無視して、文字列で比較）。足りないメソッドや型の違いはエラーです: `File.caos:1: error: class File does not implement Reader::reset`。
 * `-M` は、`Name.caos` と `Name.h` をクラスの依存として載せます。
 * コストは、`Reader` 越しの呼び出しごとに間接呼び出し 1 回です。`File_read` を直接呼ぶ場合は、今までどおり普通の関数呼び出しです。
+
+## テンプレート
+
+クラスは型パラメータを取れます。テンプレート自体は何も生成せず、`#instance` を書いた場所で、与えた名前で展開されます。
+
+```
+#class $List<T>                       // List.caos
+int length;
+T* items;
+#+int append(T item){ ... }
+#()+T at(int index){ return @items[index]; }
+#endclass
+
+#instance $IntList = $List<int>       // Lists.caos
+#instance $StrList = $List<const char*>
+```
+
+`IntList_append(IntList*, int)` や `StrList_at(...)` などが、クラスを 2 つ手で書いたのと同じように生成されます。
+利用者には、普通のクラス名 `IntList` と `StrList` だけが見えます。
+
+* **仕組み**: テンプレートのテキストを、型パラメータ（単語単位）を引数に、`$List` を `$IntList` に置き換えて、もう一度走査します。そのほかの規則（メンバ、`#line`、`implements`、オプション）は手書きのクラスと同じです。型推論や特殊化はありません。
+* **展開される場所**: `#instance` を書いたファイルに生成されます（`Lists.c`、`Lists.h` など）。同じインスタンスを複数のファイルで使うときは、`#instance` を 1 か所に書き、そのヘッダを include します。
+* **テンプレートの探し方**: 同じファイルの `#instance` より前か、入力ファイルと同じフォルダの `Name.caos`（テンプレート名のファイル）です。テンプレートのクラスの種類（`#class`、`#struct` など）は引き継がれます。`-M` は `Name.caos` を載せます。
+* **`T_name`**: 型パラメータに `_` が続く単語（`T_finish`）は、型引数のメソッド（`Element_finish`）になります。型に依存する処理を呼ぶときに使います。型引数は単純な名前（`Element`。`const char*` は不可）でなければならず、その関数を持たない型は C コンパイラのエラーになります。`src/ListBuf.caos` は `List<T>` を `Element` で展開したもので、`T_finish` と `T_delete` で要素を解放します。
+* **型引数**: `int`、`char*`、`Name`、`$Name`（= `Name*`）。複数は `,` で区切ります。`<...>` の入れ子は未対応です。ポインタはテンプレートの中で自分で書きます（`T*`）。`$T` は置き換えません。
+* **引き継がれないもの**: `#class` から `#endclass` までの行だけがテンプレートです。必要な `#include` や `#header` は、`#instance` を書くファイルに置いてください。
+* **エラー**: 引数の数の違いや、未定義のテンプレートなどは `file:line: error: ...` で報告されます。展開後のテキストのエラーは、テンプレートのファイルの、テンプレートの行を指します。単語の置き換えは、コメントや文字列の中でも行われます。
+* `<T implements $Comparable>` のような制約は、まだありません。
 
 ## 生成されるファイル
 

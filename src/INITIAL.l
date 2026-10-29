@@ -33,6 +33,7 @@
 		BEGIN(IMPORT);
 	}
 	{DIRECTIVE_CLASS} {
+	    snprintf(classDirective, sizeof(classDirective), "%s", yytext);
 	    if (isVerbose) printf("BEGIN <CLASS_DEFINE>\n");
 	    BEGIN(CLASS_DEFINE);
 	}
@@ -45,24 +46,31 @@
         isOutputHeader = FALSE;
     }
 	{DIRECTIVE_SINGLETON} {
+	    snprintf(classDirective, sizeof(classDirective), "%s", yytext);
 	    if (isVerbose) printf("#directive singleton\n");
 		classType = TYPE_SINGLETON;
 	    if (isVerbose) printf("BEGIN <CLASS_DEFINE>\n");
 		BEGIN(CLASS_DEFINE);
 	}
 	{DIRECTIVE_STRUCT} {
+	    snprintf(classDirective, sizeof(classDirective), "%s", yytext);
 	    if (isVerbose) printf("#directive struct\n");
 		classType = TYPE_STRUCT;
 	    if (isVerbose) printf("BEGIN <CLASS_DEFINE>\n");
 		BEGIN(CLASS_DEFINE);
 	}
 	{DIRECTIVE_UTILITY} {
+	    snprintf(classDirective, sizeof(classDirective), "%s", yytext);
 	    if (isVerbose) printf("#directive utility\n");
 		classType = TYPE_UTILITY;
 	    if (isVerbose) printf("BEGIN <CLASS_DEFINE>\n");
 		BEGIN(CLASS_DEFINE);
 	}
 	
+	{DIRECTIVE_INSTANCE} {
+	    instanceLen = 0;
+	    BEGIN(INSTANCE_DEFINE);
+	}
 	{DIRECTIVE_INTERFACE} {
 	    interfaceLine = yylineno;
 	    BEGIN(INTERFACE_DEFINE);

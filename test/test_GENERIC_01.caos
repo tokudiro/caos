@@ -1,0 +1,39 @@
+#include <assert.h>
+
+// a pair of types, a struct, and a method that uses $Name and a type argument
+#struct $Pair<A, B>
+A first;
+B second;
+
+#+A getFirst()
+{
+    return @first;
+}
+
+#+void set(A a, B b)
+{
+    @first = a;
+    @second = b;
+}
+#endstruct
+
+#class $Counter
+int n;
+#+void inc(){ @n++; }
+#endclass
+
+#instance $IntChar = $Pair<int, char>
+#instance $CounterPtr = $Pair<$Counter, int>
+
+int main(void)
+{
+    IntChar p;
+    CounterPtr q;
+    Counter c = {0};
+    IntChar_set(&p, 7, 'x');
+    assert(IntChar_getFirst(&p) == 7);
+    CounterPtr_set(&q, &c, 1);
+    Counter_inc(CounterPtr_getFirst(&q));
+    assert(c.n == 1);
+    return 0;
+}

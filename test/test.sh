@@ -51,6 +51,8 @@ run_test -L   COMMENT_01
 run_test -L   ATTRIBUTE_01
 run_test -L   LONG_01
 run_test -L   LONG_02
+run_test -L   GENERIC_01
+run_test -L   GENERIC_02
 
 # a member initializer is reported (with its line), caos exits non-zero,
 # and the output is still valid C without the initializers
@@ -158,6 +160,25 @@ elif [ -z "$ifaceFail" ] \
     echo "PASS: interface"
 else
     echo "FAIL: interface"
+    failed=1
+fi
+rm -rf out
+
+# templates (generic/) : List<T> is written in List.caos and expanded for two
+# types by #instance in Lists.caos; output and dependency file match
+# expected/generic/, then it is compiled and run
+rm -rf out && mkdir out
+../caos -L -o out -M out/Lists.cd generic/Lists.caos || genericFail=1
+if [ -n "$UPDATE" ]; then
+    rm -rf expected/generic && mkdir expected/generic && cp out/* expected/generic/
+elif [ -z "$genericFail" ] \
+    && [ "$(ls out | wc -l)" = "$(ls expected/generic | wc -l)" ] \
+    && (cd out && for f in *; do diff -u "../expected/generic/$f" "$f" || exit 1; done) \
+    && gcc -Wall -Wextra -Iout generic/main.c out/Lists.c -o out/app \
+    && ./out/app; then
+    echo "PASS: templates"
+else
+    echo "FAIL: templates"
     failed=1
 fi
 rm -rf out

@@ -79,6 +79,7 @@ int main(){
 | `#$` / `#classmethod` | クラスメソッド（this ポインタなし） |
 | `#@` | public メンバー（getter / setter を生成） |
 | `#interface $Name` ... `#endinterface` | インタフェース（関数ポインタの表）。クラスは `#class $X implements $Name` と書く |
+| `#class $Name<T>` ... / `#instance $X = $Name<int>` | テンプレートと、その明示的な展開 |
 | `#import` | インクルード |
 | `@name` | 現在のオブジェクトのメンバーまたはメソッド（`pthis->name` / `Class_name(pthis)`） |
 

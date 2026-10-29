@@ -1,0 +1,1 @@
+error/generic_not_closed.caos:1: error: template is not closed (#endclass is missing)

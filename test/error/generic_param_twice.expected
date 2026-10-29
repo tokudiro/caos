@@ -1,0 +1,1 @@
+error/generic_param_twice.caos:1: error: template C: a type parameter is declared twice

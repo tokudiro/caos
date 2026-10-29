@@ -5,20 +5,20 @@
 #header
 typedef struct Element Element;
 #endheader
-#singleton $ListBuf
+#singleton $List<T>
 
 int length;
-Element** elements;
+T** elements;
 
 #+void init()
 {
     @length = 0;
 }
 
-#+void append(Element* element)
+#+void append(T* element)
 {
     @length++;
-    @elements = realloc(@elements, sizeof(Element*)*@length);
+    @elements = realloc(@elements, sizeof(T*)*@length);
     if (@elements) {
         @elements[@length-1] = element;
     }
@@ -29,7 +29,7 @@ Element** elements;
     return @length;
 }
 
-#+Element* element(int index)
+#+T* element(int index)
 {
     return @elements[index];
 }
@@ -37,11 +37,13 @@ Element** elements;
 #+void finish()
 {
     while ( @length>0 ) {
-        Element_finish(@elements[@length-1]);
-        Element_delete(@elements[@length-1]);
+        T_finish(@elements[@length-1]);
+        T_delete(@elements[@length-1]);
         @length--;
     }
     free(@elements);
 }
 
 #endsingleton
+
+#instance $ListBuf = $List<Element>
