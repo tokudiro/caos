@@ -112,6 +112,35 @@ for opt in L Lp Ld Lpd; do
 done
 rm -rf out
 
+# -M : the dependency file lists the generated files (-p, -d, -o and #struct
+# are reflected) and the headers named by #import, without duplicates
+# ("..." and $Name are listed, <...> is not); snapshots are expected/depend_<name>.d
+depend_test() {
+    name=$1
+    input=$2
+    shift 2
+    rm -rf out && mkdir out
+    if [ -n "$UPDATE" ]; then
+        ../caos "$@" -M expected/depend_$name.d "$input" && rm -f test_DEPEND_0*.[ch]
+        return 0
+    fi
+    if ../caos "$@" -M out/dep.d "$input" \
+        && diff -u expected/depend_$name.d out/dep.d >&2; then
+        echo "PASS: -M $name"
+    else
+        echo "FAIL: -M $name"
+        failed=1
+    fi
+    rm -f test_DEPEND_0*.[ch]
+}
+depend_test L      test_DEPEND_01.caos -L
+depend_test Lp     test_DEPEND_01.caos -Lp
+depend_test Ld     test_DEPEND_01.caos -Ld
+depend_test Lpd    test_DEPEND_01.caos -Lpd
+depend_test Lo     test_DEPEND_01.caos -L -o out
+depend_test struct test_DEPEND_02.caos -L
+rm -rf out
+
 # option combinations on test_OPTION_01.caos (expected/option_<name>/) :
 # the generated files match the snapshots, no other file is created,
 # -L leaves out the #line directives, -C leaves out the // comments

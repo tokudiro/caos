@@ -1,0 +1,3 @@
+#struct $TEST_DEPEND_02
+int x;
+#endstruct

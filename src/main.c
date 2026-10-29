@@ -39,6 +39,7 @@ static void outputHELP(){
     printf("p : do not output private header\n");
     printf("d : do not output define header\n");
     printf("o : output folder\n");
+    printf("M : write a make dependency file\n");
 }
 
 extern char	*optarg;
@@ -47,6 +48,42 @@ static const char default_thispointer_str[] = "pthis";
 
 /* -o option: output folder (default: the folder of the input file) */
 static const char* output_dir = 0;
+
+/* -M option: the dependency file to write */
+static const char* depfile_path = 0;
+
+/* headers named by #import (as written, without the folder), no duplicates */
+static char** import_names = 0;
+static int import_count = 0;
+
+void addImport(const char* name) {
+    int i;
+    for (i = 0; i < import_count; i++) {
+        if (strcmp(import_names[i], name) == 0) return;
+    }
+    import_names = (char**)realloc(import_names, sizeof(char*) * (import_count + 1));
+    if (import_names == 0) {fprintf(stderr, "error: out of memory\n");exit(1);}
+    import_names[import_count] = strdup(name);
+    if (import_names[import_count] == 0) {fprintf(stderr, "error: out of memory\n");exit(1);}
+    import_count++;
+}
+
+/* write "<outputs>: <input> <imported headers>" in make syntax */
+static void writeDepfile(const char* dir, const char** outputs, int n_outputs) {
+    FILE* fp = fopen(depfile_path, "w");
+    int i;
+    if (fp == 0) {fprintf(stderr, "%s: error: cannot open the file\n", depfile_path);exit(1);}
+    for (i = 0; i < n_outputs; i++) {
+        fprintf(fp, "%s%s", i ? " " : "", outputs[i]);
+    }
+    fprintf(fp, " : %s", input_filename);
+    for (i = 0; i < import_count; i++) {
+        const char* sep = (dir[0] != 0 && dir[strlen(dir)-1] != '/') ? "/" : "";
+        fprintf(fp, " %s%s%s", dir, sep, import_names[i]);
+    }
+    fprintf(fp, "\n");
+    fclose(fp);
+}
 
 /* path of "<dir>/<filename><suffix>" ; dir may be empty */
 static void makePath(char* path, size_t size, const char* dir, const char* suffix) {
@@ -68,7 +105,7 @@ int main(int argc, char** argv)
     thispointer_buf = &thispointer_buf_impl;
 	SBuf_init(thispointer_buf);
 
-	while( (c = getopt(argc, argv, "hVLCo:pdk:")) !=-1 ) {
+	while( (c = getopt(argc, argv, "hVLCo:pdk:M:")) !=-1 ) {
 		switch(c){
 		case 'h':
 		    outputHELP();
@@ -91,6 +128,9 @@ int main(int argc, char** argv)
 		    break;
 		case 'd':
 		    isNonDefineHeader = TRUE;
+		    break;
+		case 'M':
+		    depfile_path = optarg;
 		    break;
 		case 'k':
 		    if (strlen(optarg) >= MAX_TEXT) {
@@ -240,6 +280,16 @@ int main(int argc, char** argv)
         printf("list.length   : %d\n", ListBuf_length(Caos_list(caos)) );
     }
     
+    if (depfile_path) {
+        const char* outputs[4];
+        int n = 0;
+        outputs[n++] = source_path;
+        outputs[n++] = public_header_path;
+        if (!isNonPrivateHeader) outputs[n++] = private_header_path;
+        if (!isNonDefineHeader && classType != TYPE_STRUCT) outputs[n++] = define_header_path;
+        writeDepfile(dir, outputs, n);
+    }
+
     ListBuf_finish( Caos_list(caos) );
     
     return (ret != 0 || errorCount != 0) ? 1 : 0;

@@ -92,6 +92,42 @@ After an intended change of the output, regenerate the snapshots with `UPDATE=1 
 | `-p` | do not output the private header |
 | `-d` | do not output the define header |
 | `-o <path>` | output folder (default: the folder of the input file) |
+| `-M <file>` | write a make dependency file (see below) |
+
+## Build integration
+`-M <file>` writes a dependency rule in make syntax, like `gcc -MF`:
+
+```
+A.c A.h A_private.h A_define.h : A.caos B.h
+```
+
+* The left side lists the files written, reflecting `-p`, `-d`, `-o` (and `#struct`, which has no define header).
+* The right side is the input and the headers named by `#import $Name` or `#import "x.h"` (looked for next to the output, like the `#include` that is generated). `#import <x.h>` is not listed.
+
+A Makefile for your project:
+
+```make
+CAOS    ?= caos
+CFLAGS  += -MMD
+CLASSES := $(basename $(wildcard *.caos))
+OBJS    := main.o $(addsuffix .o,$(CLASSES))
+
+app : $(OBJS)
+	$(CC) -o $@ $^
+
+# A class is translated into X.c, X.h, X_define.h and X_private.h at once.
+# -M writes X.cd: the generated files depend on X.caos and on the #imported headers.
+# (not X.d, which is the gcc -MMD file of X.o)
+%.c : %.caos
+	$(CAOS) -L -M $*.cd $<
+
+# translate every class before compiling anything, so that the headers exist
+$(OBJS) : | $(addsuffix .c,$(CLASSES))
+
+-include $(addsuffix .d,$(basename $(OBJS))) $(addsuffix .cd,$(CLASSES))
+```
+
+`caos`'s own `Makefile` takes its class list from `src/*.caos` (`make regen`).
 
 ## Generate files
 ```caos -L SampleClass.caos```
