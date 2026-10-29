@@ -45,4 +45,7 @@ extern int countClassMethod;
 extern int countAttribute;
 extern int errorCount;
 
+/* defined in main.c : record a header named by #import (for -M) */
+extern void addImport(const char* name);
+
 #endif /* GLOBAL_H__ */

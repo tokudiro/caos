@@ -93,6 +93,42 @@ int main(){
 | `-p` | private ヘッダを出力しない |
 | `-d` | define ヘッダを出力しない |
 | `-o <パス>` | 出力先フォルダ（既定は入力ファイルと同じフォルダ） |
+| `-M <ファイル>` | make の依存関係ファイルを書く（後述） |
+
+## ビルドとの連携
+`-M <file>` は、`gcc -MF` のように、make 形式の依存関係を書きます。
+
+```
+A.c A.h A_private.h A_define.h : A.caos B.h
+```
+
+* 左辺は出力するファイルです。`-p`、`-d`、`-o` を反映します（`#struct` は define ヘッダを作らないので載りません）。
+* 右辺は入力と、`#import $Name` または `#import "x.h"` で参照するヘッダです（生成される `#include` と同じく、出力先から探します）。`#import <x.h>` は載せません。
+
+利用者のプロジェクトの Makefile のひな形です。
+
+```make
+CAOS    ?= caos
+CFLAGS  += -MMD
+CLASSES := $(basename $(wildcard *.caos))
+OBJS    := main.o $(addsuffix .o,$(CLASSES))
+
+app : $(OBJS)
+	$(CC) -o $@ $^
+
+# クラスは X.c、X.h、X_define.h、X_private.h にまとめて変換される。
+# -M で X.cd を書く（生成物は X.caos と #import したヘッダに依存する）。
+# （X.d は使わない。X.o の gcc -MMD ファイルと衝突する）
+%.c : %.caos
+	$(CAOS) -L -M $*.cd $<
+
+# ヘッダが揃うよう、コンパイルの前に全クラスを変換する
+$(OBJS) : | $(addsuffix .c,$(CLASSES))
+
+-include $(addsuffix .d,$(basename $(OBJS))) $(addsuffix .cd,$(CLASSES))
+```
+
+`caos` 自身の `Makefile` は、クラスの一覧を `src/*.caos` から作ります（`make regen`）。
 
 ## ファイルの生成
 ```caos -L SampleClass.caos```

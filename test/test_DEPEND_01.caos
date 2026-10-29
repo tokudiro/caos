@@ -1,0 +1,9 @@
+#include <stdio.h>
+#import $SBuf
+#import "util.h"
+#import <string.h>
+#import $SBuf
+#class $TEST_DEPEND_01
+int x;
+#+int f(){ return @x; }
+#endclass
