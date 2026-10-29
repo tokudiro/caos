@@ -81,6 +81,7 @@ int main(){
 | `#interface $Name` ... `#endinterface` | インタフェース（関数ポインタの表）。クラスは `#class $X implements $Name` と書く |
 | `#class $Name<T>` ... / `#instance $X = $Name<int>` | テンプレートと、その明示的な展開 |
 | `#require expr` / `#ensure expr` | メソッドの事前条件と事後条件。`CAOS_REQUIRE` / `CAOS_ENSURE`（`include/caos_contract.h`）で検査 |
+| `#invariant expr` | クラスの不変条件。public メソッドの入口と出口で検査（`#noinvariant` で入口を省く） |
 | `#import` | インクルード |
 | `@name` | 現在のオブジェクトのメンバーまたはメソッド（`pthis->name` / `Class_name(pthis)`） |
 

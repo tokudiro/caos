@@ -47,6 +47,10 @@
 	    if (isVerbose) printf("BEGIN <METHOD_DEFINE>\n");
 		BEGIN(METHOD_DEFINE);
 	}
+	{DIRECTIVE_INVARIANT}.* { addInvariant(yytext + 10); }
+	{DIRECTIVE_NOINVARIANT}.* {
+		reportError("#noinvariant belongs between the header of a method and its '{'");
+	}
 	{DIRECTIVE_REQUIRE}.* |
 	{DIRECTIVE_ENSURE}.*  {
 		reportError("#require and #ensure belong between the header of a method and its '{'");

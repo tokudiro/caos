@@ -67,6 +67,12 @@
 		BEGIN(CLASS_DEFINE);
 	}
 	
+	{DIRECTIVE_INVARIANT}.* {
+		reportError("#invariant belongs in a class, before its methods");
+	}
+	{DIRECTIVE_NOINVARIANT}.* {
+		reportError("#noinvariant belongs between the header of a method and its '{'");
+	}
 	{DIRECTIVE_REQUIRE}.* |
 	{DIRECTIVE_ENSURE}.*  {
 		reportError("#require and #ensure belong between the header of a method and its '{'");

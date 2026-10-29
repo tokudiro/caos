@@ -69,6 +69,10 @@
 		defineClassInHeader();
 		Iface_classBegin();
 		Vars_clearMembers();
+		invariantEntryLen = 0;
+		invariantExitLen = 0;
+		invariantEntry[0] = 0;
+		invariantExit[0] = 0;
 	    if (isVerbose) printf("BEGIN <CLASS_DEFINE_TAIL>\n");
 		BEGIN(CLASS_DEFINE_TAIL);
 	}
@@ -85,6 +89,10 @@
 		defineClassInHeader();
 		Iface_classBegin();
 		Vars_clearMembers();
+		invariantEntryLen = 0;
+		invariantExitLen = 0;
+		invariantEntry[0] = 0;
+		invariantExit[0] = 0;
 	    if (isVerbose) printf("BEGIN <CLASS_DEFINE_TAIL>\n");
 		BEGIN(CLASS_DEFINE_TAIL);
 	}

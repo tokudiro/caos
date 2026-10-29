@@ -1,6 +1,7 @@
 <METHOD_DEFINE>{
     {DIRECTIVE_REQUIRE}.* { addContract(TRUE, yytext + 8); }
     {DIRECTIVE_ENSURE}.*  { addContract(FALSE, yytext + 7); }
+    {DIRECTIVE_NOINVARIANT}.* { isNoInvariant = TRUE; }
 
     {NUMBER} {
         RBuf_enque(queue, yytext, yyleng, T_NUMBER);
@@ -17,6 +18,7 @@
     }
 
     \{ {
+        if (hasInvariant()) includeContract();
         RBuf_allDeque(queue, allque);
         /* source */
         fprintf( source, "%s{", allque );

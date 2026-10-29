@@ -1,0 +1,74 @@
+#include <assert.h>
+
+/* count the violations instead of stopping */
+static int entryFailed = 0;
+static int exitFailed = 0;
+#define CAOS_REQUIRE(cond) do { if (!(cond)) entryFailed++; } while (0)
+#define CAOS_ENSURE(cond) do { if (!(cond)) exitFailed++; } while (0)
+
+#class $Range
+int low;
+int high;
+#invariant @low <= @high
+#invariant @low >= 0
+
+#+void init(int low, int high)
+#noinvariant
+{
+    @low = low;
+    @high = high;
+}
+
+#+void widen(int d)
+{
+    @low -= d;
+    @high += d;
+}
+
+#+int width()
+#ensure result >= 0
+{
+    return @high - @low;
+}
+
+#()+int peekLow()
+{
+    return @low;
+}
+
+#-void scribble()
+{
+    @low = @high + 1;
+}
+
+#+void breakIt()
+{
+    @scribble();
+}
+
+#$int make(int v)
+{
+    return v;
+}
+#endclass
+
+int main(void)
+{
+    Range r;
+    Range_init(&r, 2, 5);                    /* no entry check : the object was not valid yet */
+    assert(entryFailed == 0 && exitFailed == 0);
+    assert(Range_width(&r) == 3);
+    assert(entryFailed == 0 && exitFailed == 0);
+    Range_widen(&r, 1);                      /* low becomes 1, high 6 : still valid */
+    assert(entryFailed == 0 && exitFailed == 0);
+    Range_widen(&r, 5);                      /* low becomes -4 : the exit check fails (low >= 0) */
+    assert(entryFailed == 0 && exitFailed == 1);
+    Range_peekLow(&r);                       /* a const method : checked on entry only */
+    assert(entryFailed == 1 && exitFailed == 1);
+    r.low = 100;                             /* corrupted from outside */
+    Range_width(&r);
+    assert(entryFailed == 2);
+    Range_breakIt(&r);                       /* the private method is not checked */
+    assert(Range_make(7) == 7);              /* a class method is not checked */
+    return 0;
+}

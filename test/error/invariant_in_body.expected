@@ -1,0 +1,1 @@
+error/invariant_in_body.caos:4: error: #invariant belongs in a class, before its methods; #noinvariant belongs before the '{'
