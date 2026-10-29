@@ -1,4 +1,7 @@
 <METHOD_DEFINE>{
+    {DIRECTIVE_REQUIRE}.* { addContract(TRUE, yytext + 8); }
+    {DIRECTIVE_ENSURE}.*  { addContract(FALSE, yytext + 7); }
+
     {NUMBER} {
         RBuf_enque(queue, yytext, yyleng, T_NUMBER);
     }
@@ -39,6 +42,14 @@
         arg_analysis = FALSE;
         if (isVerbose) printf("BEGIN <METHOD_SCOPE>\n");
         BEGIN(METHOD_SCOPE);
+        {
+            /* the declaration of result and the preconditions : scanned first */
+            char head[MAX_TEXTLINE];
+            startContracts(allque, head, sizeof(head));
+            if (head[0] != 0) {
+                PUSH_INPUT(head, yylineno, input_filename, YY_START, TRUE);
+            }
+        }
     }
 
     \( {

@@ -32,7 +32,7 @@ run_test() {
     name=test_$2
     if ../caos "$opt" "$name.caos" \
         && check_output "$2" \
-        && gcc "$name.c" -o "$name" \
+        && gcc -I../include "$name.c" -o "$name" \
         && "./$name"; then
         echo "PASS: $name"
     else
@@ -54,6 +54,7 @@ run_test -L   LONG_02
 run_test -L   GENERIC_01
 run_test -L   GENERIC_02
 run_test -L   CALL_01
+run_test -L   CONTRACT_01
 
 # a member initializer is reported (with its line), caos exits non-zero,
 # and the output is still valid C without the initializers
@@ -183,6 +184,20 @@ else
     failed=1
 fi
 rm -rf out
+
+# contracts with the default macros : assert() stops the program, -DNDEBUG removes the checks
+../caos -L test_CONTRACT_02.caos \
+    && gcc -I../include test_CONTRACT_02.c -o test_CONTRACT_02 \
+    && ! ./test_CONTRACT_02 2>/dev/null \
+    && gcc -DNDEBUG -I../include test_CONTRACT_02.c -o test_CONTRACT_02 \
+    && ./test_CONTRACT_02
+if [ $? = 0 ]; then
+    echo "PASS: contract (assert, NDEBUG)"
+else
+    echo "FAIL: contract (assert, NDEBUG)"
+    failed=1
+fi
+rm -f test_CONTRACT_02 test_CONTRACT_02.c test_CONTRACT_02*.h
 
 # calling a method of a variable of a class from another file (call/) :
 # User.caos has "#import $Counter" and c->add(d) ; output matches expected/call/

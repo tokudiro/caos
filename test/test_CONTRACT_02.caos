@@ -1,0 +1,16 @@
+// the default macros of caos_contract.h : assert(), removed by NDEBUG
+#class $Box
+int v;
+#+int get()
+#require @v > 0
+{
+    return @v;
+}
+#endclass
+
+int main(void)
+{
+    Box b;
+    b.v = 0;
+    return Box_get(&b);     /* the precondition is violated */
+}

@@ -1,0 +1,1 @@
+error/contract_outside.caos:1: error: #require and #ensure belong between the header of a method and its '{'

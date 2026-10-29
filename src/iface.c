@@ -657,3 +657,13 @@ static int findIn(const VarTable* t, const char* name, VarInfo* out)
 
 int Vars_find(const char* name, VarInfo* out) { return findIn(&locals, name, out); }
 int Vars_findMember(const char* name, VarInfo* out) { return findIn(&members, name, out); }
+
+void Iface_returnType(const char* proto, char* out, size_t size)
+{
+    IMethod m;
+    char msg[MSG_SIZE];
+    out[0] = 0;
+    if (parseProto(proto, &m, msg)) return;
+    snprintf(out, size, "%s", m.ret);
+    freeMethod(&m);
+}

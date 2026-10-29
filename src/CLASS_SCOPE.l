@@ -47,6 +47,10 @@
 	    if (isVerbose) printf("BEGIN <METHOD_DEFINE>\n");
 		BEGIN(METHOD_DEFINE);
 	}
+	{DIRECTIVE_REQUIRE}.* |
+	{DIRECTIVE_ENSURE}.*  {
+		reportError("#require and #ensure belong between the header of a method and its '{'");
+	}
 	{DIRECTIVE_PROTECTED_METHOD} {
 		reportError("protected methods (##) are not supported (there is no inheritance)");
 	}
